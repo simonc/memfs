@@ -1,0 +1,2 @@
+class FsFaker::Dir
+end

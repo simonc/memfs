@@ -1,0 +1,1 @@
+require 'fs_faker'
