@@ -1,4 +1,6 @@
 require 'fs_faker/version'
+
+require 'fs_faker/file_system'
 require 'fs_faker/dir'
 require 'fs_faker/file'
 
