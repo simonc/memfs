@@ -1,6 +1,7 @@
 require 'singleton'
 require 'fs_faker/fake/directory'
 require 'fs_faker/fake/file'
+require 'fs_faker/fake/symlink'
 
 module FsFaker
   class FileSystem
@@ -14,8 +15,14 @@ module FsFaker
     end
 
     def chdir(path, &block)
+      destination = find!(path).last_target
+
+      unless destination.is_a?(Fake::Directory)
+        raise Errno::ENOTDIR, path
+      end
+
       previous_directory = working_directory
-      self.working_directory = find!(path).path
+      self.working_directory = destination.path
 
       if block
         block.call
@@ -31,8 +38,12 @@ module FsFaker
     end
     alias :pwd :getwd
 
+    def find(path)
+      registred_entries[path]
+    end
+
     def find!(path)
-      registred_entries[path] || raise(Errno::ENOENT, path)
+      find(path) || raise(Errno::ENOENT, path)
     end
 
     def mkdir(path)
@@ -47,12 +58,23 @@ module FsFaker
       registred_entries[path].is_a?(Fake::Directory)
     end
 
-    def touch(path)
-      registred_entries[path] = Fake::File.new(path)
+    def touch(*paths)
+      paths.each do |path|
+        registred_entries[path] ||= Fake::File.new(path)
+        registred_entries[path].touch
+      end
     end
 
     def chmod(mode_int, file_name)
       find!(file_name).mode = mode_int
+    end
+
+    def symlink(old_name, new_name)
+      registred_entries[new_name] = Fake::Symlink.new(new_name, old_name)
+    end
+
+    def symlink?(path)
+      find(path).is_a?(Fake::Symlink)
     end
   end
 end

@@ -1,9 +1,5 @@
 require 'fs_faker/version'
 
-require 'fs_faker/file_system'
-require 'fs_faker/dir'
-require 'fs_faker/file'
-
 # Provides a clean way to interact with a fake file system.
 #
 # @example Calling activate with a block.
@@ -26,6 +22,10 @@ module FsFaker
 
   # Keeps track of the original Ruby File class.
   OriginalFile = ::File
+
+  require 'fs_faker/file_system'
+  require 'fs_faker/dir'
+  require 'fs_faker/file'
 
   # Calls the given block with FsFaker activated.
   #
