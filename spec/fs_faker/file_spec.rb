@@ -280,5 +280,11 @@ module FsFaker
     # 
     #   it "changes the mtime of the file if the mode is w or w+"
     # end
+
+    describe ".join" do
+      it "Returns a new string formed by joining the strings using File::SEPARATOR" do
+        File.join('a', 'b', 'c').should == 'a/b/c'
+      end
+    end
   end
 end

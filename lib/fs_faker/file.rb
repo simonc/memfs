@@ -96,6 +96,10 @@ module FsFaker
     #   file.close if block_given?
     end
 
+    def self.join(*args)
+      original_file_class.join(*args)
+    end
+
     def initialize(filename, mode = RDONLY, perm = nil, opt = nil)
       unless opt.nil? || opt.is_a?(Hash)
         raise ArgumentError, "wrong number of arguments (4 for 1..3)"

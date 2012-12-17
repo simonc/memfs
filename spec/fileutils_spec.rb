@@ -116,7 +116,24 @@ describe FileUtils do
   end
 
   describe '.chmod_R' do
-    
+    before :each do
+      FileUtils.touch '/test/test-file'
+    end
+
+    it "changes the permission bits on the named entry" do
+      FileUtils.chmod_R(0777, '/test')
+      File.stat('/test').mode.should be(0100777)
+    end
+
+    it "changes the permission bits on any sub-directory of the named entry" do
+      FileUtils.chmod_R(0777, '/')
+      File.stat('/test').mode.should be(0100777)
+    end
+
+    it "changes the permission bits on any descendant file of the named entry" do
+      FileUtils.chmod_R(0777, '/')
+      File.stat('/test/test-file').mode.should be(0100777)
+    end
   end
 
   describe '.chown' do
