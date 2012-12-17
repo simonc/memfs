@@ -30,6 +30,12 @@ module FsFaker
         entry.atime.should == time
       end
 
+      it "has a parent attribute accessor" do
+        parent = Directory.new('/parent')
+        entry.parent = parent
+        entry.parent.should be(parent)
+      end
+
       describe '#mode=' do
         it "sets the mode as binary value" do
           entry.mode = 0777
@@ -83,6 +89,12 @@ module FsFaker
       describe '.last_target' do
         it "returns the entry itself" do
           entry.last_target.should be(entry)
+        end
+      end
+
+      describe '.find' do
+        it "raises an error" do
+          expect { entry.find('test') }.to raise_error(Errno::ENOTDIR)
         end
       end
     end

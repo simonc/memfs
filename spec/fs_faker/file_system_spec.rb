@@ -4,6 +4,12 @@ module FsFaker
   describe FileSystem do
     let(:fs) { FileSystem.instance }
 
+    describe '#new' do
+      it "creates the root directory" do
+        fs.find!('/').should be(fs.root)
+      end
+    end
+
     context "with the /test directory created" do
       before :each do
         fs.mkdir '/test'
@@ -93,12 +99,32 @@ module FsFaker
           fs.directory?('/some-file').should be_false
         end
       end
+
+      describe '#find_directory!' do
+        it "returns the named directory" do
+          fs.find_directory!('/test').should be_a(Fake::Directory)
+        end
+
+        it "raises an error if the named entry is not a directory" do
+          fs.touch '/test-file'
+          expect { fs.find_directory!('/test-file') }.to raise_error(Errno::ENOTDIR)
+        end
+      end
     end
 
     describe '#mkdir' do
       it "creates a directory" do
         fs.mkdir '/test'
-        fs.registred_entries['/test'].should be_a(Fake::Directory)
+        fs.find!('/test').should be_a(Fake::Directory)
+      end
+
+      context "when a relative path is given" do
+        it "creates a directory in current directory" do
+          fs.mkdir '/test'
+          fs.chdir '/test'
+          fs.mkdir 'test-dir'
+          fs.find!('/test/test-dir').should be_a(Fake::Directory)
+        end
       end
     end
 
@@ -106,19 +132,19 @@ module FsFaker
       it "clear the registred entries" do
         fs.mkdir '/test'
         fs.clear!
-        fs.registred_entries.should be_empty
+        fs.root.entry_names.should == %w[. ..]
       end
     end
 
     describe '#touch' do
       it "creates a regular file" do
         fs.touch '/some-file'
-        fs.registred_entries['/some-file'].should be_a(Fake::File)
+        fs.find!('/some-file').should be_a(Fake::File)
       end
 
       it "creates a regular file for each named filed" do
         fs.touch '/some-file', '/some-file2'
-        fs.registred_entries['/some-file2'].should be_a(Fake::File)
+        fs.find!('/some-file2').should be_a(Fake::File)
       end
 
       it "creates an entry only if it doesn't exist" do
@@ -184,6 +210,30 @@ module FsFaker
 
       it "returns false if the entry doesn't exist" do
         fs.symlink?('/test-file').should be_false
+      end
+    end
+
+    describe '#entries' do
+      it "returns an array containing all of the filenames in the given directory" do
+        %w[/test /test/dir1 /test/dir2].each { |dir| fs.mkdir dir }
+        fs.touch '/test/file1', '/test/file2'
+        fs.entries('/test').should == %w[. .. dir1 dir2 file1 file2]
+      end
+    end
+
+    describe '#find_parent!' do
+      it "returns the parent directory of the named entry" do
+        fs.mkdir '/test'
+        fs.find_parent!('/test/test-file').should be_a(Fake::Directory)
+      end
+
+      it "raises an error if the parent directory does not exist" do
+        expect { fs.find_parent!('/nowhere/test-file') }.to raise_error(Errno::ENOENT)
+      end
+
+      it "raises an error if the parent is not a directory" do
+        fs.touch('/test-file')
+        expect { fs.find_parent!('/test-file/test') }.to raise_error(Errno::ENOTDIR)
       end
     end
   end

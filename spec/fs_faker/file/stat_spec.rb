@@ -34,6 +34,45 @@ module FsFaker
       end
     end
 
+    describe '#directory?' do
+      before :each do
+        fs.mkdir('/test')
+        fs.touch('/test-file')
+        fs.symlink('/test', '/link-to-dir')
+        fs.symlink('/test-file', '/link-to-file')
+      end
+
+      it "returns true if the entry is a directory" do
+        File::Stat.new('/test').should be_directory
+      end
+
+      it "returns false if the entry is not a directory" do
+        File::Stat.new('/test-file').should_not be_directory
+      end
+
+      context "when the entry is a symlink" do
+        context "and the optional follow_symlink argument is true" do
+          it "returns true if the last target of the link chain is a directory" do
+            File::Stat.new('/link-to-dir', true).should be_directory
+          end
+
+          it "returns false if the last target of the link chain is not a directory" do
+            File::Stat.new('/link-to-file', true).should_not be_directory
+          end
+        end
+
+        context "and the optional follow_symlink argument is false" do
+          it "returns false if the last target of the link chain is a directory" do
+            File::Stat.new('/link-to-dir', false).should_not be_directory
+          end
+
+          it "returns false if the last target of the link chain is not a directory" do
+            File::Stat.new('/link-to-file', false).should_not be_directory
+          end
+        end
+      end
+    end
+
     describe '#mode' do
       it "returns an integer representing the permission bits of stat" do
         fs.touch('/test-file')

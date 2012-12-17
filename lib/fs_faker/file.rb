@@ -141,6 +141,10 @@ module FsFaker
         follow_symlink && last_entry
       end
 
+      def directory?
+        File.directory? last_entry.path
+      end
+
       def symlink?
         File.symlink? last_entry.path
       end

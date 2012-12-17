@@ -4,6 +4,7 @@ module FsFaker
       attr_accessor :atime
       attr_accessor :mtime
       attr_accessor :name
+      attr_accessor :parent
       attr_accessor :path
       attr_reader :mode
 
@@ -26,6 +27,10 @@ module FsFaker
 
       def touch
         self.atime = self.mtime = Time.now
+      end
+
+      def find(path)
+        raise Errno::ENOTDIR, self.path
       end
     end
   end

@@ -9,20 +9,17 @@ module FsFaker
 
     attr_accessor :working_directory
     attr_accessor :registred_entries
+    attr_accessor :root
 
     def initialize
-      self.registred_entries = {}
+      clear!
     end
 
     def chdir(path, &block)
-      destination = find!(path).last_target
-
-      unless destination.is_a?(Fake::Directory)
-        raise Errno::ENOTDIR, path
-      end
+      destination = find_directory!(path)
 
       previous_directory = working_directory
-      self.working_directory = destination.path
+      self.working_directory = destination
 
       if block
         block.call
@@ -34,12 +31,18 @@ module FsFaker
     end
 
     def getwd
-      working_directory
+      working_directory.path
     end
     alias :pwd :getwd
 
     def find(path)
-      registred_entries[path]
+      if path == '/'
+        root
+      elsif dirname(path) == '.'
+        working_directory.find(path)
+      else
+        root.find(path)
+      end
     end
 
     def find!(path)
@@ -47,21 +50,28 @@ module FsFaker
     end
 
     def mkdir(path)
-      registred_entries[path] = Fake::Directory.new(path)
+      find_parent!(path).add_entry Fake::Directory.new(path)
     end
 
     def clear!
-      self.registred_entries.clear
+      self.root = Fake::Directory.new('/')
     end
 
     def directory?(path)
-      registred_entries[path].is_a?(Fake::Directory)
+      find(path).is_a?(Fake::Directory)
     end
 
     def touch(*paths)
       paths.each do |path|
-        registred_entries[path] ||= Fake::File.new(path)
-        registred_entries[path].touch
+        entry = find(path)
+
+        unless entry
+          entry = Fake::File.new(path)
+          parent_dir = find_parent!(path)
+          parent_dir.add_entry entry
+        end
+
+        entry.touch
       end
     end
 
@@ -70,11 +80,35 @@ module FsFaker
     end
 
     def symlink(old_name, new_name)
-      registred_entries[new_name] = Fake::Symlink.new(new_name, old_name)
+      find_parent!(new_name).add_entry Fake::Symlink.new(new_name, old_name)
     end
 
     def symlink?(path)
       find(path).is_a?(Fake::Symlink)
     end
+
+    def entries(path)
+      find_directory!(path).entry_names
+    end
+
+    def find_directory!(path)
+      entry = find!(path).last_target
+
+      unless entry.is_a?(Fake::Directory)
+        raise Errno::ENOTDIR, path
+      end
+
+      entry
+    end
+
+    def find_parent!(path)
+      parent_path = dirname(path)
+      find_directory!(parent_path)
+    end
+
+    def dirname(path)
+      FsFaker::OriginalFile.dirname(path)
+    end
+    
   end
 end

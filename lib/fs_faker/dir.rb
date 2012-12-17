@@ -13,6 +13,10 @@ module FsFaker
       fs.mkdir path
     end
 
+    def self.entries(dirname, opts = {})
+      fs.entries(dirname)
+    end
+
     class << self
       alias :pwd :getwd
     end

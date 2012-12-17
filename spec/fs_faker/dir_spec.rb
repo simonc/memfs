@@ -2,6 +2,8 @@ require 'spec_helper'
 
 module FsFaker
   describe Dir do
+    let(:fs) { FsFaker::FileSystem.instance }
+
     before :each do
       Dir.mkdir '/'
       Dir.mkdir '/test'
@@ -52,6 +54,14 @@ module FsFaker
       it "creates a directory" do
         Dir.mkdir '/new-folder'
         File.directory?('/new-folder').should be_true
+      end
+    end
+
+    describe '.entries' do
+      it "returns an array containing all of the filenames in the given directory" do
+        %w[/test /test/dir1 /test/dir2].each { |dir| Dir.mkdir dir }
+        fs.touch '/test/file1', '/test/file2'
+        Dir.entries('/test').should == %w[. .. dir1 dir2 file1 file2]
       end
     end
   end

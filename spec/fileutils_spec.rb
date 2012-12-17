@@ -7,8 +7,6 @@ describe FileUtils do
   before :each do
     FsFaker.activate!
 
-    # FileUtils can't create a / directory
-    Dir.mkdir '/'
     FileUtils.mkdir '/test'
   end
 
