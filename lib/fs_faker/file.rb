@@ -19,8 +19,10 @@ module FsFaker
 
     def_delegator :original_file_class, :path
 
-    def self.chmod(mode_int, file_name)
-      fs.chmod mode_int, file_name
+    def self.chmod(mode_int, *paths)
+      paths.each do |path|
+        fs.chmod mode_int, path
+      end
     end
 
     def self.lchmod(mode_int, *file_names)

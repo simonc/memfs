@@ -10,6 +10,12 @@ module FsFaker
         File.chmod(0777, '/some-file')
         File.stat('/some-file').mode.should be(0100777)
       end
+
+      it "changes permission bits on the named files (in list)" do
+        fs.touch '/some-file', '/some-file2'
+        File.chmod(0777, '/some-file', '/some-file2')
+        File.stat('/some-file2').mode.should be(0100777)
+      end
     end
 
     describe '.directory?' do
