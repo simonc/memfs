@@ -198,7 +198,39 @@ describe FileUtils do
   end
 
   describe '.chown_R' do
-    
+    before :each do
+      FileUtils.touch '/test/test-file'
+    end
+
+    it "changes the owner on the named entry" do
+      FileUtils.chown_R(42, nil, '/test')
+      File.stat('/test').uid.should be(42)
+    end
+
+    it "changes the group on the named entry" do
+      FileUtils.chown_R(nil, 42, '/test')
+      File.stat('/test').gid.should be(42)
+    end
+
+    it "changes the owner on any sub-directory of the named entry" do
+      FileUtils.chown_R(42, nil, '/')
+      File.stat('/test').uid.should be(42)
+    end
+
+    it "changes the group on any sub-directory of the named entry" do
+      FileUtils.chown_R(nil, 42, '/')
+      File.stat('/test').gid.should be(42)
+    end
+
+    it "changes the owner on any descendant file of the named entry" do
+      FileUtils.chown_R(42, nil, '/')
+      File.stat('/test/test-file').uid.should be(42)
+    end
+
+    it "changes the group on any descendant file of the named entry" do
+      FileUtils.chown_R(nil, 42, '/')
+      File.stat('/test/test-file').gid.should be(42)
+    end
   end
 
   describe '.cmp' do
