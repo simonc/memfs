@@ -30,10 +30,28 @@ module FsFaker
         entry.atime.should == time
       end
 
+      it "has a uid attribute accessor" do
+        entry.uid = 42
+        entry.uid.should == 42
+      end
+
+      it "has a gid attribute accessor" do
+        entry.gid = 42
+        entry.gid.should == 42
+      end
+
       it "has a parent attribute accessor" do
         parent = Directory.new('/parent')
         entry.parent = parent
         entry.parent.should be(parent)
+      end
+
+      it "sets its default uid to the current user's uid" do
+        entry.uid.should == Etc.getpwuid.uid
+      end
+
+      it "sets its default gid to the current user's gid" do
+        entry.gid.should == Etc.getpwuid.gid
       end
 
       describe '#mode=' do

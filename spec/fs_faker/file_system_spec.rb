@@ -236,5 +236,75 @@ module FsFaker
         expect { fs.find_parent!('/test-file/test') }.to raise_error(Errno::ENOTDIR)
       end
     end
+
+    describe "#chown" do
+      before :each do
+        fs.touch '/test-file'
+      end
+
+      it "changes the owner of the named file to the given numeric owner id" do
+        fs.chown(42, nil, '/test-file')
+        fs.find!('/test-file').uid.should be(42)
+      end
+
+      it "changes the group of the named file to the given numeric group id" do
+        fs.chown(nil, 42, '/test-file')
+        fs.find!('/test-file').gid.should be(42)
+      end
+
+      it "ignores nil user id" do
+        previous_uid = fs.find!('/test-file').uid
+
+        fs.chown(nil, 42, '/test-file')
+        fs.find!('/test-file').uid.should == previous_uid
+      end
+
+      it "ignores nil group id" do
+        previous_gid = fs.find!('/test-file').gid
+
+        fs.chown(42, nil, '/test-file')
+        fs.find!('/test-file').gid.should == previous_gid
+      end
+
+      it "ignores -1 user id" do
+        previous_uid = fs.find!('/test-file').uid
+
+        fs.chown(-1, 42, '/test-file')
+        fs.find!('/test-file').uid.should == previous_uid
+      end
+
+      it "ignores -1 group id" do
+        previous_gid = fs.find!('/test-file').gid
+
+        fs.chown(42, -1, '/test-file')
+        fs.find!('/test-file').gid.should == previous_gid
+      end
+
+      context "when the named entry is a symlink" do
+        before :each do
+          fs.symlink '/test-file', '/test-link'
+        end
+
+        it "changes the owner on the last target of the link chain" do
+          fs.chown(42, nil, '/test-link')
+          fs.find!('/test-file').uid.should be(42)
+        end
+
+        it "changes the group on the last target of the link chain" do
+          fs.chown(nil, 42, '/test-link')
+          fs.find!('/test-file').gid.should be(42)
+        end
+
+        it "doesn't change the owner of the symlink" do
+          fs.chown(42, nil, '/test-link')
+          fs.find!('/test-link').uid.should_not be(42)
+        end
+
+        it "doesn't change the group of the symlink" do
+          fs.chown(nil, 42, '/test-link')
+          fs.find!('/test-link').gid.should_not be(42)
+        end
+      end
+    end
   end
 end

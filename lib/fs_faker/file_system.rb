@@ -109,6 +109,11 @@ module FsFaker
     def dirname(path)
       FsFaker::OriginalFile.dirname(path)
     end
-    
+
+    def chown(uid, gid, path)
+      entry = find!(path).last_target
+      entry.uid = uid if uid && uid != -1
+      entry.gid = gid if gid && gid != -1
+    end
   end
 end

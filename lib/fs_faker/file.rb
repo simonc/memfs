@@ -100,6 +100,17 @@ module FsFaker
       original_file_class.join(*args)
     end
 
+    def self.chown(uid, gid, *paths)
+      paths.each do |path|
+        fs.chown(uid, gid, path)
+      end
+      paths.size
+    end
+
+    def self.lchown(uid, gid, *paths)
+      chown uid, gid, *paths
+    end
+
     def initialize(filename, mode = RDONLY, perm = nil, opt = nil)
       unless opt.nil? || opt.is_a?(Hash)
         raise ArgumentError, "wrong number of arguments (4 for 1..3)"
@@ -163,6 +174,14 @@ module FsFaker
 
       def mtime
         last_entry.mtime
+      end
+
+      def uid
+        last_entry.uid
+      end
+
+      def gid
+        last_entry.gid
       end
 
       def last_entry

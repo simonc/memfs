@@ -113,5 +113,21 @@ module FsFaker
         end
       end
     end
+
+    describe "#uid" do
+      it "returns the user id of the named entry" do
+        fs.touch('/test-file')
+        fs.chown(42, nil, '/test-file')
+        File::Stat.new('/test-file').uid.should be(42)
+      end
+    end
+
+    describe "#gid" do
+      it "returns the group id of the named entry" do
+        fs.touch('/test-file')
+        fs.chown(nil, 42, '/test-file')
+        File::Stat.new('/test-file').gid.should be(42)
+      end
+    end
   end
 end

@@ -137,7 +137,64 @@ describe FileUtils do
   end
 
   describe '.chown' do
-    
+    it "changes owner on the named file" do
+      FileUtils.chown(42, nil, '/test')
+      File.stat('/test').uid.should be(42)
+    end
+
+    it "changes owner on the named files (in list)" do
+      FileUtils.touch('/test-file')
+      FileUtils.chown(42, nil, ['/test', '/test-file'])
+      File.stat('/test-file').uid.should be(42)
+    end
+
+    it "changes group on the named entry" do
+      FileUtils.chown(nil, 42, '/test')
+      File.stat('/test').gid.should be(42)
+    end
+
+    it "changes group on the named entries in list" do
+      FileUtils.touch('/test-file')
+      FileUtils.chown(nil, 42, ['/test', '/test-file'])
+      File.stat('/test-file').gid.should be(42)
+    end
+
+    it "doesn't change user if user is nil" do
+      FileUtils.chown(nil, 42, '/test')
+      File.stat('/test').uid.should_not be(42)
+    end
+
+    it "doesn't change group if group is nil" do
+      FileUtils.chown(42, nil, '/test')
+      File.stat('/test').gid.should_not be(42)
+    end
+
+    context "when the name entry is a symlink" do
+      before :each do
+        FileUtils.touch '/test-file'
+        FileUtils.symlink '/test-file', '/test-link'
+      end
+
+      it "changes the owner on the last target of the link chain" do
+        FileUtils.chown(42, nil, '/test-link')
+        File.stat('/test-file').uid.should be(42)
+      end
+
+      it "changes the group on the last target of the link chain" do
+        FileUtils.chown(nil, 42, '/test-link')
+        File.stat('/test-file').gid.should be(42)
+      end
+
+      it "doesn't change the owner of the symlink" do
+        FileUtils.chown(42, nil, '/test-link')
+        File.lstat('/test-link').uid.should_not be(42)
+      end
+
+      it "doesn't change the group of the symlink" do
+        FileUtils.chown(nil, 42, '/test-link')
+        File.lstat('/test-link').gid.should_not be(42)
+      end
+    end
   end
 
   describe '.chown_R' do

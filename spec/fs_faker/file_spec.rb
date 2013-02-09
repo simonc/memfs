@@ -286,5 +286,85 @@ module FsFaker
         File.join('a', 'b', 'c').should == 'a/b/c'
       end
     end
+
+    describe ".chown" do
+      before :each do
+        fs.clear!
+        fs.touch '/test-file', '/test-file2'
+      end
+
+      it "changes the owner of the named file to the given numeric owner id" do
+        File.chown(42, nil, '/test-file')
+        File.stat('/test-file').uid.should be(42)
+      end
+
+      it "changes owner on the named files (in list)" do
+        File.chown(42, nil, '/test-file', '/test-file2')
+        File.stat('/test-file2').uid.should be(42)
+      end
+
+      it "changes the group of the named file to the given numeric group id" do
+        File.chown(nil, 42, '/test-file')
+        File.stat('/test-file').gid.should be(42)
+      end
+
+      it "returns the number of files" do
+        File.chown(42, 42, '/test-file', '/test-file2').should be(2)
+      end
+
+      it "ignores nil user id" do
+        previous_uid = File.stat('/test-file').uid
+
+        File.chown(nil, 42, '/test-file')
+        File.stat('/test-file').uid.should == previous_uid
+      end
+
+      it "ignores nil group id" do
+        previous_gid = File.stat('/test-file').gid
+
+        File.chown(42, nil, '/test-file')
+        File.stat('/test-file').gid.should == previous_gid
+      end
+
+      it "ignores -1 user id" do
+        previous_uid = File.stat('/test-file').uid
+
+        File.chown(-1, 42, '/test-file')
+        File.stat('/test-file').uid.should == previous_uid
+      end
+
+      it "ignores -1 group id" do
+        previous_gid = File.stat('/test-file').gid
+
+        File.chown(42, -1, '/test-file')
+        File.stat('/test-file').gid.should == previous_gid
+      end
+
+      context "when the named entry is a symlink" do
+        before :each do
+          fs.symlink '/test-file', '/test-link'
+        end
+
+        it "changes the owner on the last target of the link chain" do
+          File.chown(42, nil, '/test-link')
+          File.stat('/test-file').uid.should be(42)
+        end
+
+        it "changes the group on the last target of the link chain" do
+          File.chown(nil, 42, '/test-link')
+          File.stat('/test-file').gid.should be(42)
+        end
+
+        it "doesn't change the owner of the symlink" do
+          File.chown(42, nil, '/test-link')
+          File.lstat('/test-link').uid.should_not be(42)
+        end
+
+        it "doesn't change the group of the symlink" do
+          File.chown(nil, 42, '/test-link')
+          File.lstat('/test-link').gid.should_not be(42)
+        end
+      end
+    end
   end
 end

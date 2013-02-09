@@ -2,10 +2,12 @@ module FsFaker
   module Fake
     class Entry
       attr_accessor :atime
+      attr_accessor :gid
       attr_accessor :mtime
       attr_accessor :name
       attr_accessor :parent
       attr_accessor :path
+      attr_accessor :uid
       attr_reader :mode
 
       def initialize(path = nil)
@@ -15,6 +17,9 @@ module FsFaker
         self.mode = 0666 - FsFaker::File.umask
         self.atime = time
         self.mtime = time
+        current_user = Etc.getpwuid
+        self.uid = current_user.uid
+        self.gid = current_user.gid
       end
 
       def mode=(mode_int)
