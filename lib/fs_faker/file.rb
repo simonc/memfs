@@ -11,10 +11,10 @@ module FsFaker
     MODE_MAP = {
       'r'  => RDONLY,
       'r+' => RDWR,
-      'w'  => WRONLY,
-      'w+' => CREAT|TRUNC|WRONLY,
-      'a'  => APPEND|CREAT|WRONLY,
-      'a+' => APPEND|CREAT|RDWR
+      'w'  => CREAT|TRUNC|WRONLY,
+      'w+' => CREAT|TRUNC|RDWR,
+      'a'  => CREAT|APPEND|WRONLY,
+      'a+' => CREAT|APPEND|RDWR
     }
 
     def_delegator :original_file_class, :path
@@ -82,20 +82,16 @@ module FsFaker
       @umask = original_file_class.umask
     end
 
-    # FIXME: ensure file is closed
-    def self.open(filename, mode = 'r', *perm_and_opt)
-      if mode == 'a'
-        fs.touch(filename)
-      end
-      file = self.new(filename) #(filename, mode, *perm_and_opt)
-    # 
+    def self.open(filename, mode = RDONLY, *perm_and_opt)
+      file = self.new(filename, mode, *perm_and_opt)
+
       if block_given?
         yield file
-      # else
-    #     file
+      else
+        file
       end
-    # ensure
-    #   file.close if block_given?
+    ensure
+      file.close if file && block_given?
     end
 
     def self.join(*args)
@@ -113,18 +109,53 @@ module FsFaker
       chown uid, gid, *paths
     end
 
+    def self.size(path)
+      fs.find!(path).content.size
+    end
+
+    attr_accessor :closed
+    attr_accessor :entry
+    attr_accessor :opening_mode
+
     def initialize(filename, mode = RDONLY, perm = nil, opt = nil)
       unless opt.nil? || opt.is_a?(Hash)
         raise ArgumentError, "wrong number of arguments (4 for 1..3)"
       end
 
-      mode = str_to_mode_int(mode) if mode.is_a?(String)
+      self.opening_mode = str_to_mode_int(mode)
 
-      # fs.touch(filename)
+      fs.touch(filename) if create_file?
+
+      self.entry = fs.find(filename)
     end
 
     def close
-      nil
+      self.closed = true
+    end
+
+    def closed?
+      closed
+    end
+
+    def content
+      entry.content
+    end
+
+    def puts(text)
+      unless writable?
+        raise IOError, 'not opened for writing'
+      end
+
+      content.puts text
+    end
+
+    def read(length = nil, buffer = '')
+      default = length ? nil : ''
+      content.read(length, buffer) || default
+    end
+
+    def size
+      content.size
     end
 
     private
@@ -137,13 +168,28 @@ module FsFaker
       FileSystem.instance
     end
 
+    def fs
+      FileSystem.instance
+    end
+
     def str_to_mode_int(mode)
+      return mode unless mode.is_a?(String)
+
       unless mode =~ /\A([rwa]\+?)([bt])?\z/
         raise ArgumentError, "invalid access mode #{mode}"
       end
 
       mode_str = $~[1]
       MODE_MAP[mode_str]
+    end
+
+    def create_file?
+      (opening_mode & File::CREAT).nonzero?
+    end
+
+    def writable?
+      (opening_mode & File::WRONLY).nonzero? ||
+      (opening_mode & File::RDWR).nonzero?
     end
 
     class Stat

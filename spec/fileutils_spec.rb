@@ -234,11 +234,25 @@ describe FileUtils do
   end
 
   describe '.cmp' do
-    
+    it "is an alias for #compare_file" do
+      FileUtils.method(:cmp).should == FileUtils.method(:compare_file)
+    end
   end
 
   describe '.compare_file' do
-    
+    it "returns true if the contents of a file A and a file B are identical" do
+      File.open('/test-file', 'w')  { |f| f.puts "this is a test" }
+      File.open('/test-file2', 'w') { |f| f.puts "this is a test" }
+
+      FileUtils.compare_file('/test-file', '/test-file2').should be_true
+    end
+
+    it "returns false if the contents of a file A and a file B are not identical" do
+      File.open('/test-file', 'w')  { |f| f.puts "this is a test" }
+      File.open('/test-file2', 'w') { |f| f.puts "this is not a test" }
+
+      FileUtils.compare_file('/test-file', '/test-file2').should be_false
+    end
   end
 
   describe '.compare_stream' do
@@ -274,7 +288,9 @@ describe FileUtils do
   end
 
   describe '.identical?' do
-    
+    it "is an alias for #compare_file" do
+      FileUtils.method(:identical?).should == FileUtils.method(:compare_file)
+    end
   end
 
   describe '.install' do

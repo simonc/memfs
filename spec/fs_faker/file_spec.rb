@@ -3,6 +3,7 @@ require 'spec_helper'
 module FsFaker
   describe File do
     let(:fs) { FileSystem.instance }
+    let(:random_string) { ('a'..'z').to_a.sample(rand 100).join }
 
     describe '.chmod' do
       it "changes permission bits on the named file" do
@@ -242,19 +243,39 @@ module FsFaker
         File.open('/test-file', 'a')
         expect { fs.find!('/test-file') }.not_to raise_error
       end
-      # context "when no block is given" do
-      #   it "is a synonym of new if no argument is passed" do
-      #     File.should_receive(:new).with('/test-file', 'r', 0666)
-      #     File.open('/test-file', 'r', 0666)
-      #   end
-      # 
-      #   it "returns a File instance" do
-      #     File.open('/test-file').should be_a(File)
-      #   end
-      # end
-      # 
+
+      context "when no mode is given" do
+        it "defaults to read-only access" do
+          file = File.open('/test-file')
+          file.opening_mode.should be(File::RDONLY)
+        end
+      end
+
+      context "when a mode is given" do
+        context "when the mode indicates file creation" do
+          it "creates the file" do
+            File.open('/test-file', 'w')
+            expect { fs.find!('/test-file') }.not_to raise_error
+          end
+        end
+
+        context "when the mode does not indicate file creation" do
+          it "does not create the file" do
+            File.open('/test-file', 'r')
+            expect { fs.find!('/test-file') }.to raise_error
+          end
+        end
+      end
+
+      context "when no block is given" do
+        it "returns a File instance" do
+          File.open('/test-file').should be_a(File)
+        end
+      end
+
       context "when a block is given" do
         it "passes the open file to the block" do
+          fs.touch('/test-file')
           klass = File.open('/test-file') { |f| f.class }
           klass.should == File
         end
@@ -263,13 +284,42 @@ module FsFaker
         #   value = File.open('/test-file') { 42 }
         #   value.should be(42)
         # end
-        # 
-        # it "ensures the file is closed whatever happens in the block" do
-        #   file = File.new('/test-file')
-        #   File.stub(:new).and_return(file)
-        #   file.should_receive(:close)
-        #   File.open('/test-file') {}
-        # end
+
+        it "ensures the file is closed whatever happens in the block" do
+          fs.touch('/test-file')
+          file = File.new('/test-file')
+          File.stub(:new).and_return(file)
+
+          file.should_receive(:close)
+          File.open('/test-file') {}
+        end
+      end
+    end
+
+    describe "#close" do
+      it "closes the file stream" do
+        fs.touch('/test-file')
+        file = File.open('/test-file')
+        file.close
+        file.should be_closed
+      end
+    end
+
+    describe "#closed?" do
+      before do
+        fs.touch('/test-file')
+      end
+
+      it "returns true when the file is closed" do
+        file = File.open('/test-file')
+        file.close
+        file.closed?.should be_true
+      end
+
+      it "returns false when the file is open" do
+        file = File.open('/test-file')
+        file.closed?.should be_false
+        file.close
       end
     end
 
@@ -370,6 +420,80 @@ module FsFaker
           File.chown(nil, 42, '/test-link')
           File.lstat('/test-link').gid.should_not be(42)
         end
+      end
+    end
+
+    describe "#puts" do
+      it "appends content to the file" do
+        file = File.new('/test-file', 'w')
+        file.puts "test"
+        file.close
+        file.content.to_s.should == "test\n"
+      end
+
+      it "does not override the file's content" do
+        file = File.new('/test-file', 'w')
+        file.puts "test"
+        file.puts "test"
+        file.close
+        file.content.to_s.should == "test\ntest\n"
+      end
+
+      it "raises an exception if the file is not writable" do
+        file = File.new('/test-file')
+        expect { file.puts "test" }.to raise_error(IOError)
+      end
+    end
+
+    describe ".size" do
+      it "returns the size of the file" do
+        File.open('/test-file', 'w') { |f| f.puts random_string }
+        File.size('/test-file').should == random_string.size + 1
+      end
+    end
+
+    describe "#read" do
+      let(:file) { File.new('/test-file') }
+
+      before :each do
+        File.open('/test-file', 'w') { |f| f.puts random_string }
+      end
+
+      context "when no length is given" do
+        it "returns the content of the named file" do
+          file.read.should == random_string + "\n"
+        end
+
+        it "returns an empty string if called a second time" do
+          file.read
+          file.read.should be_empty
+        end
+      end
+
+      context "when a length is given" do
+        it "returns a string of the given length" do
+          file.read(2).should == random_string[0, 2]
+        end
+
+        it "returns nil when there is nothing more to read" do
+          file.read(1000)
+          file.read(1000).should be_nil
+        end
+      end
+
+      context "when a buffer is given" do
+        it "fills the buffer with the read content" do
+          buffer = String.new
+          file.read(2, buffer)
+          buffer.should == random_string[0, 2]
+        end
+      end
+    end
+
+    describe "#size" do
+      it "returns the size of the file" do
+        File.open('/test-file', 'w') { |f| f.puts random_string }
+        File.new('/test-file').size.should == random_string.size + 1
       end
     end
   end
