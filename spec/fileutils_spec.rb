@@ -256,7 +256,25 @@ describe FileUtils do
   end
 
   describe '.compare_stream' do
-    
+    it "returns true if the contents of a stream A and stream B are identical" do
+      File.open('/test-file', 'w')  { |f| f.puts "this is a test" }
+      File.open('/test-file2', 'w') { |f| f.puts "this is a test" }
+
+      file1 = File.open('/test-file')
+      file2 = File.open('/test-file2')
+
+      FileUtils.compare_stream(file1, file2).should be_true
+    end
+
+    it "returns false if the contents of a stream A and stream B are not identical" do
+      File.open('/test-file', 'w')  { |f| f.puts "this is a test" }
+      File.open('/test-file2', 'w') { |f| f.puts "this is not a test" }
+
+      file1 = File.open('/test-file')
+      file2 = File.open('/test-file2')
+
+      FileUtils.compare_stream(file1, file2).should be_false
+    end
   end
 
   describe '.copy' do
