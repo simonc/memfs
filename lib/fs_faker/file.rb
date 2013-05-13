@@ -113,14 +113,41 @@ module FsFaker
       fs.find!(path).content.size
     end
 
+    def self.identical?(path1, path2)
+      fs.find!(path1).last_target === fs.find!(path2).last_target
+    rescue Errno::ENOENT
+      false
+    end
+
+    def self.read(path, length = nil, offset = 0, mode: RDONLY, encoding: nil, open_args: nil)
+      open_args ||= [mode, encoding: encoding]
+
+      file = open(path, *open_args)
+      file.seek(offset)
+      file.read(length)
+    ensure
+      file.close if file
+    end
+
+    def self.expand_path(file_name, dir_string = fs.pwd)
+      OriginalFile.expand_path(file_name, dir_string)
+    end
+
+    def self.basename(file_name, suffix = '')
+      OriginalFile.basename(file_name, suffix)
+    end
+
     attr_accessor :closed
     attr_accessor :entry
     attr_accessor :opening_mode
+    attr_reader :path
 
     def initialize(filename, mode = RDONLY, perm = nil, opt = nil)
       unless opt.nil? || opt.is_a?(Hash)
         raise ArgumentError, "wrong number of arguments (4 for 1..3)"
       end
+
+      @path = filename
 
       self.opening_mode = str_to_mode_int(mode)
 
@@ -156,6 +183,32 @@ module FsFaker
 
     def size
       content.size
+    end
+
+    def stat
+      File.stat(path)
+    end
+
+    def write(string)
+      content.write(string.to_s)
+    end
+
+    def seek(amount, whence = IO::SEEK_SET)
+      new_pos = case whence
+      when IO::SEEK_CUR then content.pos + amount
+      when IO::SEEK_END then content.to_s.length + amount
+      when IO::SEEK_SET then amount
+      end
+
+      if new_pos.nil? || new_pos < 0
+        raise Errno::EINVAL, path
+      end
+
+      content.pos = new_pos and 0
+    end
+
+    def pos
+      content.pos
     end
 
     private
@@ -238,6 +291,10 @@ module FsFaker
         else
           @entry
         end
+      end
+
+      def blksize
+        4096
       end
 
       private

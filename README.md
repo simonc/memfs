@@ -16,6 +16,10 @@ Or install it yourself as:
 
     $ gem install fs_faker
 
+## Requirements
+
+* Ruby 2.0+
+
 ## Usage
 
 TODO: Write usage instructions here

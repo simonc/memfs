@@ -26,13 +26,19 @@ module FsFaker
         end
 
         def read(length = nil, buffer = '')
-          read_end = length ? length - 1 : -1
-          buffer.replace @string[@pos..read_end]
+          length ||= @string.length - @pos
+          buffer.replace @string[@pos, length]
           @pos += buffer.bytesize
           buffer.empty? ? nil : buffer
         end
 
         def close
+        end
+
+        def write(string)
+          text = string.to_s
+          @string << text
+          text.size
         end
       end
 

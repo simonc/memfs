@@ -278,7 +278,9 @@ describe FileUtils do
   end
 
   describe '.copy' do
-    
+    it "is an alias for #cp" do
+      FileUtils.method(:copy).should == FileUtils.method(:cp)
+    end
   end
 
   describe '.copy_entry' do
@@ -294,7 +296,38 @@ describe FileUtils do
   end
 
   describe '.cp' do
-    
+    before :each do
+      File.open('/test-file', 'w') { |f| f.puts 'test' }
+    end
+
+    it "copies a file content +src+ to +dest+" do
+      FileUtils.cp('/test-file', '/copy-file')
+      File.read('/copy-file').should == "test\n"
+    end
+
+    context "when +src+ and +dest+ are the same file" do
+      it "raises an error" do
+        expect { FileUtils.cp('/test-file', '/test-file') }.to raise_error(ArgumentError)
+      end
+    end
+
+    context "when +dest+ is a directory" do
+      it "copies +src+ to +dest/src+" do
+        FileUtils.mkdir('/dest')
+        FileUtils.cp('/test-file', '/dest/copy-file')
+        File.read('/dest/copy-file').should == "test\n"
+      end
+    end
+
+    context "when src is a list of files" do
+      context "when +dest+ is not a directory" do
+        it "raises an error" do
+          FileUtils.touch('/dest')
+          FileUtils.touch('/test-file2')
+          expect { FileUtils.cp(['/test-file', '/test-file2'], '/dest') }.to raise_error(Errno::ENOTDIR)
+        end
+      end
+    end
   end
 
   describe '.cp_r' do

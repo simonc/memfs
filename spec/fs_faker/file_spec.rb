@@ -3,7 +3,7 @@ require 'spec_helper'
 module FsFaker
   describe File do
     let(:fs) { FileSystem.instance }
-    let(:random_string) { ('a'..'z').to_a.sample(rand 100).join }
+    let(:random_string) { ('a'..'z').to_a.sample(10).join }
 
     describe '.chmod' do
       it "changes permission bits on the named file" do
@@ -494,6 +494,249 @@ module FsFaker
       it "returns the size of the file" do
         File.open('/test-file', 'w') { |f| f.puts random_string }
         File.new('/test-file').size.should == random_string.size + 1
+      end
+    end
+
+    describe ".identical?" do
+      before :each do
+        File.open('/test-file', 'w') { |f| f.puts 'test' }
+        File.open('/test-file2', 'w') { |f| f.puts 'test' }
+        fs.symlink '/test-file', '/test-file-link'
+        fs.symlink '/test-file', '/test-file-link2'
+        fs.symlink '/test-file2', '/test-file2-link'
+      end
+
+      it "returns true if two paths represent the same file" do
+        File.identical?('/test-file', '/test-file').should be_true
+      end
+
+      it "returns false if two paths do not represent the same file" do
+        File.identical?('/test-file', '/test-file2').should be_false
+      end
+
+      context "when one of the paths does not exist" do
+        it "returns false" do
+          File.identical?('/test-file', '/no-file').should be_false
+        end
+      end
+
+      context "when a path is a symlink" do
+        it "returns true if the linked file is the same as the other path" do
+          File.identical?('/test-file', '/test-file-link').should be_true
+        end
+
+        it "returns false if the linked file is different from the other path" do
+          File.identical?('/test-file2', '/test-file-link').should be_false
+        end
+      end
+
+      context "when the two paths are symlinks" do
+        it "returns true if both links point to the same file" do
+          File.identical?('/test-file-link', '/test-file-link2').should be_true
+        end
+
+        it "returns false if both links do not point to the same file" do
+          File.identical?('/test-file-link', '/test-file2-link').should be_false
+        end
+      end
+    end
+
+    describe "#stat" do
+      it "returns the +Stat+ object of the file" do
+        fs.touch('/test-file')
+        file = File.new('/test-file')
+        file.stat == File.stat('/test-file')
+      end
+    end
+
+    describe "#path" do
+      it "returns the path of the file" do
+        fs.touch('/test-file')
+        file = File.new('/test-file')
+        file.path.should == '/test-file'
+      end
+    end
+
+    describe "#write" do
+      it "writes the given string to file" do
+        File.open('/test-file', 'w') { |f| f.write "test" }
+        File.read('/test-file').should == "test"
+      end
+
+      it "returns the number of bytes written" do
+        file = File.open('/test-file', 'w')
+        file.write('test').should be(4)
+        file.close
+      end
+
+      context "when the file is not opened for writing" do
+        it "raises an exception" do
+          file = File.open('/test-file')
+          expect { file.write('test') }.to raise_error
+          file.close
+        end
+      end
+
+      context "when the argument is not a string" do
+        it "will be converted to a string using to_s" do
+          File.open('/test-file', 'w') { |f| f.write 42 }
+          File.read('/test-file').should == '42'
+        end
+      end
+    end
+
+    describe ".read" do
+      before :each do
+        File.open('/test-file', 'w') { |f| f.puts "test" }
+      end
+
+      it "reads the content of the given file" do
+        File.read('/test-file').should == "test\n"
+      end
+
+      context "when +lenght+ is provided" do
+        it "reads only +length+ characters" do
+          File.read('/test-file', 2).should == 'te'
+        end
+
+        context "when +length+ is bigger than the file size" do
+          it "reads until the end of the file" do
+            File.read('/test-file', 1000).should == "test\n"
+          end
+        end
+      end
+
+      context "when +offset+ is provided" do
+        it "starts reading from the offset" do
+          File.read('/test-file', 2, 1).should == 'es'
+        end
+
+        it "raises an error if offset is negative" do
+          expect { File.read('/test-file', 2, -1) }.to raise_error(Errno::EINVAL)
+        end
+      end
+
+      context "when the last argument is a hash" do
+        it "passes the contained options to +open+" do
+          file = File.open('/test-file')
+          File.should_receive(:open)
+              .with('/test-file', File::RDONLY, encoding: 'UTF-8')
+              .and_return(file)
+          File.read('/test-file', encoding: 'UTF-8')
+        end
+
+        context "when it contains the +open_args+ key" do
+          it "takes precedence over the other options" do
+            file = File.open('/test-file')
+            File.should_receive(:open)
+                .with('/test-file', 'r')
+                .and_return(file)
+            File.read('/test-file', mode: 'w', open_args: ['r'])
+          end
+        end
+      end
+    end
+
+    describe "#seek" do
+      let(:file) { File.open('/test-file') }
+
+      before :each do
+        File.open('/test-file', 'w') { |f| f.puts 'test' }
+      end
+
+      it "returns zero" do
+        file.seek(1).should be(0)
+      end
+
+      context "when +whence+ is not provided" do
+        it "seeks to the absolute location given by +amount+" do
+          file.seek(3)
+          file.pos.should be(3)
+        end
+      end
+
+      context "when +whence+ is IO::SEEK_CUR" do
+        it "seeks to +amount+ plus current position" do
+          file.read(1)
+          file.seek(1, IO::SEEK_CUR)
+          file.pos.should be(2)
+        end
+      end
+
+      context "when +whence+ is IO::SEEK_END" do
+        it "seeks to +amount+ plus end of stream" do
+          file.seek(-1, IO::SEEK_END)
+          file.pos.should be(4)
+        end
+      end
+
+      context "when +whence+ is IO::SEEK_SET" do
+        it "seeks to the absolute location given by +amount+" do
+          file.seek(3, IO::SEEK_SET)
+          file.pos.should be(3)
+        end
+      end
+
+      context "when +whence+ is invalid" do
+        it "raises an exception" do
+          expect { file.seek(0, 42) }.to raise_error(Errno::EINVAL)
+        end
+      end
+
+      context "if the position ends up to be less than zero" do
+        it "raises an exception" do
+          expect { file.seek(-1) }.to raise_error(Errno::EINVAL)
+        end
+      end
+    end
+
+    describe "#pos" do
+      let(:file) { File.open('/test-file') }
+
+      before :each do
+        File.open('/test-file', 'w') { |f| f.puts 'test' }
+      end
+
+      it "returns zero when the file was just opened" do
+        file.pos.should be_zero
+      end
+
+      it "returns the reading offset when some of the file has been read" do
+        file.read(2)
+        file.pos.should be(2)
+      end
+    end
+
+    describe ".expand_path" do
+      it "converts a pathname to an absolute pathname" do
+        fs.chdir('/')
+        File.expand_path('test-file').should == "/test-file"
+      end
+
+      it "references path from the current working directory" do
+        fs.mkdir('/test')
+        fs.chdir('/test')
+        File.expand_path('test-file').should == "/test/test-file"
+      end
+
+      context "when +dir_string+ is provided" do
+        it "uses +dir_string+ as the stating point" do
+          File.expand_path('test-file', '/test').should == "/test/test-file"
+        end
+      end
+    end
+
+    describe ".basename" do
+      it "returns the last component of the filename given in +file_name+" do
+        File.basename('/path/to/file.txt').should == 'file.txt'
+      end
+
+      context "when +suffix+ is given" do
+        context "when it is present at the end of +file_name+" do
+          it "removes the +suffix+ from the filename basename" do
+            File.basename('/path/to/file.txt', '.txt').should == 'file'
+          end
+        end
       end
     end
   end

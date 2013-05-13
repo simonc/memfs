@@ -129,5 +129,12 @@ module FsFaker
         File::Stat.new('/test-file').gid.should be(42)
       end
     end
+
+    describe "#blksize" do
+      it "returns the block size of the file" do
+        fs.touch('/test-file')
+        File::Stat.new('/test-file').blksize.should be(4096)
+      end
+    end
   end
 end

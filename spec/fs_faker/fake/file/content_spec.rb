@@ -74,13 +74,8 @@ module FsFaker
           end
 
           context "when there is nothing else to read" do
-            before(:each) { subject.read(4) }
-
-            it "returns nil if +length+ is not provided" do
-              subject.read(1).should be_nil
-            end
-
-            it "returns nil if +length+ was provided" do
+            it "returns nil" do
+              subject.read(4)
               subject.read(1).should be_nil
             end
           end
@@ -107,6 +102,24 @@ module FsFaker
 
         describe "#close" do
           
+        end
+      end
+
+      describe "#write" do
+        it "writes the given string in content" do
+          subject.write('test')
+          subject.to_s.should == 'test'
+        end
+
+        it "returns the number of bytes written" do
+          subject.write('test').should be(4)
+        end
+
+        context "when the argument is not a string" do
+          it "will be converted to a string using to_s" do
+            subject.write 42
+            subject.to_s.should == '42'
+          end
         end
       end
     end
