@@ -739,5 +739,32 @@ module FsFaker
         end
       end
     end
+
+    describe ".exists?" do
+      it "returns true if the file exists" do
+        fs.touch('/test-file')
+        File.exists?('/test-file').should be_true
+      end
+
+      it "returns false if the file does not exist" do
+        File.exists?('/test-file').should be_false
+      end
+    end
+
+    describe ".exist?" do
+      it "should be an alias for .exists?" do
+        File.method(:exist?).should == File.method(:exists?)
+      end
+    end
+
+    describe ".dirname" do
+      it "returns all components of the filename given in +file_name+ except the last one" do
+        File.dirname('/path/to/some/file.txt').should == '/path/to/some'
+      end
+
+      it "returns / if file_name is /" do
+        File.dirname('/').should == '/'
+      end
+    end
   end
 end

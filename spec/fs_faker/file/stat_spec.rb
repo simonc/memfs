@@ -136,5 +136,17 @@ module FsFaker
         File::Stat.new('/test-file').blksize.should be(4096)
       end
     end
+
+    describe "#file?" do
+      it "returns true if the entry is a regular file" do
+        fs.touch('/test-file')
+        File.stat('/test-file').should be_file
+      end
+
+      it "returns false if the entry is not a regular file" do
+        fs.mkdir('/test-dir')
+        File.stat('/test-dir').should_not be_file
+      end
+    end
   end
 end

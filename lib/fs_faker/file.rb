@@ -137,6 +137,15 @@ module FsFaker
       OriginalFile.basename(file_name, suffix)
     end
 
+    def self.exists?(path)
+      not fs.find(path).nil?
+    end
+    class << self; alias :exist? :exists?; end
+
+    def self.dirname(file_name)
+      OriginalFile.dirname(file_name)
+    end
+
     attr_accessor :closed
     attr_accessor :entry
     attr_accessor :opening_mode
@@ -295,6 +304,10 @@ module FsFaker
 
       def blksize
         4096
+      end
+
+      def file?
+        @entry.is_a?(Fake::File)
       end
 
       private

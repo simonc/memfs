@@ -331,7 +331,46 @@ describe FileUtils do
   end
 
   describe '.cp_r' do
-    
+    it "copies +src+ to +dest+" do
+      File.open('/test-file', 'w') { |f| f.puts 'test' }
+
+      FileUtils.cp_r('/test-file', '/copy-file')
+      File.read('/copy-file').should == "test\n"
+    end
+
+    context "when +src+ is a directory" do
+      it "copies all its contents recursively" do
+        FileUtils.mkdir('/test/dir')
+        FileUtils.touch('/test/dir/file')
+
+        FileUtils.cp_r('/test', '/dest')
+        File.exists?('/dest/dir/file').should be_true
+      end
+    end
+
+    context "when +dest+ is a directory" do
+      it "copies +src+ to +dest/src+" do
+        FileUtils.mkdir('/test/dir')
+        FileUtils.touch('/test/dir/file')
+        FileUtils.mkdir('/dest')
+
+        FileUtils.cp_r('/test', '/dest')
+        File.exists?('/dest/test/dir/file').should be_true
+      end
+    end
+
+    context "when +src+ is a list of files" do
+      it "copies each of them in +dest+" do
+        FileUtils.mkdir('/test/dir')
+        FileUtils.touch('/test/dir/file')
+        FileUtils.mkdir('/test/dir2')
+        FileUtils.touch('/test/dir2/file')
+        FileUtils.mkdir('/dest')
+
+        FileUtils.cp_r(['/test/dir', '/test/dir2'], '/dest')
+        File.exists?('/dest/dir2/file').should be_true
+      end
+    end
   end
 
   describe '.getwd' do
