@@ -47,7 +47,7 @@ module FsFaker
 
     def self.symlink(old_name, new_name)
       fs.symlink old_name, new_name
-      0
+      SUCCESS
     end
 
     def self.symlink?(path)
