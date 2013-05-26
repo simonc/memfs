@@ -17,6 +17,8 @@ module FsFaker
       'a+' => CREAT|APPEND|RDWR
     }
 
+    SUCCESS = 0
+
     def_delegator :original_file_class, :path
 
     def self.chmod(mode_int, *paths)
@@ -145,6 +147,19 @@ module FsFaker
     def self.dirname(file_name)
       OriginalFile.dirname(file_name)
     end
+
+    def self.link(old_name, new_name)
+      fs.link old_name, new_name
+      SUCCESS
+    end
+
+    def self.unlink(*paths)
+      paths.each do |path|
+        fs.unlink(path)
+      end
+      paths.size
+    end
+    class << self; alias :delete :unlink; end
 
     attr_accessor :closed
     attr_accessor :entry

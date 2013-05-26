@@ -306,5 +306,43 @@ module FsFaker
         end
       end
     end
+
+    describe '#link' do
+      before :each do
+        fs.touch('/some-file')
+      end
+
+      it "creates a hard link +dest+ that points to +src+" do
+        fs.link('/some-file', '/some-link')
+        fs.find!('/some-link').content.should be(fs.find!('/some-file').content)
+      end
+
+      it "does not create a symbolic link" do
+        fs.link('/some-file', '/some-link')
+        fs.find!('/some-link').should_not be_a(Fake::Symlink)
+      end
+
+      context "when +new_name+ already exists" do
+        it "raises an exception" do
+          fs.touch('/some-link')
+          expect { fs.link('/some-file', '/some-link') }.to raise_error(SystemCallError)
+        end
+      end
+    end
+
+    describe "#unlink" do
+      it "deletes the named file" do
+        fs.touch('/some-file')
+        fs.unlink('/some-file')
+        fs.find('/some-file').should be_nil
+      end
+
+      context "when the entry is a directory" do
+        it "raises an exception" do
+          fs.mkdir('/test-dir')
+          expect { fs.unlink('/test-dir') }.to raise_error
+        end
+      end
+    end
   end
 end

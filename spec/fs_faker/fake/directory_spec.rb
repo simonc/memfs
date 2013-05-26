@@ -75,6 +75,16 @@ module FsFaker
           directory.parent.should be(parent)
         end
       end
+
+      describe "#remove_entry" do
+        let(:file) { File.new('file') }
+
+        it "removes an entry from the entries list" do
+          directory.add_entry file
+          directory.remove_entry file
+          directory.entries.should_not have_value(file)
+        end
+      end
     end
   end
 end

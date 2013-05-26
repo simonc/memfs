@@ -37,6 +37,10 @@ module FsFaker
       def find(path)
         raise Errno::ENOTDIR, self.path
       end
+
+      def delete
+        parent.remove_entry self
+      end
     end
   end
 end

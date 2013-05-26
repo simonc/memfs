@@ -388,11 +388,67 @@ describe FileUtils do
   end
 
   describe '.link' do
-    
+    it "is an alias for #ln" do
+      FileUtils.method(:link).should == FileUtils.method(:ln)
+    end
   end
 
   describe '.ln' do
-    
+    before :each do
+      File.open('/test-file', 'w') { |f| f.puts 'test' }
+    end
+
+    it "creates a hard link +dest+ which points to +src+" do
+      FileUtils.ln('/test-file', '/test-file2')
+      File.read('/test-file2').should == File.read('/test-file')
+    end
+
+    it "creates a hard link, not a symlink" do
+      FileUtils.ln('/test-file', '/test-file2')
+      File.symlink?('/test-file2').should be_false
+    end
+
+    context "when +dest+ already exists" do
+      context "and is a directory" do
+        it "creates a link dest/src" do
+          FileUtils.mkdir('/test-dir')
+          FileUtils.ln('/test-file', '/test-dir')
+          File.read('/test-dir/test-file').should == File.read('/test-file')
+        end
+      end
+
+      context "and it is not a directory" do
+        it "raises an exception" do
+          FileUtils.touch('/test-file2')
+          expect { FileUtils.ln('/test-file', '/test-file2') }.to raise_error(SystemCallError)
+        end
+
+        context "and +:force+ is set" do
+          it "overwrites +dest+" do
+            FileUtils.touch('/test-file2')
+            FileUtils.ln('/test-file', '/test-file2', force: true)
+            File.read('/test-file2').should == File.read('/test-file')
+          end
+        end
+      end
+    end
+
+    context "when passing a list of paths" do
+      it "creates a link for each path in +destdir+" do
+        FileUtils.touch('/test-file2')
+        FileUtils.mkdir('/test-dir')
+        FileUtils.ln(['/test-file', '/test-file2'], '/test-dir')
+      end
+
+      context "and +destdir+ is not a directory" do
+        it "raises an exception" do
+          FileUtils.touch(['/test-file2', '/not-a-dir'])
+          expect {
+            FileUtils.ln(['/test-file', '/test-file2'], '/not-a-dir')
+          }.to raise_error(Errno::ENOTDIR)
+        end
+      end
+    end
   end
 
   describe '.ln_s' do

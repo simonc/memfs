@@ -766,5 +766,68 @@ module FsFaker
         File.dirname('/').should == '/'
       end
     end
+
+    describe ".link" do
+      before :each do
+        File.open('/test-file', 'w') { |f| f.puts 'test' }
+      end
+
+      it "creates a new name for an existing file using a hard link" do
+        File.link('/test-file', '/test-file2')
+        File.read('/test-file2').should == File.read('/test-file')
+      end
+
+      it "returns zero" do
+        File.link('/test-file', '/test-file2').should == 0
+      end
+
+      context "when +old_name+ does not exist" do
+        it "raises an exception" do
+          expect { File.link('/no-file', '/nowhere') }.to raise_error(Errno::ENOENT)
+        end
+      end
+
+      context "when +new_name+ already exists" do
+        it "raises an exception" do
+          File.open('/test-file2', 'w') { |f| f.puts 'test2' }
+          expect { File.link('/test-file', '/test-file2') }.to raise_error(SystemCallError)
+        end
+      end
+    end
+
+    describe ".unlink" do
+      before :each do
+        fs.touch('/test-file', '/test-file2')
+      end
+
+      it "deletes the named file" do
+        File.unlink('/test-file')
+        File.exists?('/test-file').should be_false
+      end
+
+      it "returns the number of names passed as arguments" do
+        File.unlink('/test-file', '/test-file2').should be(2)
+      end
+
+      context "when multiple file names are given" do
+        it "deletes the named files" do
+          File.unlink('/test-file', '/test-file2')
+          fs.find('/test-file2').should be_nil
+        end
+      end
+
+      context "when the entry is a directory" do
+        it "raises an exception" do
+          fs.mkdir('/test-dir')
+          expect { File.unlink('/test-dir') }.to raise_error(Errno::EPERM)
+        end
+      end
+    end
+
+    describe ".delete" do
+      it "is an alias for #unlink" do
+        File.method(:delete).should == File.method(:unlink)
+      end
+    end
   end
 end

@@ -35,6 +35,10 @@ module FsFaker
         super
         entries['..'] = parent
       end
+
+      def remove_entry(entry)
+        entries.delete(entry.name)
+      end
     end
   end
 end

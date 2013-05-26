@@ -115,6 +115,15 @@ module FsFaker
           expect { entry.find('test') }.to raise_error(Errno::ENOTDIR)
         end
       end
+
+      describe ".delete" do
+        it "removes the entry from its parent" do
+          parent = Directory.new('/parent')
+          entry.parent = parent
+          entry.delete
+          parent.entries.should_not have_value(entry)
+        end
+      end
     end
   end
 end

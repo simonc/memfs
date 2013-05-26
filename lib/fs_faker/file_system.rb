@@ -110,10 +110,30 @@ module FsFaker
       FsFaker::OriginalFile.dirname(path)
     end
 
+    def basename(path)
+      FsFaker::OriginalFile.basename(path)
+    end
+
     def chown(uid, gid, path)
       entry = find!(path).last_target
       entry.uid = uid if uid && uid != -1
       entry.gid = gid if gid && gid != -1
+    end
+
+    def link(old_name, new_name)
+      file = find!(old_name)
+
+      raise Errno::EEXIST, "(#{old_name}, #{new_name})" if find(new_name)
+
+      link = file.dup
+      link.name = basename(new_name)
+      find_parent!(new_name).add_entry link
+    end
+
+    def unlink(path)
+      entry = find!(path)
+      raise Errno::EPERM, path if entry.is_a?(Fake::Directory)
+      entry.delete
     end
   end
 end
