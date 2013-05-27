@@ -527,7 +527,9 @@ describe FileUtils do
   end
 
   describe '.makedirs' do
-    
+    it "is an alias for #mkdir_p" do
+      FileUtils.method(:makedirs).should == FileUtils.method(:mkdir_p)
+    end
   end
 
   describe '.mkdir' do
