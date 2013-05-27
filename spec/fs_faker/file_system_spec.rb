@@ -195,6 +195,14 @@ module FsFaker
         fs.symlink('/some-file', '/some-link')
         fs.find!('/some-link').should be_a(Fake::Symlink)
       end
+
+      context "when +new_name+ already exists" do
+        it "raises an exception" do
+          fs.touch('/some-file')
+          fs.touch('/some-file2')
+          expect { fs.symlink('/some-file', '/some-file2') }.to raise_error(Errno::EEXIST)
+        end
+      end
     end
 
     describe '#symlink?' do

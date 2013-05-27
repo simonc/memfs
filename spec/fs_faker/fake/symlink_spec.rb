@@ -32,6 +32,14 @@ module FsFaker
           s.last_target.should == target
         end
       end
+
+      describe '#content' do
+        it "returns the target's content" do
+          FsFaker::File.open('/test-file', 'w') { |f| f.puts "test" }
+          s = Symlink.new('/test-link', '/test-file')
+          s.content.should be(s.last_target.content)
+        end
+      end
     end
   end
 end

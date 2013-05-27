@@ -80,6 +80,7 @@ module FsFaker
     end
 
     def symlink(old_name, new_name)
+      raise Errno::EEXIST, new_name if find(new_name)
       find_parent!(new_name).add_entry Fake::Symlink.new(new_name, old_name)
     end
 

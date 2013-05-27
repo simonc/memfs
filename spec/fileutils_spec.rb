@@ -452,7 +452,69 @@ describe FileUtils do
   end
 
   describe '.ln_s' do
-    
+    before :each do
+      File.open('/test-file', 'w') { |f| f.puts 'test' }
+      FileUtils.touch('/not-a-dir')
+      FileUtils.mkdir('/test-dir')
+    end
+
+    it "creates a symbolic link +new+" do
+      FileUtils.ln_s('/test-file', '/test-link')
+      File.symlink?('/test-link').should be_true
+    end
+
+    it "creates a symbolic link which points to +old+" do
+      FileUtils.ln_s('/test-file', '/test-link')
+      File.read('/test-link').should == File.read('/test-file')
+    end
+
+    context "when +new+ already exists" do
+      context "and it is a directory" do
+        it "creates a symbolic link +new/old+" do
+          FileUtils.ln_s('/test-file', '/test-dir')
+          File.symlink?('/test-dir/test-file').should be_true
+        end
+      end
+
+      context "and it is not a directory" do
+        it "raises an exeption" do
+          expect {
+            FileUtils.ln_s('/test-file', '/not-a-dir')
+          }.to raise_error(Errno::EEXIST)
+        end
+
+        context "and +:force+ is set" do
+          it "overwrites +new+" do
+            FileUtils.ln_s('/test-file', '/not-a-dir', force: true)
+            File.symlink?('/not-a-dir').should be_true
+          end
+        end
+      end
+    end
+
+    context "when passing a list of paths" do
+      before :each do
+        File.open('/test-file2', 'w') { |f| f.puts 'test2' }
+      end
+
+      it "creates several symbolic links in +destdir+" do
+        FileUtils.ln_s(['/test-file', '/test-file2'], '/test-dir')
+        File.exists?('/test-dir/test-file2').should be_true
+      end
+
+      it "creates symbolic links pointing to each item in the list" do
+        FileUtils.ln_s(['/test-file', '/test-file2'], '/test-dir')
+        File.read('/test-dir/test-file2').should == File.read('/test-file2')
+      end
+
+      context "when +destdir+ is not a directory" do
+        it "raises an error" do
+          expect {
+            FileUtils.ln_s(['/test-file', '/test-file2'], '/not-a-dir')
+          }.to raise_error(Errno::ENOTDIR)
+        end
+      end
+    end
   end
 
   describe '.ln_sf' do
