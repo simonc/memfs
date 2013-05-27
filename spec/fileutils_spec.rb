@@ -518,7 +518,12 @@ describe FileUtils do
   end
 
   describe '.ln_sf' do
-    
+    it "calls ln_s with +:force+ set to true" do
+      File.open('/test-file', 'w') { |f| f.puts 'test' }
+      File.open('/test-file2', 'w') { |f| f.puts 'test2' }
+      FileUtils.ln_sf('/test-file', '/test-file2')
+      File.read('/test-file2').should == File.read('/test-file')
+    end
   end
 
   describe '.makedirs' do
