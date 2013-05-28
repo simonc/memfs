@@ -547,7 +547,27 @@ describe FileUtils do
   end
 
   describe '.mkdir_p' do
-    
+    it "creates a directory" do
+      FileUtils.mkdir_p('/test-dir')
+      expect(File.directory?('/test-dir')).to be_true
+    end
+
+    it "creates all the parent directories" do
+      FileUtils.mkdir_p('/path/to/some/test-dir')
+      expect(File.directory?('/path/to/some')).to be_true
+    end
+
+    context "when passing a list of paths" do
+      it "creates each directory" do
+        FileUtils.mkdir_p(['/test-dir', '/test-dir'])
+        expect(File.directory?('/test-dir')).to be_true
+      end
+
+      it "creates each directory's parents" do
+        FileUtils.mkdir_p(['/test-dir', '/path/to/some/test-dir'])
+        expect(File.directory?('/path/to/some')).to be_true
+      end
+    end
   end
 
   describe '.mkpath' do
