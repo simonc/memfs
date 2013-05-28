@@ -577,7 +577,9 @@ describe FileUtils do
   end
 
   describe '.move' do
-    
+    it "is an alias for #mv" do
+      FileUtils.method(:move).should == FileUtils.method(:mv)
+    end
   end
 
   describe '.mv' do
