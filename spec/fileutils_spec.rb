@@ -533,7 +533,17 @@ describe FileUtils do
   end
 
   describe '.mkdir' do
-    
+    it "creates one directory" do
+      FileUtils.mkdir('/test-dir')
+      expect(File.directory?('/test-dir')).to be_true
+    end
+
+    context "when passing a list of paths" do
+      it "creates several directories" do
+        FileUtils.mkdir(['/test-dir', '/test-dir2'])
+        expect(File.directory?('/test-dir2')).to be_true
+      end
+    end
   end
 
   describe '.mkdir_p' do
