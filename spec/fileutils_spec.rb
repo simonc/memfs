@@ -571,7 +571,9 @@ describe FileUtils do
   end
 
   describe '.mkpath' do
-    
+    it "is an alias for #mkdir_p" do
+      FileUtils.method(:mkpath).should == FileUtils.method(:mkdir_p)
+    end
   end
 
   describe '.move' do
