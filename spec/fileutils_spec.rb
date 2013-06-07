@@ -374,7 +374,9 @@ describe FileUtils do
   end
 
   describe '.getwd' do
-    
+    it "is an alias for #pwd" do
+      FileUtils.method(:getwd).should == FileUtils.method(:pwd)
+    end
   end
 
   describe '.identical?' do
@@ -617,7 +619,10 @@ describe FileUtils do
   end
 
   describe '.pwd' do
-    
+    it "returns the name of the current directory" do
+      FileUtils.cd '/test'
+      expect(FileUtils.pwd).to eq('/test')
+    end
   end
 
   describe '.remove' do
