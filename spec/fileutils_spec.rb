@@ -632,7 +632,23 @@ describe FileUtils do
   end
 
   describe '.remove_dir' do
-    
+    it "removes the given directory +dir+" do
+      FileUtils.mkdir('/test-dir')
+      FileUtils.remove_dir('/test-dir')
+      expect(File.exists?('/test-dir')).to be_false
+    end
+
+    it "removes the contents of the given directory +dir+" do
+      FileUtils.mkdir_p('/test-dir/test-sub-dir')
+      FileUtils.remove_dir('/test-dir')
+      expect(File.exists?('/test-dir/test-sub-dir')).to be_false
+    end
+
+    context "when +force+ is set" do
+      it "ignores standard errors" do
+        expect { FileUtils.remove_dir('/test-dir', true) }.not_to raise_error
+      end
+    end
   end
 
   describe '.remove_entry' do

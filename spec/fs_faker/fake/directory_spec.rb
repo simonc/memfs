@@ -100,6 +100,17 @@ module FsFaker
           end
         end
       end
+
+      describe "empty?" do
+        it "returns true if the directory is empty" do
+          expect(directory).to be_empty
+        end
+
+        it "returns false if the directory is not empty" do
+          directory.add_entry Directory.new('test')
+          expect(directory).not_to be_empty
+        end
+      end
     end
   end
 end

@@ -43,6 +43,10 @@ module FsFaker
       def path
         name == '/' ? '/' : super
       end
+
+      def empty?
+        (entries.keys - %w[. ..]).empty?
+      end
     end
   end
 end

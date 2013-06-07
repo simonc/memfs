@@ -17,6 +17,14 @@ module FsFaker
       fs.entries(dirname)
     end
 
+    def self.rmdir(path)
+      fs.rmdir path
+    end
+
+    def self.exists?(path)
+      fs.directory?(path)
+    end
+
     class << self
       alias :pwd :getwd
     end

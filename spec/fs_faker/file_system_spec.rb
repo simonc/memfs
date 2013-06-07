@@ -373,5 +373,21 @@ module FsFaker
         expect(fs.find('/test-dir/test-file')).not_to be_nil
       end
     end
+
+    describe "#rmdir" do
+      it "removes the given directory" do
+        fs.mkdir('/test-dir')
+        fs.rmdir('/test-dir')
+        expect(fs.find('/test-dir')).to be_nil
+      end
+
+      context "when the directory is not empty" do
+        it "raises an exception" do
+          fs.mkdir('/test-dir')
+          fs.mkdir('/test-dir/test-sub-dir')
+          expect { fs.rmdir('/test-dir') }.to raise_error(Errno::ENOTEMPTY)
+        end
+      end
+    end
   end
 end

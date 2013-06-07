@@ -144,5 +144,11 @@ module FsFaker
       file.name = basename(new_name)
       find_parent!(new_name).add_entry(file)
     end
+
+    def rmdir(path)
+      directory = find!(path)
+      raise Errno::ENOTEMPTY, path unless directory.empty?
+      directory.delete
+    end
   end
 end

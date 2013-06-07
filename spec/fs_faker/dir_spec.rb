@@ -64,5 +64,38 @@ module FsFaker
         Dir.entries('/test').should == %w[. .. dir1 dir2 file1 file2]
       end
     end
+
+    describe ".rmdir" do
+      it "deletes the named directory" do
+        Dir.mkdir('/test-dir')
+        Dir.rmdir('/test-dir')
+        expect(Dir.exists?('/test-dir')).to be_false
+      end
+
+      context "when the directory is not empty" do
+        it "raises an exception" do
+          Dir.mkdir('/test-dir')
+          Dir.mkdir('/test-dir/test-sub-dir')
+          expect { Dir.rmdir('/test-dir') }.to raise_error(Errno::ENOTEMPTY)
+        end
+      end
+    end
+
+    describe ".exists?" do
+      it "returns true if the given +path+ exists and is a directory" do
+        Dir.mkdir('/test-dir')
+        expect(Dir.exists?('/test-dir')).to be_true
+      end
+
+      it "returns false if the given +path+ does not exist" do
+        Dir.exists?('/test-dir')
+        expect(Dir.exists?('/test-dir')).to be_false
+      end
+
+      it "returns false if the given +path+ is not a directory" do
+        fs.touch('/test-file')
+        expect(Dir.exists?('/test-file')).to be_false
+      end
+    end
   end
 end
