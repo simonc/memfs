@@ -626,7 +626,9 @@ describe FileUtils do
   end
 
   describe '.remove' do
-    
+    it "is an alias for #rm" do
+      FileUtils.method(:remove).should == FileUtils.method(:rm)
+    end
   end
 
   describe '.remove_dir' do
