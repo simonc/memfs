@@ -652,7 +652,19 @@ describe FileUtils do
   end
 
   describe '.remove_entry' do
-    
+    it "removes a file system entry +path+" do
+      FileUtils.touch('/test-file')
+      FileUtils.remove_entry('/test-file')
+      expect(File.exists?('/test-file')).to be_false
+    end
+
+    context "when +path+ is a directory" do
+      it "removes it recursively" do
+        FileUtils.mkdir_p('/test-dir/test-sub-dir')
+        FileUtils.remove_entry('/test-dir')
+        expect(Dir.exists?('/test-dir')).to be_false
+      end
+    end
   end
 
   describe '.remove_entry_secure' do
