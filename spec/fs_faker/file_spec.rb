@@ -829,5 +829,18 @@ module FsFaker
         File.method(:delete).should == File.method(:unlink)
       end
     end
+
+    describe ".rename" do
+      it "renames the given file to the new name" do
+        fs.touch('/test-file')
+        File.rename('/test-file', '/test-file2')
+        expect(File.exists?('/test-file2')).to be_true
+      end
+
+      it "returns zero" do
+        fs.touch('/test-file')
+        expect(File.rename('/test-file', '/test-file2')).to eq(0)
+      end
+    end
   end
 end

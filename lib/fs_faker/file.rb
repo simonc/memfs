@@ -161,6 +161,11 @@ module FsFaker
     end
     class << self; alias :delete :unlink; end
 
+    def self.rename(old_name, new_name)
+      fs.rename(old_name, new_name)
+      SUCCESS
+    end
+
     attr_accessor :closed
     attr_accessor :entry
     attr_accessor :opening_mode

@@ -39,6 +39,10 @@ module FsFaker
       def remove_entry(entry)
         entries.delete(entry.name)
       end
+
+      def path
+        name == '/' ? '/' : super
+      end
     end
   end
 end

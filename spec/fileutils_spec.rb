@@ -583,7 +583,37 @@ describe FileUtils do
   end
 
   describe '.mv' do
-    
+    it "moves +src+ to +dest+" do
+      FileUtils.touch('/test-file')
+      FileUtils.mv('/test-file', '/test-file2')
+      expect(File.exists?('/test-file2')).to be_true
+    end
+
+    it "removes +src+" do
+      FileUtils.touch('/test-file')
+      FileUtils.mv('/test-file', '/test-file2')
+      expect(File.exists?('/test-file')).to be_false
+    end
+
+    context "when +dest+ already exists" do
+      context "and is a directory" do
+        it "moves +src+ to dest/src" do
+          FileUtils.touch('/test-file')
+          FileUtils.mkdir('/test-dir')
+          FileUtils.mv('/test-file', '/test-dir')
+          expect(File.exists?('/test-dir/test-file')).to be_true
+        end
+      end
+
+      context "and +dest+ is not a directory" do
+        it "it overwrites +dest+" do
+          File.open('/test-file', 'w') { |f| f.puts 'test' }
+          FileUtils.touch('/test-file2')
+          FileUtils.mv('/test-file', '/test-file2')
+          expect(File.read('/test-file2')).to eq("test\n")
+        end
+      end
+    end
   end
 
   describe '.pwd' do

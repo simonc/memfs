@@ -6,14 +6,12 @@ module FsFaker
       attr_accessor :mtime
       attr_accessor :name
       attr_accessor :parent
-      attr_accessor :path
       attr_accessor :uid
       attr_reader :mode
 
       def initialize(path = nil)
         time = Time.now
         self.name = FsFaker::OriginalFile.basename(path || '')
-        self.path = path
         self.mode = 0666 - FsFaker::File.umask
         self.atime = time
         self.mtime = time
@@ -40,6 +38,11 @@ module FsFaker
 
       def delete
         parent.remove_entry self
+      end
+
+      def path
+        parts = [parent && parent.path, name].compact
+        FsFaker::OriginalFile.join(parts)
       end
     end
   end

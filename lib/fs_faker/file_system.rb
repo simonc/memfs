@@ -136,5 +136,13 @@ module FsFaker
       raise Errno::EPERM, path if entry.is_a?(Fake::Directory)
       entry.delete
     end
+
+    def rename(old_name, new_name)
+      file = find!(old_name)
+      file.delete
+
+      file.name = basename(new_name)
+      find_parent!(new_name).add_entry(file)
+    end
   end
 end

@@ -15,11 +15,6 @@ module FsFaker
         entry.mode.should be(33188)
       end
 
-      it "has a path attribute accessor" do
-        entry.path = '/test'
-        entry.path.should == '/test'
-      end
-
       it "has a atime attribute accessor" do
         entry.atime = time
         entry.atime.should == time
@@ -87,10 +82,6 @@ module FsFaker
           Entry.new.name.should == ''
         end
 
-        it "set its path as the path passed as argument" do
-          Entry.new('/test').path.should == '/test'
-        end
-
         it "sets the access time" do
           Entry.new.atime.should be_a(Time)
         end
@@ -122,6 +113,21 @@ module FsFaker
           entry.parent = parent
           entry.delete
           parent.entries.should_not have_value(entry)
+        end
+      end
+
+      describe ".path" do
+        let(:entry) { Entry.new('test') }
+
+        it "returns the name of the entry" do
+          expect(entry.path).to eq('test')
+        end
+
+        context "when the entry as a parent" do
+          it "returns the complete path of the entry" do
+            entry.parent = Entry.new('/')
+            expect(entry.path).to eq('/test')
+          end
         end
       end
     end

@@ -352,5 +352,26 @@ module FsFaker
         end
       end
     end
+
+    describe "#rename" do
+      it "renames the given file to the new name" do
+        fs.touch('/test-file')
+        fs.rename('/test-file', '/test-file2')
+        expect(fs.find('/test-file2')).not_to be_nil
+      end
+
+      it "removes the old file" do
+        fs.touch('/test-file')
+        fs.rename('/test-file', '/test-file2')
+        expect(fs.find('/test-file')).to be_nil
+      end
+
+      it "can move a file in another directory" do
+        fs.touch('/test-file')
+        fs.mkdir('/test-dir')
+        fs.rename('/test-file', '/test-dir/test-file')
+        expect(fs.find('/test-dir/test-file')).not_to be_nil
+      end
+    end
   end
 end

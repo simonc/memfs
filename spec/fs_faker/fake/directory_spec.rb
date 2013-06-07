@@ -85,6 +85,21 @@ module FsFaker
           directory.entries.should_not have_value(file)
         end
       end
+
+      describe "#path" do
+        let(:root) { Directory.new('/') }
+
+        it "returns the directory path" do
+          directory.parent = root
+          expect(directory.path).to eq('/test')
+        end
+
+        context "when the directory is /" do
+          it "returns /" do
+            expect(root.path).to eq('/')
+          end
+        end
+      end
     end
   end
 end
