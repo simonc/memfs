@@ -702,7 +702,17 @@ describe FileUtils do
   end
 
   describe '.remove_file' do
-    
+    it "removes a file path" do
+      fs.touch('/test-file')
+      FileUtils.remove_file('/test-file')
+      expect(File.exists?('/test-file')).to be_false
+    end
+
+    context "when +force+ is set" do
+      it "ignores StandardError" do
+        expect { FileUtils.remove_file('/no-file', true) }.not_to raise_error
+      end
+    end
   end
 
   describe '.rm' do
