@@ -668,7 +668,37 @@ describe FileUtils do
   end
 
   describe '.remove_entry_secure' do
-    
+    before :each do
+      FileUtils.mkdir_p('/test-dir/test-sub-dir')
+    end
+
+    it "removes a file system entry +path+" do
+      FileUtils.remove_entry_secure('/test-dir')
+      expect(Dir.exists?('/test-dir')).to be_false
+    end
+
+    context "when +path+ is a directory" do
+      it "removes it recursively" do
+        FileUtils.remove_entry_secure('/test-dir')
+        expect(Dir.exists?('/test-dir/test-sub-dir')).to be_false
+      end
+
+      context "and is word writable" do
+        it "calls chown(2) on it" do
+          fs.chmod(01777, '/')
+          directory = fs.find('/test-dir')
+          directory.should_receive(:uid=).at_least(:once)
+          FileUtils.remove_entry_secure('/test-dir')
+        end
+
+        it "calls chmod(2) on all sub directories" do
+          fs.chmod(01777, '/')
+          directory = fs.find('/test-dir')
+          directory.should_receive(:mode=).at_least(:once)
+          FileUtils.remove_entry_secure('/test-dir')
+        end
+      end
+    end
   end
 
   describe '.remove_file' do

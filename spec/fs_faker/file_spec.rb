@@ -842,5 +842,127 @@ module FsFaker
         expect(File.rename('/test-file', '/test-file2')).to eq(0)
       end
     end
+
+    describe "#chown" do
+      let(:file) { File.new('/test-file') }
+
+      before :each do
+        fs.touch('/test-file')
+      end
+
+      it "changes the owner of the named file to the given numeric owner id" do
+        file.chown(42, nil)
+        expect(file.stat.uid).to be(42)
+      end
+
+      it "changes owner on the named files (in list)" do
+        file.chown(42)
+        expect(file.stat.uid).to be(42)
+      end
+
+      it "changes the group of the named file to the given numeric group id" do
+        file.chown(nil, 42)
+        expect(file.stat.gid).to be(42)
+      end
+
+      it "returns zero" do
+        expect(file.chown(42, 42)).to eq(0)
+      end
+
+      it "ignores nil user id" do
+        previous_uid = file.stat.uid
+
+        file.chown(nil, 42)
+        expect(file.stat.uid).to eq(previous_uid)
+      end
+
+      it "ignores nil group id" do
+        previous_gid = file.stat.gid
+
+        file.chown(42, nil)
+        expect(file.stat.gid).to eq(previous_gid)
+      end
+
+      it "ignores -1 user id" do
+        previous_uid = file.stat.uid
+
+        file.chown(-1, 42)
+        expect(file.stat.uid).to eq(previous_uid)
+      end
+
+      it "ignores -1 group id" do
+        previous_gid = file.stat.gid
+
+        file.chown(42, -1)
+        expect(file.stat.gid).to eq(previous_gid)
+      end
+
+      context "when the named entry is a symlink" do
+        let(:symlink) { File.new('/test-link') }
+
+        before :each do
+          fs.symlink '/test-file', '/test-link'
+        end
+
+        it "changes the owner on the last target of the link chain" do
+          symlink.chown(42, nil)
+          expect(file.stat.uid).to be(42)
+        end
+
+        it "changes the group on the last target of the link chain" do
+          symlink.chown(nil, 42)
+          expect(file.stat.gid).to be(42)
+        end
+
+        it "doesn't change the owner of the symlink" do
+          symlink.chown(42, nil)
+          expect(symlink.lstat.uid).not_to be(42)
+        end
+
+        it "doesn't change the group of the symlink" do
+          symlink.chown(nil, 42)
+          expect(symlink.lstat.gid).not_to be(42)
+        end
+      end
+    end
+
+    describe '#lstat' do
+      let(:file) { File.new('/test-file') }
+
+      it "returns the File::Stat object of the file" do
+        fs.touch('/test-file')
+        expect(file.lstat).to be_a(File::Stat)
+      end
+
+      it "does not follow the last symbolic link" do
+        fs.touch('/test-file')
+        File.symlink('/test-file', '/test-link')
+        file = File.new('/test-link')
+        expect(file.lstat).to be_symlink
+      end
+
+      it "doesn't raise an error if the named file is a symlink and its target doesn't exist" do
+        File.symlink('/test-file', '/test-link')
+        file = File.new('/test-link')
+        expect { file.lstat }.not_to raise_error(Errno::ENOENT)
+      end
+    end
+
+    describe '#chmod' do
+      let(:file) { File.new('/test-file') }
+
+      before :each do
+        fs.touch '/test-file'
+      end
+
+      it "changes permission bits on the file" do
+        file.chmod(0777)
+        expect(file.stat.mode).to eq(0100777)
+      end
+
+      it "returns zero" do
+        expect(file.chmod(0777)).to eq(0)
+      end
+    end
   end
 end

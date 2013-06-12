@@ -148,5 +148,49 @@ module FsFaker
         File.stat('/test-dir').should_not be_file
       end
     end
+
+    describe "#world_writable?" do
+      context "when +file_name+ is writable by others" do
+        it "returns an integer representing the file permission bits of +file_name+" do
+          fs.touch('/test-file')
+          fs.chmod(0777, '/test-file')
+          expect(File::Stat.new('/test-file')).to be_world_writable
+        end
+      end
+
+      context "when +file_name+ is not writable by others" do
+        it "returns nil" do
+          fs.touch('/test-file')
+          expect(File::Stat.new('/test-file')).not_to be_world_writable
+        end
+      end
+    end
+
+    describe "#sticky?" do
+      it "returns true if the named file has the sticky bit set" do
+        fs.touch('/test-file')
+        fs.chmod(01777, '/test-file')
+        expect(File::Stat.new('/test-file')).to be_sticky
+      end
+
+      it "returns false if the named file hasn't' the sticky bit set" do
+        fs.touch('/test-file')
+        expect(File::Stat.new('/test-file')).not_to be_sticky
+      end
+    end
+
+    describe "#dev" do
+      it "returns an integer representing the device on which stat resides" do
+        fs.touch('/test-file')
+        expect(File::Stat.new('/test-file').dev).to be_a(Fixnum)
+      end
+    end
+
+    describe "#ino" do
+      it "returns the inode number for stat." do
+        fs.touch('/test-file')
+        expect(File::Stat.new('/test-file').ino).to be_a(Fixnum)
+      end
+    end
   end
 end

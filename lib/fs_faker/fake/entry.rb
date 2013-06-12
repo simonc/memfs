@@ -1,6 +1,18 @@
 module FsFaker
   module Fake
     class Entry
+      UREAD  = 00100
+      UWRITE = 00200
+      UEXEC  = 00400
+      GREAD  = 00010
+      GWRITE = 00020
+      GEXEC  = 00040
+      OREAD  = 00001
+      OWRITE = 00002
+      OEXEC  = 00004
+      RSTICK = 01000
+      USTICK = 05000
+
       attr_accessor :atime
       attr_accessor :gid
       attr_accessor :mtime
@@ -43,6 +55,14 @@ module FsFaker
       def path
         parts = [parent && parent.path, name].compact
         FsFaker::OriginalFile.join(parts)
+      end
+
+      def dev
+        @dev ||= rand(1000)
+      end
+
+      def ino
+        @ino ||= rand(1000)
       end
     end
   end

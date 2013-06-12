@@ -130,6 +130,18 @@ module FsFaker
           end
         end
       end
+
+      describe "#dev" do
+        it "returns an integer representing the device on which the entry resides" do
+          expect(entry.dev).to be_a(Fixnum)
+        end
+      end
+
+      describe "#ino" do
+        it "Returns the inode number for the entry" do
+          expect(entry.ino).to be_a(Fixnum)
+        end
+      end
     end
   end
 end

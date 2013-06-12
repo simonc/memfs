@@ -218,6 +218,10 @@ module FsFaker
       File.stat(path)
     end
 
+    def lstat
+      File.lstat(path)
+    end
+
     def write(string)
       content.write(string.to_s)
     end
@@ -238,6 +242,16 @@ module FsFaker
 
     def pos
       content.pos
+    end
+
+    def chown(uid, gid = nil)
+      fs.chown(uid, gid, path)
+      SUCCESS
+    end
+
+    def chmod(mode_int)
+      fs.chmod(mode_int, path)
+      SUCCESS
     end
 
     private
@@ -328,6 +342,26 @@ module FsFaker
 
       def file?
         @entry.is_a?(Fake::File)
+      end
+
+      def world_writable?
+        if (last_entry.mode & Fake::Entry::OWRITE).nonzero?
+          last_entry.mode
+        else
+          nil
+        end
+      end
+
+      def sticky?
+        !!(last_entry.mode & Fake::Entry::USTICK).nonzero?
+      end
+
+      def dev
+        last_entry.dev
+      end
+
+      def ino
+        last_entry.ino
       end
 
       private
