@@ -751,7 +751,31 @@ describe FileUtils do
   end
 
   describe '.rm_r' do
-    
+    before :each do
+      fs.touch('/test-file', '/test-file2')
+    end
+
+    it "removes a list of files" do
+      FileUtils.rm_r(['/test-file', '/test-file2'])
+      expect(File.exists?('/test-file2')).to be_false
+    end
+
+    context "when an item of the list is a directory" do
+      it "removes all its contents recursively" do
+        fs.mkdir('/test-dir')
+        fs.touch('/test-dir/test-file')
+        FileUtils.rm_r(['/test-file', '/test-file2', '/test-dir'])
+        expect(File.exists?('/test-dir/test-file')).to be_false
+      end
+    end
+
+    context "when +:force+ is set" do
+      it "ignores StandardError" do
+        expect {
+          FileUtils.rm_r(['/no-file'], force: true)
+        }.not_to raise_error(Errno::ENOENT)
+      end
+    end
   end
 
   describe '.rm_rf' do
