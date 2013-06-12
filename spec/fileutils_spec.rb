@@ -716,7 +716,31 @@ describe FileUtils do
   end
 
   describe '.rm' do
-    
+    it "removes the specified file" do
+      fs.touch('/test-file')
+      FileUtils.rm('/test-file')
+      expect(File.exists?('/test-file')).to be_false
+    end
+
+    it "removes files specified in list" do
+      fs.touch('/test-file', '/test-file2')
+      FileUtils.rm(['/test-file', '/test-file2'])
+      expect(File.exists?('/test-file2')).to be_false
+    end
+
+    it "cannot remove a directory" do
+      fs.mkdir('/test-dir')
+      expect { FileUtils.rm('/test-dir') }.to raise_error(Errno::EPERM)
+    end
+
+    context "when +:force+ is set" do
+      it "ignores StandardError" do
+        fs.mkdir('/test-dir')
+        expect {
+          FileUtils.rm('/test-dir', force: true)
+        }.not_to raise_error(Errno::EPERM)
+      end
+    end
   end
 
   describe '.rm_f' do
