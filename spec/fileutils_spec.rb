@@ -823,7 +823,9 @@ describe FileUtils do
   end
 
   describe '.safe_unlink' do
-    
+    it "is an alias for #rm_f" do
+      FileUtils.method(:safe_unlink).should == FileUtils.method(:rm_f)
+    end
   end
 
   describe '.symlink' do
