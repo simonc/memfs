@@ -817,7 +817,9 @@ describe FileUtils do
   end
 
   describe '.rmtree' do
-    
+    it "is an alias for #rm_rf" do
+      FileUtils.method(:rmtree).should == FileUtils.method(:rm_rf)
+    end
   end
 
   describe '.safe_unlink' do
