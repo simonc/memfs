@@ -345,7 +345,6 @@ module FsFaker
 
     describe ".chown" do
       before :each do
-        fs.clear!
         fs.touch '/test-file', '/test-file2'
       end
 
