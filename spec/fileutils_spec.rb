@@ -779,7 +779,10 @@ describe FileUtils do
   end
 
   describe '.rm_rf' do
-    
+    it "calls rm with +:force+ set to true" do
+      FileUtils.should_receive(:rm_r).with('test', force: true)
+      FileUtils.rm_rf('test')
+    end
   end
 
   describe '.rmdir' do
