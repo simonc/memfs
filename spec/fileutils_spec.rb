@@ -786,7 +786,34 @@ describe FileUtils do
   end
 
   describe '.rmdir' do
-    
+    it "Removes a directory" do
+      fs.mkdir('/test-dir')
+      FileUtils.rmdir('/test-dir')
+      expect(Dir.exists?('/test-dir')).to be_false
+    end
+
+    it "Removes a list of directories" do
+      fs.mkdir('/test-dir')
+      fs.mkdir('/test-dir2')
+      FileUtils.rmdir(['/test-dir', '/test-dir2'])
+      expect(Dir.exists?('/test-dir2')).to be_false
+    end
+
+    context "when a directory is not empty" do
+      before :each do
+        fs.mkdir('/test-dir')
+        fs.touch('/test-dir/test-file')
+      end
+
+      it "ignores errors" do
+        expect { FileUtils.rmdir('/test-dir') }.not_to raise_error
+      end
+
+      it "doesn't remove the directory" do
+        FileUtils.rmdir('/test-dir')
+        expect(Dir.exists?('/test-dir')).to be_true
+      end
+    end
   end
 
   describe '.rmtree' do
