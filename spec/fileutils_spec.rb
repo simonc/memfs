@@ -829,7 +829,9 @@ describe FileUtils do
   end
 
   describe '.symlink' do
-    
+    it "is an alias for #ln_s" do
+      FileUtils.method(:symlink).should == FileUtils.method(:ln_s)
+    end
   end
 
   describe '.touch' do
