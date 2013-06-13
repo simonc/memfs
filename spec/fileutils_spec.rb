@@ -847,6 +847,27 @@ describe FileUtils do
   end
 
   describe '.uptodate?' do
-    
+    before :each do
+      fs.touch('/test-file')
+      fs.touch('/old-file')
+      fs.find!('/old-file').mtime = Time.now - 3600
+    end
+
+    it "returns true if +newer+ is newer than all +old_list+" do
+      expect(FileUtils.uptodate?('/test-file', ['/old-file'])).to be_true
+    end
+
+    context "when +newer+ does not exist" do
+      it "consideres it as older" do
+        expect(FileUtils.uptodate?('/no-file', ['/old-file'])).to be_false
+      end
+    end
+
+    context "when a item of +old_list+ does not exist" do
+      it "consideres it as older than +newer+" do
+        uptodate = FileUtils.uptodate?('/test-file', ['/old-file', '/no-file'])
+        expect(uptodate).to be_true
+      end
+    end
   end
 end
