@@ -369,7 +369,7 @@ describe FileUtils do
   end
 
   describe '.copy_stream' do
-    
+    # This method is not implemented since it is delegated to the IO class.
   end
 
   describe '.cp' do
