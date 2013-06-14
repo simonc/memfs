@@ -361,7 +361,11 @@ describe FileUtils do
   end
 
   describe '.copy_file' do
-    
+    it "copies file contents of src to dest" do
+      File.open('/test-file', 'w') { |f| f.puts 'test' }
+      FileUtils.copy_file('/test-file', '/test-file2')
+      expect(File.read('/test-file2')).to eq("test\n")
+    end
   end
 
   describe '.copy_stream' do
