@@ -963,5 +963,42 @@ module FsFaker
         expect(file.chmod(0777)).to eq(0)
       end
     end
+
+    describe ".file?" do
+      it "returns true if the named file exists and is a regular file" do
+        fs.touch('/test-file')
+        expect(File.file?('/test-file')).to be_true
+      end
+
+      it "returns false if the named file does not exist" do
+        expect(File.file?('/test-file')).to be_false
+      end
+
+      it "returns false if the named file is not a regular file" do
+        fs.mkdir('/test-dir')
+        expect(File.file?('/test-dir')).to be_false
+      end
+    end
+
+    describe ".symlink?" do
+      it "returns true if the named file is a symlink" do
+        fs.touch('/test-file')
+        fs.symlink('/test-file', '/test-link')
+        expect(File.symlink?('/test-link')).to be_true
+      end
+
+      it "returns false if the named file is a symlink" do
+        fs.touch('/test-file')
+        expect(File.symlink?('/test-file')).to be_false
+      end
+    end
+
+    describe ".readlink" do
+      it "returns the name of the file referenced by the given link" do
+        fs.touch('/test-file')
+        fs.symlink('/test-file', '/test-link')
+        expect(File.readlink('/test-link')).to eq('/test-file')
+      end
+    end
   end
 end

@@ -33,7 +33,7 @@ module FsFaker
       end
 
       def mode=(mode_int)
-        @mode = 0100000 + mode_int
+        @mode = 0100000 | mode_int
       end
 
       def last_target

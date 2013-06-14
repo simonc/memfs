@@ -166,6 +166,14 @@ module FsFaker
       SUCCESS
     end
 
+    def self.file?(path)
+      fs.find(path).is_a?(Fake::File)
+    end
+
+    def self.readlink(path)
+      fs.find!(path).target
+    end
+
     attr_accessor :closed
     attr_accessor :entry
     attr_accessor :opening_mode

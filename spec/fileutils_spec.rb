@@ -284,7 +284,80 @@ describe FileUtils do
   end
 
   describe '.copy_entry' do
-    
+    it "copies a file system entry +src+ to +dest+" do
+      File.open('/test-file', 'w') { |f| f.puts 'test' }
+      FileUtils.copy_entry('/test-file', '/test-copy')
+      File.read('/test-copy').should == "test\n"
+    end
+
+    it "preserves file types" do
+      fs.touch('/test-file')
+      fs.symlink('/test-file', '/test-link')
+      FileUtils.copy_entry('/test-link', '/test-copy')
+      expect(File.symlink?('/test-copy')).to be_true
+    end
+
+    context "when +src+ does not exist" do
+      it "raises an exception" do
+        expect {
+          FileUtils.copy_entry('/test-file', '/test-copy')
+        }.to raise_error(RuntimeError)
+      end
+    end
+
+    context "when +preserve+ is true" do
+      let(:time) { Date.parse('2013-01-01') }
+
+      before :each do
+        fs.touch('/test-file')
+        fs.chown(1042, 1042, '/test-file')
+        fs.chmod(0777, '/test-file')
+        fs.find('/test-file').mtime = time
+        FileUtils.copy_entry('/test-file', '/test-copy', true)
+      end
+
+      it "preserves owner" do
+        expect(File.stat('/test-copy').uid).to eq(1042)
+      end
+
+      it "preserves group" do
+        expect(File.stat('/test-copy').gid).to eq(1042)
+      end
+
+      it "preserves permissions" do
+        expect(File.stat('/test-copy').mode).to eq(0100777)
+      end
+
+      it "preserves modified time" do
+        expect(File.stat('/test-copy').mtime).to eq(time)
+      end
+    end
+
+    context "when +dest+ already exists" do
+      it "overwrite it" do
+        File.open('/test-file', 'w') { |f| f.puts 'test' }
+        fs.touch('/test-copy')
+        FileUtils.copy_entry('/test-file', '/test-copy')
+        expect(File.read('/test-copy')).to eq("test\n")
+      end
+    end
+
+    context "when +remove_destination+ is true" do
+      it "removes each destination file before copy" do
+        fs.touch('/test-file')
+        fs.touch('/test-copy')
+        File.should_receive(:unlink).with('/test-copy')
+        FileUtils.copy_entry('/test-file', '/test-copy', false, false, true)
+      end
+    end
+
+    context "when +src+ is a directory" do
+      it "copies its contents recursively" do
+        FileUtils.mkdir_p('/test-dir/test-sub-dir')
+        FileUtils.copy_entry('/test-dir', '/test-copy')
+        expect(Dir.exists?('/test-copy/test-sub-dir')).to be_true
+      end
+    end
   end
 
   describe '.copy_file' do
