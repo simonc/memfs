@@ -8,12 +8,12 @@ module MemFs
         @target = target
       end
 
-      def last_target
-        fs.symlink?(target) ? fs.find!(target).last_target : fs.find!(target)
+      def dereferenced
+        fs.find!(target).dereferenced
       end
 
       def content
-        last_target.content
+        dereferenced.content
       end
 
       private

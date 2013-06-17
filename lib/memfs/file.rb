@@ -116,7 +116,7 @@ module MemFs
     end
 
     def self.identical?(path1, path2)
-      fs.find!(path1).last_target === fs.find!(path2).last_target
+      fs.find!(path1).dereferenced === fs.find!(path2).dereferenced
     rescue Errno::ENOENT
       false
     end
@@ -336,9 +336,10 @@ module MemFs
         last_entry.gid
       end
 
+      # FIXME: just set the entry in initialize
       def last_entry
-        if @follow_symlink && @entry.respond_to?(:last_target)
-          @entry.last_target
+        if @follow_symlink && @entry.respond_to?(:dereferenced)
+          @entry.dereferenced
         else
           @entry
         end

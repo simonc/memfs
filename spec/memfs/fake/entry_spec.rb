@@ -95,9 +95,9 @@ module MemFs
         end
       end
 
-      describe '.last_target' do
+      describe '.dereferenced' do
         it "returns the entry itself" do
-          entry.last_target.should be(entry)
+          entry.dereferenced.should be(entry)
         end
       end
 

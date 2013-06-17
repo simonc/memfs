@@ -36,7 +36,7 @@ module MemFs
         @mode = 0100000 | mode_int
       end
 
-      def last_target
+      def dereferenced
         self
       end
 

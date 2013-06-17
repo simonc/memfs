@@ -93,7 +93,7 @@ module MemFs
     end
 
     def find_directory!(path)
-      entry = find!(path).last_target
+      entry = find!(path).dereferenced
 
       unless entry.is_a?(Fake::Directory)
         raise Errno::ENOTDIR, path
@@ -116,7 +116,7 @@ module MemFs
     end
 
     def chown(uid, gid, path)
-      entry = find!(path).last_target
+      entry = find!(path).dereferenced
       entry.uid = uid if uid && uid != -1
       entry.gid = gid if gid && gid != -1
     end
