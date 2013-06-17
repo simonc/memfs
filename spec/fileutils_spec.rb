@@ -463,7 +463,44 @@ describe FileUtils do
   end
 
   describe '.install' do
-    
+    before :each do
+      File.open('/test-file', 'w') { |f| f.puts 'test' }
+    end
+
+    it "copies +src+ to +dest+" do
+      FileUtils.install('/test-file', '/test-file2')
+      File.read('/test-file2').should == "test\n"
+    end
+
+    context "when +:mode+ is set" do
+      it "changes the permission mode to +mode+" do
+        File.should_receive(:chmod).with(0777, '/test-file2')
+        FileUtils.install('/test-file', '/test-file2', mode: 0777)
+      end
+    end
+
+    context "when +src+ and +dest+ are the same file" do
+      it "raises an exception" do
+        expect {
+          FileUtils.install('/test-file', '/test-file')
+        }.to raise_exception(ArgumentError)
+      end
+    end
+
+    context "when +dest+ already exists" do
+      it "removes destination before copy" do
+        File.should_receive(:unlink).with('/test-file2')
+        FileUtils.install('/test-file', '/test-file2')
+      end
+
+      context "and +dest+ is a directory" do
+        it "installs +src+ in dest/src" do
+          fs.mkdir('/test-dir')
+          FileUtils.install('/test-file', '/test-dir')
+          expect(File.read('/test-dir/test-file')).to eq("test\n")
+        end
+      end
+    end
   end
 
   describe '.link' do
