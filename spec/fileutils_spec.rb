@@ -1,3 +1,4 @@
+require 'date'
 require 'fileutils'
 require 'spec_helper'
 
