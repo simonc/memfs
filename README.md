@@ -1,4 +1,4 @@
-# MemFs
+# MemFs [![Build Status](https://secure.travis-ci.org/simonc/memfs.png?branch=master)](http://travis-ci.org/simonc/memfs)
 
 MemFs is an in-memory filesystem that can be used for your tests.
 
