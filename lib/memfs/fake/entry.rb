@@ -1,4 +1,4 @@
-module FsFaker
+module MemFs
   module Fake
     class Entry
       UREAD  = 00100
@@ -23,8 +23,8 @@ module FsFaker
 
       def initialize(path = nil)
         time = Time.now
-        self.name = FsFaker::OriginalFile.basename(path || '')
-        self.mode = 0666 - FsFaker::File.umask
+        self.name = MemFs::OriginalFile.basename(path || '')
+        self.mode = 0666 - MemFs::File.umask
         self.atime = time
         self.mtime = time
         current_user = Etc.getpwuid
@@ -54,7 +54,7 @@ module FsFaker
 
       def path
         parts = [parent && parent.path, name].compact
-        FsFaker::OriginalFile.join(parts)
+        MemFs::OriginalFile.join(parts)
       end
 
       def dev

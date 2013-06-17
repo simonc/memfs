@@ -1,6 +1,6 @@
 require 'forwardable'
 
-module FsFaker
+module MemFs
   class File
     extend SingleForwardable
 
@@ -265,7 +265,7 @@ module FsFaker
     private
 
     def self.original_file_class
-      FsFaker::OriginalFile
+      MemFs::OriginalFile
     end
 
     def self.fs

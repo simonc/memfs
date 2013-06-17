@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module FsFaker
+module MemFs
   module Fake
     describe Entry do
       let(:entry) { Entry.new }

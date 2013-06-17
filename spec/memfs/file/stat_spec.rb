@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module FsFaker
+module MemFs
   describe File::Stat do
     let(:fs) { FileSystem.instance }
 

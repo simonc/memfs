@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module FsFaker
+module MemFs
   module Fake
     describe Symlink do
       let(:fs) { FileSystem.instance }
@@ -35,7 +35,7 @@ module FsFaker
 
       describe '#content' do
         it "returns the target's content" do
-          FsFaker::File.open('/test-file', 'w') { |f| f.puts "test" }
+          MemFs::File.open('/test-file', 'w') { |f| f.puts "test" }
           s = Symlink.new('/test-link', '/test-file')
           s.content.should be(s.last_target.content)
         end

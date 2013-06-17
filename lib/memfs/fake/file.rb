@@ -1,12 +1,11 @@
-require 'fs_faker/fake/entry'
-require 'fs_faker/fake/file/content'
+require 'memfs/fake/entry'
+require 'memfs/fake/file/content'
 
-module FsFaker
+module MemFs
   module Fake
     class File < Entry
       attr_accessor :content
 
-      # TODO: delegate everything to @content
       def initialize(*args)
         super
         @content = Content.new

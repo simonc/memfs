@@ -1,8 +1,8 @@
-require 'fs_faker'
+require 'memfs'
 
 RSpec.configure do |config|
   config.before :each do
-    FsFaker::File.reset!
-    FsFaker::FileSystem.instance.clear!
+    MemFs::File.reset!
+    MemFs::FileSystem.instance.clear!
   end
 end

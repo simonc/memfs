@@ -1,4 +1,4 @@
-module FsFaker
+module MemFs
   module Fake
     class Symlink < Entry
       attr_reader :target

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module FsFaker
+module MemFs
   describe FileSystem do
     let(:fs) { FileSystem.instance }
 
@@ -149,7 +149,7 @@ module FsFaker
 
       it "creates an entry only if it doesn't exist" do
         fs.touch '/some-file'
-        FsFaker::Fake::File.should_not_receive(:new)
+        MemFs::Fake::File.should_not_receive(:new)
         fs.touch '/some-file'
       end
 

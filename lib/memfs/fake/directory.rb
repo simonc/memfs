@@ -1,6 +1,6 @@
-require 'fs_faker/fake/entry'
+require 'memfs/fake/entry'
 
-module FsFaker
+module MemFs
   module Fake
     class Directory < Entry
       attr_accessor :entries

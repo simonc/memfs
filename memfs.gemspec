@@ -1,17 +1,17 @@
 # -*- encoding: utf-8 -*-
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'fs_faker/version'
+require 'memfs/version'
 
 Gem::Specification.new do |gem|
-  gem.name          = "fs_faker"
-  gem.version       = FsFaker::VERSION
+  gem.name          = "memfs"
+  gem.version       = MemFs::VERSION
   gem.authors       = ["Simon COURTOIS"]
   gem.email         = ["scourtois@cubyx.fr"]
-  gem.description   = "FS Faker provides a fake file system that can be used " \
-                      "in  test. Strongly inspired by FakeFS"
-  gem.summary       = "fs_faker-#{FsFaker::VERSION}"
-  gem.homepage      = "http://github.com/simonc/fs_faker"
+  gem.description   = "MemFs provides a fake file system that can be used " \
+                      "for tests. Strongly inspired by FakeFS."
+  gem.summary       = "memfs-#{MemFs::VERSION}"
+  gem.homepage      = "http://github.com/simonc/memfs"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

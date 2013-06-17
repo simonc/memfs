@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module FsFaker
+module MemFs
   module Fake
     describe File do
       let(:file) { fs.find!('/test-file') }

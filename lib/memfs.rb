@@ -1,20 +1,20 @@
-require 'fs_faker/version'
+require 'memfs/version'
 
 # Provides a clean way to interact with a fake file system.
 #
 # @example Calling activate with a block.
-#   FsFaker.activate do
+#   MemFs.activate do
 #     Dir.mkdir '/hello_world'
 #     # /hello_world exists here, in memory
 #   end
 #   # /hello_world doesn't exist and has never been on the real FS
 #
 # @example Calling activate! and deactivate!.
-#   FsFaker.activate!
+#   MemFs.activate!
 #     # The fake file system is running here
-#   FsFaker.deactivate!
+#   MemFs.deactivate!
 #   # Everything back to normal
-module FsFaker
+module MemFs
   extend self
 
   # Keeps track of the original Ruby Dir class.
@@ -23,26 +23,26 @@ module FsFaker
   # Keeps track of the original Ruby File class.
   OriginalFile = ::File
 
-  require 'fs_faker/file_system'
-  require 'fs_faker/dir'
-  require 'fs_faker/file'
+  require 'memfs/file_system'
+  require 'memfs/dir'
+  require 'memfs/file'
 
-  # Calls the given block with FsFaker activated.
+  # Calls the given block with MemFs activated.
   #
   # The advantage of using {#activate} against {#activate!} is that, in case an
-  # exception occurs, FsFaker is deactivated.
+  # exception occurs, MemFs is deactivated.
   #
   # @yield with no argument.
   #
   # @example
-  #   FsFaker.activate do
+  #   MemFs.activate do
   #     Dir.mkdir '/hello_world'
   #     # /hello_world exists here, in memory
   #   end
   #   # /hello_world doesn't exist and has never been on the real FS
   #
   # @example Exception in activate block.
-  #   FsFaker.activate do
+  #   MemFs.activate do
   #     raise "Some Error"
   #   end
   #   # Still back to the original Ruby classes
@@ -61,10 +61,10 @@ module FsFaker
   #   you may have some issues in your scripts or tests otherwise.
   #
   # @example
-  #   FsFaker.activate!
+  #   MemFs.activate!
   #   Dir.mkdir '/hello_world'
   #   # /hello_world exists here, in memory
-  #   FsFaker.deactivate!
+  #   MemFs.deactivate!
   #   # /hello_world doesn't exist and has never been on the real FS
   #
   # @see #deactivate!
@@ -74,8 +74,8 @@ module FsFaker
       remove_const :Dir
       remove_const :File
 
-      const_set :Dir,  FsFaker::Dir
-      const_set :File, FsFaker::File
+      const_set :Dir,  MemFs::Dir
+      const_set :File, MemFs::File
     end
   end
 
@@ -90,8 +90,8 @@ module FsFaker
       remove_const :Dir
       remove_const :File
 
-      const_set :Dir,  FsFaker::OriginalDir
-      const_set :File, FsFaker::OriginalFile
+      const_set :Dir,  MemFs::OriginalDir
+      const_set :File, MemFs::OriginalFile
     end
   end
 end

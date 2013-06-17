@@ -1,9 +1,9 @@
 require 'singleton'
-require 'fs_faker/fake/directory'
-require 'fs_faker/fake/file'
-require 'fs_faker/fake/symlink'
+require 'memfs/fake/directory'
+require 'memfs/fake/file'
+require 'memfs/fake/symlink'
 
-module FsFaker
+module MemFs
   class FileSystem
     include Singleton
 
@@ -108,11 +108,11 @@ module FsFaker
     end
 
     def dirname(path)
-      FsFaker::OriginalFile.dirname(path)
+      MemFs::OriginalFile.dirname(path)
     end
 
     def basename(path)
-      FsFaker::OriginalFile.basename(path)
+      MemFs::OriginalFile.basename(path)
     end
 
     def chown(uid, gid, path)

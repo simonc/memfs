@@ -1,4 +1,4 @@
-# FsFaker
+# MemFs
 
 TODO: Write a gem description
 
@@ -6,7 +6,7 @@ TODO: Write a gem description
 
 Add this line to your application's Gemfile:
 
-    gem 'fs_faker'
+    gem 'memfs'
 
 And then execute:
 
@@ -14,7 +14,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install fs_faker
+    $ gem install memfs
 
 ## Requirements
 

@@ -1,6 +1,6 @@
 require "delegate"
 
-module FsFaker
+module MemFs
   module Fake
     class File < Entry
 

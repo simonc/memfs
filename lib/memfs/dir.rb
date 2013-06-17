@@ -1,4 +1,4 @@
-module FsFaker
+module MemFs
   class Dir
     def self.chdir(path, &block)
       fs.chdir path, &block

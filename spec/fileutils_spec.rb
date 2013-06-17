@@ -2,16 +2,16 @@ require 'fileutils'
 require 'spec_helper'
 
 describe FileUtils do
-  let(:fs) { FsFaker::FileSystem.instance }
+  let(:fs) { MemFs::FileSystem.instance }
 
   before :each do
-    FsFaker.activate!
+    MemFs.activate!
 
     FileUtils.mkdir '/test'
   end
 
   after :each do
-    FsFaker.deactivate!
+    MemFs.deactivate!
   end
 
   describe '.cd' do

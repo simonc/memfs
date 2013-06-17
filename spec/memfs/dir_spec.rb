@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-module FsFaker
+module MemFs
   describe Dir do
-    let(:fs) { FsFaker::FileSystem.instance }
+    let(:fs) { MemFs::FileSystem.instance }
 
     before :each do
       Dir.mkdir '/'
