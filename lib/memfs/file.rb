@@ -337,11 +337,7 @@ module MemFs
       end
 
       def world_writable?
-        if (entry.mode & Fake::Entry::OWRITE).nonzero?
-          entry.mode
-        else
-          nil
-        end
+        entry.mode if (entry.mode & Fake::Entry::OWRITE).nonzero?
       end
 
       def sticky?
