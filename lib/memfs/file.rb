@@ -295,48 +295,37 @@ module MemFs
 
       attr_reader :entry
 
-      def initialize(path, follow_symlink = false)
-        @path  = path
-        @entry = fs.find!(path)
-        @follow_symlink = follow_symlink
-        follow_symlink && last_entry
+      def initialize(path, dereference = false)
+        entry = fs.find!(path)
+        @entry = dereference ? entry.dereferenced : entry
       end
 
       def directory?
-        File.directory? last_entry.path
+        File.directory? entry.path
       end
 
       def symlink?
-        File.symlink? last_entry.path
+        File.symlink? entry.path
       end
 
       def mode
-        last_entry.mode
+        entry.mode
       end
 
       def atime
-        last_entry.atime
+        entry.atime
       end
 
       def mtime
-        last_entry.mtime
+        entry.mtime
       end
 
       def uid
-        last_entry.uid
+        entry.uid
       end
 
       def gid
-        last_entry.gid
-      end
-
-      # FIXME: just set the entry in initialize
-      def last_entry
-        if @follow_symlink && @entry.respond_to?(:dereferenced)
-          @entry.dereferenced
-        else
-          @entry
-        end
+        entry.gid
       end
 
       def blksize
@@ -344,27 +333,27 @@ module MemFs
       end
 
       def file?
-        last_entry.is_a?(Fake::File)
+        entry.is_a?(Fake::File)
       end
 
       def world_writable?
-        if (last_entry.mode & Fake::Entry::OWRITE).nonzero?
-          last_entry.mode
+        if (entry.mode & Fake::Entry::OWRITE).nonzero?
+          entry.mode
         else
           nil
         end
       end
 
       def sticky?
-        !!(last_entry.mode & Fake::Entry::USTICK).nonzero?
+        !!(entry.mode & Fake::Entry::USTICK).nonzero?
       end
 
       def dev
-        last_entry.dev
+        entry.dev
       end
 
       def ino
-        last_entry.ino
+        entry.ino
       end
 
       private
