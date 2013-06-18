@@ -169,9 +169,9 @@ module MemFs
       file_names.size
     end
 
-    attr_accessor :closed
-    attr_accessor :entry
-    attr_accessor :opening_mode
+    attr_accessor :closed,
+                  :entry,
+                  :opening_mode
     attr_reader :path
 
     def initialize(filename, mode = RDONLY, perm = nil, opt = nil)
@@ -188,6 +188,16 @@ module MemFs
       self.entry = fs.find(filename)
     end
 
+    def chmod(mode_int)
+      fs.chmod(mode_int, path)
+      SUCCESS
+    end
+
+    def chown(uid, gid = nil)
+      fs.chown(uid, gid, path)
+      SUCCESS
+    end
+
     def close
       self.closed = true
     end
@@ -198,6 +208,14 @@ module MemFs
 
     def content
       entry.content
+    end
+
+    def lstat
+      File.lstat(path)
+    end
+
+    def pos
+      content.pos
     end
 
     def puts(text)
@@ -211,22 +229,6 @@ module MemFs
     def read(length = nil, buffer = '')
       default = length ? nil : ''
       content.read(length, buffer) || default
-    end
-
-    def size
-      content.size
-    end
-
-    def stat
-      File.stat(path)
-    end
-
-    def lstat
-      File.lstat(path)
-    end
-
-    def write(string)
-      content.write(string.to_s)
     end
 
     def seek(amount, whence = IO::SEEK_SET)
@@ -243,18 +245,16 @@ module MemFs
       content.pos = new_pos and 0
     end
 
-    def pos
-      content.pos
+    def size
+      content.size
     end
 
-    def chown(uid, gid = nil)
-      fs.chown(uid, gid, path)
-      SUCCESS
+    def stat
+      File.stat(path)
     end
 
-    def chmod(mode_int)
-      fs.chmod(mode_int, path)
-      SUCCESS
+    def write(string)
+      content.write(string.to_s)
     end
 
     private
