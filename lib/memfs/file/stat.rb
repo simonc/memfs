@@ -18,7 +18,7 @@ module MemFs
                      :uid
 
       def initialize(path, dereference = false)
-        entry = fs.find!(path)
+        entry = FileSystem.instance.find!(path)
         @entry = dereference ? entry.dereferenced : entry
       end
 
@@ -40,12 +40,6 @@ module MemFs
 
       def sticky?
         !!(entry.mode & Fake::Entry::USTICK).nonzero?
-      end
-
-      private
-
-      def fs
-        FileSystem.instance
       end
     end
   end
