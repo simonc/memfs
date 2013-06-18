@@ -9,6 +9,7 @@ module MemFs
 
       def_delegators :entry,
                      :atime,
+                     :blksize,
                      :dev,
                      :gid,
                      :ino,
@@ -31,10 +32,6 @@ module MemFs
 
       def file?
         File.file? entry.path
-      end
-
-      def blksize
-        4096
       end
 
       def world_writable?

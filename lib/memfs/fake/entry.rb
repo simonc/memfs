@@ -64,6 +64,10 @@ module MemFs
       def ino
         @ino ||= rand(1000)
       end
+
+      def blksize
+        4096
+      end
     end
   end
 end
