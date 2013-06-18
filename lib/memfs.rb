@@ -26,6 +26,7 @@ module MemFs
   require 'memfs/file_system'
   require 'memfs/dir'
   require 'memfs/file'
+  require 'memfs/file/stat'
 
   # Calls the given block with MemFs activated.
   #
