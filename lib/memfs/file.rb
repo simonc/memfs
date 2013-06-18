@@ -24,10 +24,48 @@ module MemFs
                    :dirname,
                    :path
 
+    def self.atime(path)
+      stat(path).atime
+    end
+
     def self.chmod(mode_int, *paths)
       paths.each do |path|
         fs.chmod mode_int, path
       end
+    end
+
+    def self.chown(uid, gid, *paths)
+      paths.each do |path|
+        fs.chown(uid, gid, path)
+      end
+      paths.size
+    end
+
+    def self.directory?(path)
+      fs.directory? path
+    end
+
+    def self.exists?(path)
+      not fs.find(path).nil?
+    end
+    class << self; alias :exist? :exists?; end
+
+    def self.expand_path(file_name, dir_string = fs.pwd)
+      OriginalFile.expand_path(file_name, dir_string)
+    end
+
+    def self.file?(path)
+      fs.find(path).is_a?(Fake::File)
+    end
+
+    def self.identical?(path1, path2)
+      fs.find!(path1).dereferenced === fs.find!(path2).dereferenced
+    rescue Errno::ENOENT
+      false
+    end
+
+    def self.join(*args)
+      original_file_class.join(*args)
     end
 
     def self.lchmod(mode_int, *file_names)
@@ -36,55 +74,21 @@ module MemFs
       end
     end
 
-    def self.directory?(path)
-      fs.directory? path
+    def self.lchown(uid, gid, *paths)
+      chown uid, gid, *paths
     end
 
-    def self.utime(atime, mtime, *file_names)
-      file_names.each do |file_name|
-        fs.find!(file_name).atime = atime
-        fs.find!(file_name).mtime = mtime
-      end
-      file_names.size
-    end
-
-    def self.symlink(old_name, new_name)
-      fs.symlink old_name, new_name
+    def self.link(old_name, new_name)
+      fs.link old_name, new_name
       SUCCESS
-    end
-
-    def self.symlink?(path)
-      fs.symlink? path
-    end
-
-    def self.stat(path)
-      Stat.new(path, true)
     end
 
     def self.lstat(path)
       Stat.new(path)
     end
 
-    def self.umask(integer = nil)
-      old_value = @umask
-
-      if integer
-        @umask = integer
-      end
-
-      old_value
-    end
-
-    def self.atime(path)
-      stat(path).atime
-    end
-
     def self.mtime(path)
       stat(path).mtime
-    end
-
-    def self.reset!
-      @umask = original_file_class.umask
     end
 
     def self.open(filename, mode = RDONLY, *perm_and_opt)
@@ -99,31 +103,6 @@ module MemFs
       file.close if file && block_given?
     end
 
-    def self.join(*args)
-      original_file_class.join(*args)
-    end
-
-    def self.chown(uid, gid, *paths)
-      paths.each do |path|
-        fs.chown(uid, gid, path)
-      end
-      paths.size
-    end
-
-    def self.lchown(uid, gid, *paths)
-      chown uid, gid, *paths
-    end
-
-    def self.size(path)
-      fs.find!(path).content.size
-    end
-
-    def self.identical?(path1, path2)
-      fs.find!(path1).dereferenced === fs.find!(path2).dereferenced
-    rescue Errno::ENOENT
-      false
-    end
-
     def self.read(path, length = nil, offset = 0, mode: RDONLY, encoding: nil, open_args: nil)
       open_args ||= [mode, encoding: encoding]
 
@@ -134,18 +113,44 @@ module MemFs
       file.close if file
     end
 
-    def self.expand_path(file_name, dir_string = fs.pwd)
-      OriginalFile.expand_path(file_name, dir_string)
+    def self.readlink(path)
+      fs.find!(path).target
     end
 
-    def self.exists?(path)
-      not fs.find(path).nil?
-    end
-    class << self; alias :exist? :exists?; end
-
-    def self.link(old_name, new_name)
-      fs.link old_name, new_name
+    def self.rename(old_name, new_name)
+      fs.rename(old_name, new_name)
       SUCCESS
+    end
+
+    def self.reset!
+      @umask = original_file_class.umask
+    end
+
+    def self.size(path)
+      fs.find!(path).content.size
+    end
+
+    def self.stat(path)
+      Stat.new(path, true)
+    end
+
+    def self.symlink(old_name, new_name)
+      fs.symlink old_name, new_name
+      SUCCESS
+    end
+
+    def self.symlink?(path)
+      fs.symlink? path
+    end
+
+    def self.umask(integer = nil)
+      old_value = @umask
+
+      if integer
+        @umask = integer
+      end
+
+      old_value
     end
 
     def self.unlink(*paths)
@@ -156,17 +161,12 @@ module MemFs
     end
     class << self; alias :delete :unlink; end
 
-    def self.rename(old_name, new_name)
-      fs.rename(old_name, new_name)
-      SUCCESS
-    end
-
-    def self.file?(path)
-      fs.find(path).is_a?(Fake::File)
-    end
-
-    def self.readlink(path)
-      fs.find!(path).target
+    def self.utime(atime, mtime, *file_names)
+      file_names.each do |file_name|
+        fs.find!(file_name).atime = atime
+        fs.find!(file_name).mtime = mtime
+      end
+      file_names.size
     end
 
     attr_accessor :closed
