@@ -29,12 +29,12 @@ module MemFs
         File.symlink? entry.path
       end
 
-      def blksize
-        4096
+      def file?
+        File.file? entry.path
       end
 
-      def file?
-        entry.is_a?(Fake::File)
+      def blksize
+        4096
       end
 
       def world_writable?
