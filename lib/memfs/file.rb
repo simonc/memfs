@@ -20,6 +20,8 @@ module MemFs
     SUCCESS = 0
 
     def_delegator :original_file_class, :path
+    def_delegator :original_file_class, :basename
+    def_delegator :original_file_class, :dirname
 
     def self.chmod(mode_int, *paths)
       paths.each do |path|
@@ -135,18 +137,10 @@ module MemFs
       OriginalFile.expand_path(file_name, dir_string)
     end
 
-    def self.basename(file_name, suffix = '')
-      OriginalFile.basename(file_name, suffix)
-    end
-
     def self.exists?(path)
       not fs.find(path).nil?
     end
     class << self; alias :exist? :exists?; end
-
-    def self.dirname(file_name)
-      OriginalFile.dirname(file_name)
-    end
 
     def self.link(old_name, new_name)
       fs.link old_name, new_name

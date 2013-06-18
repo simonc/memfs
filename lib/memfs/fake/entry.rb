@@ -23,7 +23,7 @@ module MemFs
 
       def initialize(path = nil)
         time = Time.now
-        self.name = MemFs::OriginalFile.basename(path || '')
+        self.name = MemFs::File.basename(path || '')
         self.mode = 0666 - MemFs::File.umask
         self.atime = time
         self.mtime = time
@@ -54,7 +54,7 @@ module MemFs
 
       def path
         parts = [parent && parent.path, name].compact
-        MemFs::OriginalFile.join(parts)
+        MemFs::File.join(parts)
       end
 
       def dev

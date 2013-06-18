@@ -108,11 +108,11 @@ module MemFs
     end
 
     def dirname(path)
-      MemFs::OriginalFile.dirname(path)
+      File.dirname(path)
     end
 
     def basename(path)
-      MemFs::OriginalFile.basename(path)
+      File.basename(path)
     end
 
     def chown(uid, gid, path)
