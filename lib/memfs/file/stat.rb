@@ -7,6 +7,15 @@ module MemFs
 
       attr_reader :entry
 
+      def_delegators :entry,
+                     :atime,
+                     :dev,
+                     :gid,
+                     :ino,
+                     :mode,
+                     :mtime,
+                     :uid
+
       def initialize(path, dereference = false)
         entry = fs.find!(path)
         @entry = dereference ? entry.dereferenced : entry
@@ -18,26 +27,6 @@ module MemFs
 
       def symlink?
         File.symlink? entry.path
-      end
-
-      def mode
-        entry.mode
-      end
-
-      def atime
-        entry.atime
-      end
-
-      def mtime
-        entry.mtime
-      end
-
-      def uid
-        entry.uid
-      end
-
-      def gid
-        entry.gid
       end
 
       def blksize
@@ -54,14 +43,6 @@ module MemFs
 
       def sticky?
         !!(entry.mode & Fake::Entry::USTICK).nonzero?
-      end
-
-      def dev
-        entry.dev
-      end
-
-      def ino
-        entry.ino
       end
 
       private
