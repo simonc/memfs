@@ -344,7 +344,7 @@ module MemFs
       end
 
       def file?
-        @entry.is_a?(Fake::File)
+        last_entry.is_a?(Fake::File)
       end
 
       def world_writable?

@@ -147,6 +147,20 @@ module MemFs
         fs.mkdir('/test-dir')
         File.stat('/test-dir').should_not be_file
       end
+
+      context "when the entry is a symlink" do
+        it "returns true if its target is a regular file" do
+          fs.touch('/test-file')
+          fs.symlink('/test-file', '/test-link')
+          expect(File.stat('/test-link')).to be_file
+        end
+
+        it "returns false if its target is not a regular file" do
+          fs.mkdir('/test-dir')
+          fs.symlink('/test-dir', '/test-link')
+          expect(File.stat('/test-link')).not_to be_file
+        end
+      end
     end
 
     describe "#world_writable?" do
