@@ -19,9 +19,10 @@ module MemFs
 
     SUCCESS = 0
 
-    def_delegator :original_file_class, :path
-    def_delegator :original_file_class, :basename
-    def_delegator :original_file_class, :dirname
+    def_delegators :original_file_class,
+                   :basename,
+                   :dirname,
+                   :path
 
     def self.chmod(mode_int, *paths)
       paths.each do |path|
