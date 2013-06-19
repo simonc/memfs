@@ -1,8 +1,11 @@
 require 'forwardable'
+require 'memfs/filesystem_access'
 
 module MemFs
   class File
+    extend FilesystemAccess
     extend SingleForwardable
+    include FilesystemAccess
 
     OriginalFile.constants.grep(/^[A-Z_]+$/).each do |const|
       const_set const, OriginalFile.const_get(const)
@@ -261,14 +264,6 @@ module MemFs
 
     def self.original_file_class
       MemFs::OriginalFile
-    end
-
-    def self.fs
-      FileSystem.instance
-    end
-
-    def fs
-      FileSystem.instance
     end
 
     def str_to_mode_int(mode)

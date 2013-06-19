@@ -1,5 +1,9 @@
+require 'memfs/filesystem_access'
+
 module MemFs
   class Dir
+    extend FilesystemAccess
+
     def self.chdir(path, &block)
       fs.chdir path, &block
       return 0
@@ -27,12 +31,6 @@ module MemFs
 
     class << self
       alias :pwd :getwd
-    end
-
-    private
-
-    def self.fs
-      FileSystem.instance
     end
   end
 end

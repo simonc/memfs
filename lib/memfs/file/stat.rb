@@ -1,9 +1,11 @@
 require 'forwardable'
+require 'memfs/filesystem_access'
 
 module MemFs
   class File
     class Stat
       extend Forwardable
+      include FilesystemAccess
 
       attr_reader :entry
 
@@ -18,7 +20,7 @@ module MemFs
                      :uid
 
       def initialize(path, dereference = false)
-        entry = FileSystem.instance.find!(path)
+        entry = fs.find!(path)
         @entry = dereference ? entry.dereferenced : entry
       end
 
