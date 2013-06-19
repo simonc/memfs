@@ -2,7 +2,6 @@ require 'spec_helper'
 
 module MemFs
   describe File do
-    let(:fs) { FileSystem.instance }
     let(:random_string) { ('a'..'z').to_a.sample(10).join }
 
     describe '.chmod' do

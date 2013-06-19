@@ -6,3 +6,7 @@ RSpec.configure do |config|
     MemFs::FileSystem.instance.clear!
   end
 end
+
+def fs
+  MemFs::FileSystem.instance
+end

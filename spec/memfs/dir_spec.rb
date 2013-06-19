@@ -2,8 +2,6 @@ require 'spec_helper'
 
 module MemFs
   describe Dir do
-    let(:fs) { MemFs::FileSystem.instance }
-
     before :each do
       Dir.mkdir '/'
       Dir.mkdir '/test'

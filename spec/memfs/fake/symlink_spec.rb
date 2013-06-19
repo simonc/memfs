@@ -3,8 +3,6 @@ require 'spec_helper'
 module MemFs
   module Fake
     describe Symlink do
-      let(:fs) { FileSystem.instance }
-
       describe '#target' do
         it "returns the target of the symlink" do
           s = Symlink.new('/test-link', '/test-file')

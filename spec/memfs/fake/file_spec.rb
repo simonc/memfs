@@ -4,7 +4,6 @@ module MemFs
   module Fake
     describe File do
       let(:file) { fs.find!('/test-file') }
-      let(:fs) { FileSystem.instance }
 
       before do
         fs.touch('/test-file')

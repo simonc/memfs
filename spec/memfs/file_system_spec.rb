@@ -2,8 +2,6 @@ require 'spec_helper'
 
 module MemFs
   describe FileSystem do
-    let(:fs) { FileSystem.instance }
-
     describe '#new' do
       it "creates the root directory" do
         fs.find!('/').should be(fs.root)

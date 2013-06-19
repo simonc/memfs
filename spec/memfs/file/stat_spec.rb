@@ -2,8 +2,6 @@ require 'spec_helper'
 
 module MemFs
   describe File::Stat do
-    let(:fs) { FileSystem.instance }
-
     describe '.new' do
       context "when optional follow_symlink argument is set to true" do
         it "raises an error if the end-of-links-chain target doesn't exist" do

@@ -3,8 +3,6 @@ require 'fileutils'
 require 'spec_helper'
 
 describe FileUtils do
-  let(:fs) { MemFs::FileSystem.instance }
-
   before :each do
     MemFs.activate!
 

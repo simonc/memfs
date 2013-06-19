@@ -3,7 +3,6 @@ require 'spec_helper'
 module MemFs
   module Fake
     describe Directory do
-      let(:fs) { FsFake::FileSystem.instance }
       let(:directory) { Directory.new('/test') }
 
       describe '.new' do
