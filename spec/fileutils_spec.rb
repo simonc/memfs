@@ -13,6 +13,12 @@ describe FileUtils do
     MemFs.deactivate!
   end
 
+  shared_examples 'aliased method' do |method, original_method|
+    it "is an alias for ##{original_method}" do
+      FileUtils.method(method).should == FileUtils.method(original_method)
+    end
+  end
+
   describe '.cd' do
     it "changes the current working directory" do
       FileUtils.cd '/test'
@@ -233,9 +239,7 @@ describe FileUtils do
   end
 
   describe '.cmp' do
-    it "is an alias for #compare_file" do
-      FileUtils.method(:cmp).should == FileUtils.method(:compare_file)
-    end
+    it_behaves_like 'aliased method', :cmp, :compare_file
   end
 
   describe '.compare_file' do
@@ -277,9 +281,7 @@ describe FileUtils do
   end
 
   describe '.copy' do
-    it "is an alias for #cp" do
-      FileUtils.method(:copy).should == FileUtils.method(:cp)
-    end
+    it_behaves_like 'aliased method', :copy, :cp
   end
 
   describe '.copy_entry' do
@@ -450,15 +452,11 @@ describe FileUtils do
   end
 
   describe '.getwd' do
-    it "is an alias for #pwd" do
-      FileUtils.method(:getwd).should == FileUtils.method(:pwd)
-    end
+    it_behaves_like 'aliased method', :getwd, :pwd
   end
 
   describe '.identical?' do
-    it "is an alias for #compare_file" do
-      FileUtils.method(:identical?).should == FileUtils.method(:compare_file)
-    end
+    it_behaves_like 'aliased method', :identical?, :compare_file
   end
 
   describe '.install' do
@@ -503,9 +501,7 @@ describe FileUtils do
   end
 
   describe '.link' do
-    it "is an alias for #ln" do
-      FileUtils.method(:link).should == FileUtils.method(:ln)
-    end
+    it_behaves_like 'aliased method', :link, :ln
   end
 
   describe '.ln' do
@@ -642,9 +638,7 @@ describe FileUtils do
   end
 
   describe '.makedirs' do
-    it "is an alias for #mkdir_p" do
-      FileUtils.method(:makedirs).should == FileUtils.method(:mkdir_p)
-    end
+    it_behaves_like 'aliased method', :makedirs, :mkdir_p
   end
 
   describe '.mkdir' do
@@ -686,15 +680,11 @@ describe FileUtils do
   end
 
   describe '.mkpath' do
-    it "is an alias for #mkdir_p" do
-      FileUtils.method(:mkpath).should == FileUtils.method(:mkdir_p)
-    end
+    it_behaves_like 'aliased method', :mkpath, :mkdir_p
   end
 
   describe '.move' do
-    it "is an alias for #mv" do
-      FileUtils.method(:move).should == FileUtils.method(:mv)
-    end
+    it_behaves_like 'aliased method', :move, :mv
   end
 
   describe '.mv' do
@@ -739,9 +729,7 @@ describe FileUtils do
   end
 
   describe '.remove' do
-    it "is an alias for #rm" do
-      FileUtils.method(:remove).should == FileUtils.method(:rm)
-    end
+    it_behaves_like 'aliased method', :remove, :rm
   end
 
   describe '.remove_dir' do
@@ -930,21 +918,15 @@ describe FileUtils do
   end
 
   describe '.rmtree' do
-    it "is an alias for #rm_rf" do
-      FileUtils.method(:rmtree).should == FileUtils.method(:rm_rf)
-    end
+    it_behaves_like 'aliased method', :rmtree, :rm_rf
   end
 
   describe '.safe_unlink' do
-    it "is an alias for #rm_f" do
-      FileUtils.method(:safe_unlink).should == FileUtils.method(:rm_f)
-    end
+    it_behaves_like 'aliased method', :safe_unlink, :rm_f
   end
 
   describe '.symlink' do
-    it "is an alias for #ln_s" do
-      FileUtils.method(:symlink).should == FileUtils.method(:ln_s)
-    end
+    it_behaves_like 'aliased method', :symlink, :ln_s
   end
 
   describe '.touch' do
