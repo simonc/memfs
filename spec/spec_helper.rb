@@ -1,4 +1,7 @@
+require 'coveralls'
 require 'memfs'
+
+Coveralls.wear!
 
 RSpec.configure do |config|
   config.before :each do
