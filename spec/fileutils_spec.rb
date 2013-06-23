@@ -292,8 +292,8 @@ describe FileUtils do
     end
 
     it "preserves file types" do
-      fs.touch('/test-file')
-      fs.symlink('/test-file', '/test-link')
+      FileUtils.touch('/test-file')
+      FileUtils.symlink('/test-file', '/test-link')
       FileUtils.copy_entry('/test-link', '/test-copy')
       expect(File.symlink?('/test-copy')).to be_true
     end
@@ -310,9 +310,9 @@ describe FileUtils do
       let(:time) { Date.parse('2013-01-01') }
 
       before :each do
-        fs.touch('/test-file')
-        fs.chown(1042, 1042, '/test-file')
-        fs.chmod(0777, '/test-file')
+        FileUtils.touch('/test-file')
+        FileUtils.chown(1042, 1042, '/test-file')
+        FileUtils.chmod(0777, '/test-file')
         fs.find('/test-file').mtime = time
         FileUtils.copy_entry('/test-file', '/test-copy', true)
       end
@@ -337,7 +337,7 @@ describe FileUtils do
     context "when +dest+ already exists" do
       it "overwrite it" do
         File.open('/test-file', 'w') { |f| f.puts 'test' }
-        fs.touch('/test-copy')
+        FileUtils.touch('/test-copy')
         FileUtils.copy_entry('/test-file', '/test-copy')
         expect(File.read('/test-copy')).to eq("test\n")
       end
@@ -345,8 +345,7 @@ describe FileUtils do
 
     context "when +remove_destination+ is true" do
       it "removes each destination file before copy" do
-        fs.touch('/test-file')
-        fs.touch('/test-copy')
+        FileUtils.touch(['/test-file', '/test-copy'])
         File.should_receive(:unlink).with('/test-copy')
         FileUtils.copy_entry('/test-file', '/test-copy', false, false, true)
       end
@@ -400,8 +399,7 @@ describe FileUtils do
     context "when src is a list of files" do
       context "when +dest+ is not a directory" do
         it "raises an error" do
-          FileUtils.touch('/dest')
-          FileUtils.touch('/test-file2')
+          FileUtils.touch(['/dest', '/test-file2'])
           expect { FileUtils.cp(['/test-file', '/test-file2'], '/dest') }.to raise_error(Errno::ENOTDIR)
         end
       end
@@ -428,9 +426,8 @@ describe FileUtils do
 
     context "when +dest+ is a directory" do
       it "copies +src+ to +dest/src+" do
-        FileUtils.mkdir('/test/dir')
+        FileUtils.mkdir(['/test/dir', '/dest'])
         FileUtils.touch('/test/dir/file')
-        FileUtils.mkdir('/dest')
 
         FileUtils.cp_r('/test', '/dest')
         File.exists?('/dest/test/dir/file').should be_true
@@ -439,11 +436,8 @@ describe FileUtils do
 
     context "when +src+ is a list of files" do
       it "copies each of them in +dest+" do
-        FileUtils.mkdir('/test/dir')
-        FileUtils.touch('/test/dir/file')
-        FileUtils.mkdir('/test/dir2')
-        FileUtils.touch('/test/dir2/file')
-        FileUtils.mkdir('/dest')
+        FileUtils.mkdir(['/test/dir', '/test/dir2', '/dest'])
+        FileUtils.touch(['/test/dir/file', '/test/dir2/file'])
 
         FileUtils.cp_r(['/test/dir', '/test/dir2'], '/dest')
         File.exists?('/dest/dir2/file').should be_true
@@ -492,7 +486,7 @@ describe FileUtils do
 
       context "and +dest+ is a directory" do
         it "installs +src+ in dest/src" do
-          fs.mkdir('/test-dir')
+          FileUtils.mkdir('/test-dir')
           FileUtils.install('/test-file', '/test-dir')
           expect(File.read('/test-dir/test-file')).to eq("test\n")
         end
@@ -786,14 +780,14 @@ describe FileUtils do
 
       context "and is word writable" do
         it "calls chown(2) on it" do
-          fs.chmod(01777, '/')
+          FileUtils.chmod(01777, '/')
           directory = fs.find('/test-dir')
           directory.should_receive(:uid=).at_least(:once)
           FileUtils.remove_entry_secure('/test-dir')
         end
 
         it "calls chmod(2) on all sub directories" do
-          fs.chmod(01777, '/')
+          FileUtils.chmod(01777, '/')
           directory = fs.find('/test-dir')
           directory.should_receive(:mode=).at_least(:once)
           FileUtils.remove_entry_secure('/test-dir')
@@ -804,7 +798,7 @@ describe FileUtils do
 
   describe '.remove_file' do
     it "removes a file path" do
-      fs.touch('/test-file')
+      FileUtils.touch('/test-file')
       FileUtils.remove_file('/test-file')
       expect(File.exists?('/test-file')).to be_false
     end
@@ -818,25 +812,25 @@ describe FileUtils do
 
   describe '.rm' do
     it "removes the specified file" do
-      fs.touch('/test-file')
+      FileUtils.touch('/test-file')
       FileUtils.rm('/test-file')
       expect(File.exists?('/test-file')).to be_false
     end
 
     it "removes files specified in list" do
-      fs.touch('/test-file', '/test-file2')
+      FileUtils.touch(['/test-file', '/test-file2'])
       FileUtils.rm(['/test-file', '/test-file2'])
       expect(File.exists?('/test-file2')).to be_false
     end
 
     it "cannot remove a directory" do
-      fs.mkdir('/test-dir')
+      FileUtils.mkdir('/test-dir')
       expect { FileUtils.rm('/test-dir') }.to raise_error(Errno::EPERM)
     end
 
     context "when +:force+ is set" do
       it "ignores StandardError" do
-        fs.mkdir('/test-dir')
+        FileUtils.mkdir('/test-dir')
         expect {
           FileUtils.rm('/test-dir', force: true)
         }.not_to raise_error(Errno::EPERM)
@@ -853,7 +847,7 @@ describe FileUtils do
 
   describe '.rm_r' do
     before :each do
-      fs.touch('/test-file', '/test-file2')
+      FileUtils.touch(['/test-file', '/test-file2'])
     end
 
     it "removes a list of files" do
@@ -863,8 +857,8 @@ describe FileUtils do
 
     context "when an item of the list is a directory" do
       it "removes all its contents recursively" do
-        fs.mkdir('/test-dir')
-        fs.touch('/test-dir/test-file')
+        FileUtils.mkdir('/test-dir')
+        FileUtils.touch('/test-dir/test-file')
         FileUtils.rm_r(['/test-file', '/test-file2', '/test-dir'])
         expect(File.exists?('/test-dir/test-file')).to be_false
       end
@@ -888,22 +882,22 @@ describe FileUtils do
 
   describe '.rmdir' do
     it "Removes a directory" do
-      fs.mkdir('/test-dir')
+      FileUtils.mkdir('/test-dir')
       FileUtils.rmdir('/test-dir')
       expect(Dir.exists?('/test-dir')).to be_false
     end
 
     it "Removes a list of directories" do
-      fs.mkdir('/test-dir')
-      fs.mkdir('/test-dir2')
+      FileUtils.mkdir('/test-dir')
+      FileUtils.mkdir('/test-dir2')
       FileUtils.rmdir(['/test-dir', '/test-dir2'])
       expect(Dir.exists?('/test-dir2')).to be_false
     end
 
     context "when a directory is not empty" do
       before :each do
-        fs.mkdir('/test-dir')
-        fs.touch('/test-dir/test-file')
+        FileUtils.mkdir('/test-dir')
+        FileUtils.touch('/test-dir/test-file')
       end
 
       it "ignores errors" do
@@ -943,8 +937,8 @@ describe FileUtils do
 
   describe '.uptodate?' do
     before :each do
-      fs.touch('/test-file')
-      fs.touch('/old-file')
+      FileUtils.touch('/test-file')
+      FileUtils.touch('/old-file')
       fs.find!('/old-file').mtime = Time.now - 3600
     end
 
