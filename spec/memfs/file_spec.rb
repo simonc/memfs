@@ -214,28 +214,28 @@ module MemFs
       end
     end
 
-    # describe '.mtime' do
-    #   it "returns the last modification time for the named file as a Time object" do
-    #     fs.touch('/test-file')
-    #     File.mtime('/test-file').should be_a(Time)
-    #   end
-    # 
-    #   it "raises an error if the entry doesn't exist" do
-    #     expect { File.mtime('/test-file') }.to raise_error(Errno::ENOENT)
-    #   end
-    # 
-    #   context "when the entry is a symlink" do
-    #     let(:time) { Time.now - 500000 }
-    # 
-    #     it "returns the last modification time of the last target of the link chain" do
-    #       fs.touch('/test-file')
-    #       fs.find!('/test-file').mtime = time
-    #       File.symlink('/test-file', '/test-link')
-    #       File.symlink('/test-link', '/test-link2')
-    #       File.mtime('/test-link2').should == time
-    #     end
-    #   end
-    # end
+    describe '.mtime' do
+      it "returns the last modification time for the named file as a Time object" do
+        fs.touch('/test-file')
+        File.mtime('/test-file').should be_a(Time)
+      end
+
+      it "raises an error if the entry doesn't exist" do
+        expect { File.mtime('/test-file') }.to raise_error(Errno::ENOENT)
+      end
+
+      context "when the entry is a symlink" do
+        let(:time) { Time.now - 500000 }
+
+        it "returns the last modification time of the last target of the link chain" do
+          fs.touch('/test-file')
+          fs.find!('/test-file').mtime = time
+          File.symlink('/test-file', '/test-link')
+          File.symlink('/test-link', '/test-link2')
+          File.mtime('/test-link2').should == time
+        end
+      end
+    end
 
     describe '.open' do
       it "creates the file when called with mode a" do
