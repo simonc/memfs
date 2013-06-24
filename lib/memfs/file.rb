@@ -257,6 +257,10 @@ module MemFs
     end
 
     def write(string)
+      unless writable?
+        raise IOError, 'not opened for writing'
+      end
+
       content.write(string.to_s)
     end
 

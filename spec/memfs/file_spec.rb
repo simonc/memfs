@@ -570,7 +570,7 @@ module MemFs
       context "when the file is not opened for writing" do
         it "raises an exception" do
           file = File.open('/test-file')
-          expect { file.write('test') }.to raise_error
+          expect { file.write('test') }.to raise_error(IOError)
           file.close
         end
       end
