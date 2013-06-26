@@ -89,18 +89,18 @@ module MemFs
 
       describe '#directory?' do
         it "returns true if an entry is a directory" do
-          fs.directory?('/test').should be_true
+          expect(fs.directory?('/test')).to be_true
         end
 
         it "returns false if an entry is not a directory" do
           fs.touch('/some-file')
-          fs.directory?('/some-file').should be_false
+          expect(fs.directory?('/some-file')).to be_false
         end
       end
 
       describe '#find_directory!' do
         it "returns the named directory" do
-          fs.find_directory!('/test').should be_a(Fake::Directory)
+          expect(fs.find_directory!('/test')).to be_a(Fake::Directory)
         end
 
         it "raises an error if the named entry is not a directory" do
@@ -113,7 +113,7 @@ module MemFs
     describe '#mkdir' do
       it "creates a directory" do
         fs.mkdir '/test'
-        fs.find!('/test').should be_a(Fake::Directory)
+        expect(fs.find!('/test')).to be_a(Fake::Directory)
       end
 
       context "when a relative path is given" do
@@ -121,7 +121,7 @@ module MemFs
           fs.mkdir '/test'
           fs.chdir '/test'
           fs.mkdir 'test-dir'
-          fs.find!('/test/test-dir').should be_a(Fake::Directory)
+          expect(fs.find!('/test/test-dir')).to be_a(Fake::Directory)
         end
       end
     end
@@ -137,12 +137,12 @@ module MemFs
     describe '#touch' do
       it "creates a regular file" do
         fs.touch '/some-file'
-        fs.find!('/some-file').should be_a(Fake::File)
+        expect(fs.find!('/some-file')).to be_a(Fake::File)
       end
 
       it "creates a regular file for each named filed" do
         fs.touch '/some-file', '/some-file2'
-        fs.find!('/some-file2').should be_a(Fake::File)
+        expect(fs.find!('/some-file2')).to be_a(Fake::File)
       end
 
       it "creates an entry only if it doesn't exist" do
@@ -191,7 +191,7 @@ module MemFs
     describe '#symlink' do
       it "creates a symbolic link" do
         fs.symlink('/some-file', '/some-link')
-        fs.find!('/some-link').should be_a(Fake::Symlink)
+        expect(fs.find!('/some-link')).to be_a(Fake::Symlink)
       end
 
       context "when +new_name+ already exists" do
@@ -206,16 +206,16 @@ module MemFs
     describe '#symlink?' do
       it "returns true if the entry is a symlink" do
         fs.symlink('/test-file', '/test-link')
-        fs.symlink?('/test-link').should be_true
+        expect(fs.symlink?('/test-link')).to be_true
       end
 
       it "returns false if the entry is not a symlink" do
         fs.touch('/test-file')
-        fs.symlink?('/test-file').should be_false
+        expect(fs.symlink?('/test-file')).to be_false
       end
 
       it "returns false if the entry doesn't exist" do
-        fs.symlink?('/test-file').should be_false
+        expect(fs.symlink?('/test-file')).to be_false
       end
     end
 
@@ -230,7 +230,7 @@ module MemFs
     describe '#find_parent!' do
       it "returns the parent directory of the named entry" do
         fs.mkdir '/test'
-        fs.find_parent!('/test/test-file').should be_a(Fake::Directory)
+        expect(fs.find_parent!('/test/test-file')).to be_a(Fake::Directory)
       end
 
       it "raises an error if the parent directory does not exist" do
@@ -325,7 +325,7 @@ module MemFs
 
       it "does not create a symbolic link" do
         fs.link('/some-file', '/some-link')
-        fs.find!('/some-link').should_not be_a(Fake::Symlink)
+        expect(fs.find!('/some-link')).not_to be_a(Fake::Symlink)
       end
 
       context "when +new_name+ already exists" do
@@ -340,7 +340,7 @@ module MemFs
       it "deletes the named file" do
         fs.touch('/some-file')
         fs.unlink('/some-file')
-        fs.find('/some-file').should be_nil
+        expect(fs.find('/some-file')).to be_nil
       end
 
       context "when the entry is a directory" do

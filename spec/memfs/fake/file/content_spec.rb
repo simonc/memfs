@@ -76,7 +76,7 @@ module MemFs
           context "when there is nothing else to read" do
             it "returns nil" do
               subject.read(4)
-              subject.read(1).should be_nil
+              expect(subject.read(1)).to be_nil
             end
           end
 

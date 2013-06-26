@@ -26,7 +26,7 @@ describe FileUtils do
     end
 
     it "returns nil" do
-      FileUtils.cd('/test').should be_nil
+      expect(FileUtils.cd('/test')).to be_nil
     end
 
     it "raises an error when the given path doesn't exist" do
@@ -247,14 +247,14 @@ describe FileUtils do
       File.open('/test-file', 'w')  { |f| f.puts "this is a test" }
       File.open('/test-file2', 'w') { |f| f.puts "this is a test" }
 
-      FileUtils.compare_file('/test-file', '/test-file2').should be_true
+      expect(FileUtils.compare_file('/test-file', '/test-file2')).to be_true
     end
 
     it "returns false if the contents of a file A and a file B are not identical" do
       File.open('/test-file', 'w')  { |f| f.puts "this is a test" }
       File.open('/test-file2', 'w') { |f| f.puts "this is not a test" }
 
-      FileUtils.compare_file('/test-file', '/test-file2').should be_false
+      expect(FileUtils.compare_file('/test-file', '/test-file2')).to be_false
     end
   end
 
@@ -266,7 +266,7 @@ describe FileUtils do
       file1 = File.open('/test-file')
       file2 = File.open('/test-file2')
 
-      FileUtils.compare_stream(file1, file2).should be_true
+      expect(FileUtils.compare_stream(file1, file2)).to be_true
     end
 
     it "returns false if the contents of a stream A and stream B are not identical" do
@@ -276,7 +276,7 @@ describe FileUtils do
       file1 = File.open('/test-file')
       file2 = File.open('/test-file2')
 
-      FileUtils.compare_stream(file1, file2).should be_false
+      expect(FileUtils.compare_stream(file1, file2)).to be_false
     end
   end
 
@@ -420,7 +420,7 @@ describe FileUtils do
         FileUtils.touch('/test/dir/file')
 
         FileUtils.cp_r('/test', '/dest')
-        File.exists?('/dest/dir/file').should be_true
+        expect(File.exists?('/dest/dir/file')).to be_true
       end
     end
 
@@ -430,7 +430,7 @@ describe FileUtils do
         FileUtils.touch('/test/dir/file')
 
         FileUtils.cp_r('/test', '/dest')
-        File.exists?('/dest/test/dir/file').should be_true
+        expect(File.exists?('/dest/test/dir/file')).to be_true
       end
     end
 
@@ -440,7 +440,7 @@ describe FileUtils do
         FileUtils.touch(['/test/dir/file', '/test/dir2/file'])
 
         FileUtils.cp_r(['/test/dir', '/test/dir2'], '/dest')
-        File.exists?('/dest/dir2/file').should be_true
+        expect(File.exists?('/dest/dir2/file')).to be_true
       end
     end
   end
@@ -510,7 +510,7 @@ describe FileUtils do
 
     it "creates a hard link, not a symlink" do
       FileUtils.ln('/test-file', '/test-file2')
-      File.symlink?('/test-file2').should be_false
+      expect(File.symlink?('/test-file2')).to be_false
     end
 
     context "when +dest+ already exists" do
@@ -565,7 +565,7 @@ describe FileUtils do
 
     it "creates a symbolic link +new+" do
       FileUtils.ln_s('/test-file', '/test-link')
-      File.symlink?('/test-link').should be_true
+      expect(File.symlink?('/test-link')).to be_true
     end
 
     it "creates a symbolic link which points to +old+" do
@@ -577,7 +577,7 @@ describe FileUtils do
       context "and it is a directory" do
         it "creates a symbolic link +new/old+" do
           FileUtils.ln_s('/test-file', '/test-dir')
-          File.symlink?('/test-dir/test-file').should be_true
+          expect(File.symlink?('/test-dir/test-file')).to be_true
         end
       end
 
@@ -591,7 +591,7 @@ describe FileUtils do
         context "and +:force+ is set" do
           it "overwrites +new+" do
             FileUtils.ln_s('/test-file', '/not-a-dir', force: true)
-            File.symlink?('/not-a-dir').should be_true
+            expect(File.symlink?('/not-a-dir')).to be_true
           end
         end
       end
@@ -604,7 +604,7 @@ describe FileUtils do
 
       it "creates several symbolic links in +destdir+" do
         FileUtils.ln_s(['/test-file', '/test-file2'], '/test-dir')
-        File.exists?('/test-dir/test-file2').should be_true
+        expect(File.exists?('/test-dir/test-file2')).to be_true
       end
 
       it "creates symbolic links pointing to each item in the list" do
@@ -926,12 +926,12 @@ describe FileUtils do
   describe '.touch' do
     it "creates a file if it doesn't exist" do
       FileUtils.touch('/test-file')
-      fs.find('/test-file').should_not be_nil
+      expect(fs.find('/test-file')).not_to be_nil
     end
 
     it "creates a list of files if they don't exist" do
       FileUtils.touch(['/test-file', '/test-file2'])
-      fs.find('/test-file2').should_not be_nil
+      expect(fs.find('/test-file2')).not_to be_nil
     end
   end
 

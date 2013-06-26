@@ -83,11 +83,11 @@ module MemFs
         end
 
         it "sets the access time" do
-          Entry.new.atime.should be_a(Time)
+          expect(Entry.new.atime).to be_a(Time)
         end
 
         it "sets the modification time" do
-          entry.mtime.should be_a(Time)
+          expect(entry.mtime).to be_a(Time)
         end
 
         it "sets atime and mtime to the same value" do

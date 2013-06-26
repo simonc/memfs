@@ -14,7 +14,7 @@ module MemFs
       end
 
       it "returns zero" do
-        Dir.chdir('/test').should be_zero
+        expect(Dir.chdir('/test')).to be_zero
       end
 
       it "raises an error when the folder does not exist" do
@@ -51,7 +51,7 @@ module MemFs
     describe '.mkdir' do
       it "creates a directory" do
         Dir.mkdir '/new-folder'
-        File.directory?('/new-folder').should be_true
+        expect(File.directory?('/new-folder')).to be_true
       end
     end
 

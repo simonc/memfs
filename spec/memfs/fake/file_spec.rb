@@ -16,7 +16,7 @@ module MemFs
 
       describe "#content" do
         it "returns the file content" do
-          file.content.should_not be_nil
+          expect(file.content).not_to be_nil
         end
 
         it "returns an empty string container if the file is empty" do
@@ -27,7 +27,7 @@ module MemFs
       describe "#close" do
         it "sets the file as closed?" do
           file.close
-          file.should be_closed
+          expect(file).to be_closed
         end
       end
     end
