@@ -10,8 +10,8 @@ module MemFs
       end
 
       it "stores the modification made on its content" do
-        file.content << "test"
-        fs.find!('/test-file').content.to_s.should == "test"
+        file.content << 'test'
+        expect(fs.find!('/test-file').content.to_s).to eq('test')
       end
 
       describe "#content" do
@@ -19,8 +19,10 @@ module MemFs
           expect(file.content).not_to be_nil
         end
 
-        it "returns an empty string container if the file is empty" do
-          file.content.to_s.should == ""
+        context "when the file is empty" do
+          it "returns an empty string container" do
+            expect(file.content.to_s).to be_empty
+          end
         end
       end
 
