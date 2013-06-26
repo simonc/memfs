@@ -25,6 +25,7 @@ module MemFs
     def_delegators :original_file_class,
                    :basename,
                    :dirname,
+                   :join,
                    :path
 
     def self.atime(path)
@@ -65,10 +66,6 @@ module MemFs
       fs.find!(path1).dereferenced === fs.find!(path2).dereferenced
     rescue Errno::ENOENT
       false
-    end
-
-    def self.join(*args)
-      original_file_class.join(*args)
     end
 
     def self.lchmod(mode_int, *file_names)
