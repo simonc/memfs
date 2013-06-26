@@ -127,7 +127,7 @@ module MemFs
     end
 
     def self.size(path)
-      fs.find!(path).content.size
+      fs.find!(path).size
     end
 
     def self.stat(path)
@@ -246,7 +246,7 @@ module MemFs
     end
 
     def size
-      content.size
+      entry.size
     end
 
     def stat

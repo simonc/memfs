@@ -19,6 +19,10 @@ module MemFs
       def closed?
         @closed
       end
+
+      def size
+        content.size
+      end
     end
   end
 end
