@@ -54,7 +54,7 @@ module MemFs
     class << self; alias :exist? :exists?; end
 
     def self.expand_path(file_name, dir_string = fs.pwd)
-      OriginalFile.expand_path(file_name, dir_string)
+      original_file_class.expand_path(file_name, dir_string)
     end
 
     def self.file?(path)
