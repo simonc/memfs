@@ -6,36 +6,40 @@ module MemFs
     describe File::Content do
       subject { File::Content.new }
 
-      it "has a string" do
-        subject.to_s.should == ''
+      describe "#<<" do
+        it "writes the given string to the contained string" do
+          subject << 'test'
+          expect(subject.to_s).to eq('test')
+        end
       end
 
       describe "#initialize" do
         context "when no argument is given" do
           it "initialize the contained string to an empty one" do
-            subject.to_s.should == ''
+            expect(subject.to_s).to eq('')
           end
         end
 
         context "when an argument is given" do
+          subject { File::Content.new(base_value) }
+
           context "when the argument is a string" do
-            let(:base_string) { 'test' }
-            subject { File::Content.new(base_string) }
+            let(:base_value) { 'test' }
 
             it "initialize the contained string with the given one" do
-              subject.to_s.should == 'test'
+              expect(subject.to_s).to eq('test')
             end
 
             it "duplicates the original string to prevent modifications on it" do
-              subject.to_s.should_not be(base_string)
+              expect(subject.to_s).not_to be(base_value)
             end
           end
 
           context "when the argument is not a string" do
-            subject { File::Content.new(42) }
+            let(:base_value) { 42 }
 
-            it "initialize the contained string to the result of a call of to_s on the argument" do
-              subject.to_s.should == '42'
+            it "converts it to a string" do
+              expect(subject.to_s).to eq('42')
             end
           end
         end
@@ -43,25 +47,59 @@ module MemFs
 
       describe "#puts" do
         it "appends the given string to the contained string" do
-          subject.puts "test"
-          subject.to_s.should == "test\n"
+          subject.puts 'test'
+          expect(subject.to_s).to eq("test\n")
         end
 
         it "appends all given strings to the contained string" do
           subject.puts 'this', 'is', 'a', 'test'
-          subject.to_s.should == "this\nis\na\ntest\n"
+          expect(subject.to_s).to eq("this\nis\na\ntest\n")
         end
 
-        it "doesn't add any line break if one is already present at the end of the given string" do
-          subject.puts "test\n"
-          subject.to_s.should_not == "test\n\n"
+        context "when a line break is present at the end of the given string" do
+          it "doesn't add any line break" do
+            subject.puts "test\n"
+            expect(subject.to_s).not_to eq("test\n\n")
+          end
         end
       end
 
-      describe "#<<" do
-        it "writes the given string to the contained string" do
-          subject << 'test'
-          subject.to_s.should == 'test'
+      describe "#to_s" do
+        context "when the content is empty" do
+          it "returns an empty string" do
+            expect(subject.to_s).to eq('')
+          end
+        end
+
+        context "when the content is not empty" do
+          it "returns the content's string" do
+            subject << 'test'
+            expect(subject.to_s).to eq('test')
+          end
+        end
+      end
+
+      describe "#write" do
+        it "writes the given string in content" do
+          subject.write 'test'
+          expect(subject.to_s).to eq('test')
+        end
+
+        it "returns the number of bytes written" do
+          expect(subject.write('test')).to eq(4)
+        end
+
+        context "when the argument is not a string" do
+          it "converts it to a string" do
+            subject.write 42
+            expect(subject.to_s).to eq('42')
+          end
+        end
+
+        context "when the argument is a non-ascii string" do
+          it "returns the correct number of bytes written" do
+            expect(subject.write('é')).to eq(1)
+          end
         end
       end
 
@@ -70,55 +108,43 @@ module MemFs
 
         describe "#read" do
           it "reads +length+ bytes from the contained string" do
-            subject.read(2).should == "te"
+            expect(subject.read(2)).to eq('te')
           end
 
           context "when there is nothing else to read" do
             it "returns nil" do
-              subject.read(4)
+              subject.read 4
               expect(subject.read(1)).to be_nil
             end
           end
 
           context "when the optional +buffer+ argument is provided" do
             it "inserts the output in the buffer" do
-              s = String.new
-              subject.read(2, s)
-              s.should == "te"
+              string = String.new
+              subject.read(2, string)
+              expect(string).to eq('te')
             end
           end
         end
 
         describe "#pos" do
-          it "returns 0 when the string has not been read" do
-            subject.pos.should == 0
+          context "when the string has not been read" do
+            it "returns 0" do
+              expect(subject.pos).to eq(0)
+            end
           end
 
-          it "returns the current offset" do
-            subject.read(2)
-            subject.pos.should be(2)
+          context "when the string has been read" do
+            it "returns the current offset" do
+              subject.read 2
+              expect(subject.pos).to eq(2)
+            end
           end
         end
 
         describe "#close" do
-          
-        end
-      end
-
-      describe "#write" do
-        it "writes the given string in content" do
-          subject.write('test')
-          subject.to_s.should == 'test'
-        end
-
-        it "returns the number of bytes written" do
-          subject.write('test').should be(4)
-        end
-
-        context "when the argument is not a string" do
-          it "will be converted to a string using to_s" do
-            subject.write 42
-            subject.to_s.should == '42'
+          it "responds to close" do
+            expect(subject).to respond_to(:close)
           end
         end
       end

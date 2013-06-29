@@ -7,15 +7,14 @@ module MemFs
       class Content < SimpleDelegator
         attr_accessor :pos
 
+        def close
+        end
+
         def initialize(obj = '')
           @string = obj.to_s.dup
           @pos = 0
 
           __setobj__ @string
-        end
-
-        def to_s
-          @string
         end
 
         def puts(*strings)
@@ -32,7 +31,8 @@ module MemFs
           buffer.empty? ? nil : buffer
         end
 
-        def close
+        def to_s
+          @string
         end
 
         def write(string)
