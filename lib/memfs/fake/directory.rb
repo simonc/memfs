@@ -5,14 +5,13 @@ module MemFs
     class Directory < Entry
       attr_accessor :entries
 
-      def initialize(*args)
-        super
-        self.entries = { '.' => self, '..' => nil }
-      end
-
       def add_entry(entry)
         entries[entry.name] = entry
         entry.parent = self
+      end
+
+      def empty?
+        (entries.keys - %w[. ..]).empty?
       end
 
       def entry_names
@@ -30,21 +29,22 @@ module MemFs
         end
       end
 
+      def initialize(*args)
+        super
+        self.entries = { '.' => self, '..' => nil }
+      end
+
       def parent=(parent)
         super
         entries['..'] = parent
-      end
-
-      def remove_entry(entry)
-        entries.delete(entry.name)
       end
 
       def path
         name == '/' ? '/' : super
       end
 
-      def empty?
-        (entries.keys - %w[. ..]).empty?
+      def remove_entry(entry)
+        entries.delete(entry.name)
       end
     end
   end

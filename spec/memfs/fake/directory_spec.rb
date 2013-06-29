@@ -29,6 +29,17 @@ module MemFs
         end
       end
 
+      describe "empty?" do
+        it "returns true if the directory is empty" do
+          expect(directory).to be_empty
+        end
+
+        it "returns false if the directory is not empty" do
+          directory.add_entry Directory.new('test')
+          expect(directory).not_to be_empty
+        end
+      end
+
       describe '#entry_names' do
         it "returns the list of the names of the entries in the directory" do
           3.times do |n|
@@ -75,16 +86,6 @@ module MemFs
         end
       end
 
-      describe "#remove_entry" do
-        let(:file) { File.new('file') }
-
-        it "removes an entry from the entries list" do
-          directory.add_entry file
-          directory.remove_entry file
-          directory.entries.should_not have_value(file)
-        end
-      end
-
       describe "#path" do
         let(:root) { Directory.new('/') }
 
@@ -100,14 +101,13 @@ module MemFs
         end
       end
 
-      describe "empty?" do
-        it "returns true if the directory is empty" do
-          expect(directory).to be_empty
-        end
+      describe "#remove_entry" do
+        let(:file) { File.new('file') }
 
-        it "returns false if the directory is not empty" do
-          directory.add_entry Directory.new('test')
-          expect(directory).not_to be_empty
+        it "removes an entry from the entries list" do
+          directory.add_entry file
+          directory.remove_entry file
+          directory.entries.should_not have_value(file)
         end
       end
     end
