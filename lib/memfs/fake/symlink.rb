@@ -25,7 +25,7 @@ module MemFs
       end
 
       def respond_to_missing?(meth, include_private)
-        dereferenced.respond_to?(meth) || super
+        dereferenced.respond_to?(meth, include_private) || super
       end
     end
   end
