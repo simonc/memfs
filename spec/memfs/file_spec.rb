@@ -332,19 +332,44 @@ module MemFs
       end
     end
 
-    # describe '.new' do
-    #   it "accepts string or integer as mode value"
-    # 
-    #   it "raises an error if no argument is given" do
-    #     expect { File.open }.to raise_error(ArgumentError)
-    #   end
-    # 
-    #   it "raises an error if too many arguments are given" do
-    #     expect { File.open(1,2,3,4) }.to raise_error(ArgumentError)
-    #   end
-    # 
-    #   it "changes the mtime of the file if the mode is w or w+"
-    # end
+    describe '.new' do
+      context "when the mode is provided" do
+        context "and it is an integer" do
+          it "sets the mode to the integer value" do
+            file = File.new('/test-file', File::RDWR)
+            expect(file.opening_mode).to eq(File::RDWR)
+          end
+        end
+
+        context "and it is a string" do
+          it "sets the mode to the integer value" do
+            file = File.new('/test-file', 'r+')
+            expect(file.opening_mode).to eq(File::RDWR)
+          end
+        end
+
+        context "and it specifies that the file must be created" do
+          context "and the file already exists" do
+            it "changes the mtime of the file" do
+              fs.should_receive(:touch).with('/test-file')
+              File.new('/test-file', 'w')
+            end
+          end
+        end
+      end
+
+      context "when no argument is given" do
+        it "raises an exception" do
+          expect { File.new }.to raise_error(ArgumentError)
+        end
+      end
+
+      context "when too many arguments are given" do
+        it "raises an exception" do
+          expect { File.new(1,2,3,4) }.to raise_error(ArgumentError)
+        end
+      end
+    end
 
     describe ".join" do
       it "Returns a new string formed by joining the strings using File::SEPARATOR" do
