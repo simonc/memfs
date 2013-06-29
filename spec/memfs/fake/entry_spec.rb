@@ -5,28 +5,50 @@ module MemFs
     describe Entry do
       let(:entry) { Entry.new('test') }
       let(:parent) { Directory.new('parent') }
+      let(:time) { Time.now - 5000 }
 
       before(:each) do
         parent.parent = Directory.new('/')
         entry.parent = parent
       end
 
-      shared_examples 'it has accessors for' do |attribute, value, expected_value|
-        expected_value ||= value
+      shared_examples 'it has accessors for' do |attribute|
+        let(:expected) { value }
 
         it attribute do
           entry.send(:"#{attribute}=", value)
-          expect(entry.send(attribute)).to eq(expected_value)
+          expect(entry.public_send(attribute)).to eq(expected)
         end
       end
 
-      it_behaves_like 'it has accessors for', :name, 'test'
-      it_behaves_like 'it has accessors for', :atime, Time.now - 5000
-      it_behaves_like 'it has accessors for', :mtime, Time.now - 5000
-      it_behaves_like 'it has accessors for', :uid, 42
-      it_behaves_like 'it has accessors for', :gid, 42
-      it_behaves_like 'it has accessors for', :mode, 0777, 0100777
-      it_behaves_like 'it has accessors for', :parent, Directory.new('/parent')
+      it_behaves_like 'it has accessors for', :name do
+        let(:value) { 'test' }
+      end
+
+      it_behaves_like 'it has accessors for', :atime do
+        let(:value) { time }
+      end
+
+      it_behaves_like 'it has accessors for', :mtime do
+        let(:value) { time }
+      end
+
+      it_behaves_like 'it has accessors for', :uid do
+        let(:value) { 42 }
+      end
+
+      it_behaves_like 'it has accessors for', :gid do
+        let(:value) { 42 }
+      end
+
+      it_behaves_like 'it has accessors for', :mode do
+        let(:value) { 0777 }
+        let(:expected) { 0100777 }
+      end
+
+      it_behaves_like 'it has accessors for', :parent do
+        let(:value) { parent }
+      end
 
       describe ".delete" do
         it "removes the entry from its parent" do
