@@ -13,43 +13,51 @@ module MemFs
       RSTICK = 01000
       USTICK = 05000
 
-      attr_accessor :atime
-      attr_accessor :gid
-      attr_accessor :mtime
-      attr_accessor :name
-      attr_accessor :parent
-      attr_accessor :uid
+      attr_accessor :atime,
+                    :gid,
+                    :mtime,
+                    :name,
+                    :parent,
+                    :uid
       attr_reader :mode
 
-      def initialize(path = nil)
-        time = Time.now
-        self.name = MemFs::File.basename(path || '')
-        self.mode = 0666 - MemFs::File.umask
-        self.atime = time
-        self.mtime = time
-        current_user = Etc.getpwuid
-        self.uid = current_user.uid
-        self.gid = current_user.gid
+      def blksize
+        4096
       end
 
-      def mode=(mode_int)
-        @mode = 0100000 | mode_int
+      def delete
+        parent.remove_entry self
       end
 
       def dereferenced
         self
       end
 
-      def touch
-        self.atime = self.mtime = Time.now
+      def dev
+        @dev ||= rand(1000)
       end
 
       def find(path)
         raise Errno::ENOTDIR, self.path
       end
 
-      def delete
-        parent.remove_entry self
+      def initialize(path = nil)
+        current_user = Etc.getpwuid
+        time = Time.now
+        self.atime = time
+        self.gid = current_user.gid
+        self.mode = 0666 - MemFs::File.umask
+        self.mtime = time
+        self.name = MemFs::File.basename(path || '')
+        self.uid = current_user.uid
+      end
+
+      def ino
+        @ino ||= rand(1000)
+      end
+
+      def mode=(mode_int)
+        @mode = 0100000 | mode_int
       end
 
       def path
@@ -57,16 +65,8 @@ module MemFs
         MemFs::File.join(parts)
       end
 
-      def dev
-        @dev ||= rand(1000)
-      end
-
-      def ino
-        @ino ||= rand(1000)
-      end
-
-      def blksize
-        4096
+      def touch
+        self.atime = self.mtime = Time.now
       end
     end
   end
