@@ -9,6 +9,14 @@ module MemFs
       return 0
     end
 
+    def self.entries(dirname, opts = {})
+      fs.entries(dirname)
+    end
+
+    def self.exists?(path)
+      fs.directory?(path)
+    end
+
     def self.getwd
       fs.getwd
     end
@@ -17,16 +25,8 @@ module MemFs
       fs.mkdir path
     end
 
-    def self.entries(dirname, opts = {})
-      fs.entries(dirname)
-    end
-
     def self.rmdir(path)
       fs.rmdir path
-    end
-
-    def self.exists?(path)
-      fs.directory?(path)
     end
 
     class << self

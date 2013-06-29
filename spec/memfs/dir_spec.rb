@@ -38,44 +38,11 @@ module MemFs
       end
     end
 
-    describe '.getwd' do
-      it "returns the path to the current working directory" do
-        Dir.getwd.should == FileSystem.instance.getwd
-      end
-
-      it "has a pwd alias" do
-        Dir.method(:pwd).should == Dir.method(:getwd)
-      end
-    end
-
-    describe '.mkdir' do
-      it "creates a directory" do
-        Dir.mkdir '/new-folder'
-        expect(File.directory?('/new-folder')).to be_true
-      end
-    end
-
     describe '.entries' do
       it "returns an array containing all of the filenames in the given directory" do
         %w[/test /test/dir1 /test/dir2].each { |dir| Dir.mkdir dir }
         fs.touch '/test/file1', '/test/file2'
         Dir.entries('/test').should == %w[. .. dir1 dir2 file1 file2]
-      end
-    end
-
-    describe ".rmdir" do
-      it "deletes the named directory" do
-        Dir.mkdir('/test-dir')
-        Dir.rmdir('/test-dir')
-        expect(Dir.exists?('/test-dir')).to be_false
-      end
-
-      context "when the directory is not empty" do
-        it "raises an exception" do
-          Dir.mkdir('/test-dir')
-          Dir.mkdir('/test-dir/test-sub-dir')
-          expect { Dir.rmdir('/test-dir') }.to raise_error(Errno::ENOTEMPTY)
-        end
       end
     end
 
@@ -93,6 +60,39 @@ module MemFs
       it "returns false if the given +path+ is not a directory" do
         fs.touch('/test-file')
         expect(Dir.exists?('/test-file')).to be_false
+      end
+    end
+
+    describe '.getwd' do
+      it "returns the path to the current working directory" do
+        Dir.getwd.should == FileSystem.instance.getwd
+      end
+
+      it "has a pwd alias" do
+        Dir.method(:pwd).should == Dir.method(:getwd)
+      end
+    end
+
+    describe '.mkdir' do
+      it "creates a directory" do
+        Dir.mkdir '/new-folder'
+        expect(File.directory?('/new-folder')).to be_true
+      end
+    end
+
+    describe ".rmdir" do
+      it "deletes the named directory" do
+        Dir.mkdir('/test-dir')
+        Dir.rmdir('/test-dir')
+        expect(Dir.exists?('/test-dir')).to be_false
+      end
+
+      context "when the directory is not empty" do
+        it "raises an exception" do
+          Dir.mkdir('/test-dir')
+          Dir.mkdir('/test-dir/test-sub-dir')
+          expect { Dir.rmdir('/test-dir') }.to raise_error(Errno::ENOTEMPTY)
+        end
       end
     end
   end
