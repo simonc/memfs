@@ -215,7 +215,7 @@ module MemFs
     end
 
     def pos
-      content.pos
+      entry.pos
     end
 
     def puts(text)
@@ -233,7 +233,7 @@ module MemFs
 
     def seek(amount, whence = IO::SEEK_SET)
       new_pos = case whence
-      when IO::SEEK_CUR then content.pos + amount
+      when IO::SEEK_CUR then entry.pos + amount
       when IO::SEEK_END then content.to_s.length + amount
       when IO::SEEK_SET then amount
       end
@@ -242,7 +242,7 @@ module MemFs
         raise Errno::EINVAL, path
       end
 
-      content.pos = new_pos and 0
+      entry.pos = new_pos and 0
     end
 
     def size

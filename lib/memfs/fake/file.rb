@@ -20,6 +20,14 @@ module MemFs
         @closed
       end
 
+      def pos
+        content.pos
+      end
+
+      def pos=(value)
+        content.pos = value
+      end
+
       def size
         content.size
       end
