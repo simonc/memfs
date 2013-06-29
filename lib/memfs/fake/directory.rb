@@ -26,7 +26,6 @@ module MemFs
         if entry_names.include?(path)
           entries[path]
         elsif entry_names.include?(parts.first)
-          parts = path.split('/', 2)
           entries[parts.first].find(parts.last)
         end
       end
