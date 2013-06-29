@@ -7,13 +7,13 @@ module MemFs
 
       attr_reader :target
 
+      def dereferenced
+        @dereferenced ||= fs.find!(target).dereferenced
+      end
+
       def initialize(path, target)
         super(path)
         @target = target
-      end
-
-      def dereferenced
-        @dereferenced ||= fs.find!(target).dereferenced
       end
 
       def method_missing(meth, *args, &block)

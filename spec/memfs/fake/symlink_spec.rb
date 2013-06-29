@@ -3,10 +3,11 @@ require 'spec_helper'
 module MemFs
   module Fake
     describe Symlink do
-      describe '#target' do
-        it "returns the target of the symlink" do
+      describe '#content' do
+        it "returns the target's content" do
+          MemFs::File.open('/test-file', 'w') { |f| f.puts "test" }
           s = Symlink.new('/test-link', '/test-file')
-          s.target.should == '/test-file'
+          s.content.should be(s.dereferenced.content)
         end
       end
 
@@ -31,11 +32,10 @@ module MemFs
         end
       end
 
-      describe '#content' do
-        it "returns the target's content" do
-          MemFs::File.open('/test-file', 'w') { |f| f.puts "test" }
+      describe '#target' do
+        it "returns the target of the symlink" do
           s = Symlink.new('/test-link', '/test-file')
-          s.content.should be(s.dereferenced.content)
+          s.target.should == '/test-file'
         end
       end
     end
