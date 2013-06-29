@@ -14,6 +14,13 @@ module MemFs
         expect(fs.find!('/test-file').content.to_s).to eq('test')
       end
 
+      describe "#close" do
+        it "sets the file as closed?" do
+          file.close
+          expect(file).to be_closed
+        end
+      end
+
       describe "#content" do
         it "returns the file content" do
           expect(file.content).not_to be_nil
@@ -23,13 +30,6 @@ module MemFs
           it "returns an empty string container" do
             expect(file.content.to_s).to be_empty
           end
-        end
-      end
-
-      describe "#close" do
-        it "sets the file as closed?" do
-          file.close
-          expect(file).to be_closed
         end
       end
     end

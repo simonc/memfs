@@ -6,18 +6,18 @@ module MemFs
     class File < Entry
       attr_accessor :content
 
-      def initialize(*args)
-        super
-        @content = Content.new
-        @closed = false
-      end
-
       def close
         @closed = true
       end
 
       def closed?
         @closed
+      end
+
+      def initialize(*args)
+        super
+        @content = Content.new
+        @closed = false
       end
 
       def pos
