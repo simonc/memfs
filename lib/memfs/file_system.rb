@@ -11,8 +11,8 @@ module MemFs
     attr_accessor :registred_entries
     attr_accessor :root
 
-    def initialize
-      clear!
+    def basename(path)
+      File.basename(path)
     end
 
     def chdir(path, &block)
@@ -21,19 +21,38 @@ module MemFs
       previous_directory = working_directory
       self.working_directory = destination
 
-      if block
-        block.call
-      end
+      block.call if block
     ensure
       if block
         self.working_directory = previous_directory
       end
     end
 
-    def getwd
-      working_directory.path
+    def clear!
+      self.root = Fake::Directory.new('/')
     end
-    alias :pwd :getwd
+
+    def chmod(mode_int, file_name)
+      find!(file_name).mode = mode_int
+    end
+
+    def chown(uid, gid, path)
+      entry = find!(path).dereferenced
+      entry.uid = uid if uid && uid != -1
+      entry.gid = gid if gid && gid != -1
+    end
+
+    def directory?(path)
+      find(path).is_a?(Fake::Directory)
+    end
+
+    def dirname(path)
+      File.dirname(path)
+    end
+
+    def entries(path)
+      find_directory!(path).entry_names
+    end
 
     def find(path)
       if path == '/'
@@ -49,16 +68,66 @@ module MemFs
       find(path) || raise(Errno::ENOENT, path)
     end
 
+    def find_directory!(path)
+      entry = find!(path).dereferenced
+
+      raise Errno::ENOTDIR, path unless entry.is_a?(Fake::Directory)
+
+      entry
+    end
+
+    def find_parent!(path)
+      parent_path = dirname(path)
+      find_directory!(parent_path)
+    end
+
+    def getwd
+      working_directory.path
+    end
+    alias :pwd :getwd
+
+    def initialize
+      clear!
+    end
+
+    def link(old_name, new_name)
+      file = find!(old_name)
+
+      raise Errno::EEXIST, "(#{old_name}, #{new_name})" if find(new_name)
+
+      link = file.dup
+      link.name = basename(new_name)
+      find_parent!(new_name).add_entry link
+    end
+
     def mkdir(path)
       find_parent!(path).add_entry Fake::Directory.new(path)
     end
 
-    def clear!
-      self.root = Fake::Directory.new('/')
+    def rename(old_name, new_name)
+      file = find!(old_name)
+      file.delete
+
+      file.name = basename(new_name)
+      find_parent!(new_name).add_entry(file)
     end
 
-    def directory?(path)
-      find(path).is_a?(Fake::Directory)
+    def rmdir(path)
+      directory = find!(path)
+
+      raise Errno::ENOTEMPTY, path unless directory.empty?
+
+      directory.delete
+    end
+
+    def symlink(old_name, new_name)
+      raise Errno::EEXIST, new_name if find(new_name)
+
+      find_parent!(new_name).add_entry Fake::Symlink.new(new_name, old_name)
+    end
+
+    def symlink?(path)
+      find(path).is_a?(Fake::Symlink)
     end
 
     def touch(*paths)
@@ -75,80 +144,12 @@ module MemFs
       end
     end
 
-    def chmod(mode_int, file_name)
-      find!(file_name).mode = mode_int
-    end
-
-    def symlink(old_name, new_name)
-      raise Errno::EEXIST, new_name if find(new_name)
-      find_parent!(new_name).add_entry Fake::Symlink.new(new_name, old_name)
-    end
-
-    def symlink?(path)
-      find(path).is_a?(Fake::Symlink)
-    end
-
-    def entries(path)
-      find_directory!(path).entry_names
-    end
-
-    def find_directory!(path)
-      entry = find!(path).dereferenced
-
-      unless entry.is_a?(Fake::Directory)
-        raise Errno::ENOTDIR, path
-      end
-
-      entry
-    end
-
-    def find_parent!(path)
-      parent_path = dirname(path)
-      find_directory!(parent_path)
-    end
-
-    def dirname(path)
-      File.dirname(path)
-    end
-
-    def basename(path)
-      File.basename(path)
-    end
-
-    def chown(uid, gid, path)
-      entry = find!(path).dereferenced
-      entry.uid = uid if uid && uid != -1
-      entry.gid = gid if gid && gid != -1
-    end
-
-    def link(old_name, new_name)
-      file = find!(old_name)
-
-      raise Errno::EEXIST, "(#{old_name}, #{new_name})" if find(new_name)
-
-      link = file.dup
-      link.name = basename(new_name)
-      find_parent!(new_name).add_entry link
-    end
-
     def unlink(path)
       entry = find!(path)
+
       raise Errno::EPERM, path if entry.is_a?(Fake::Directory)
+
       entry.delete
-    end
-
-    def rename(old_name, new_name)
-      file = find!(old_name)
-      file.delete
-
-      file.name = basename(new_name)
-      find_parent!(new_name).add_entry(file)
-    end
-
-    def rmdir(path)
-      directory = find!(path)
-      raise Errno::ENOTEMPTY, path unless directory.empty?
-      directory.delete
     end
   end
 end
