@@ -23,13 +23,19 @@ Here is a simple example of MemFs usage:
 ``` ruby
 MemFs.activate!
 File.open('/test-file', 'w') { |f| f.puts "hello world" }
+File.read('/test-file') #=> "hello world\n"
 MemFs.deactivate!
+
+File.exists?('/test-file') #=> false
 
 # Or with the block syntax
 
 MemFs.activate do
   FileUtils.touch('/test-file', verbose: true, noop: true)
+  File.exists?('/test-file') #=> true
 end
+
+File.exists?('/test-file') #=> false
 ```
 
 ## Installation
