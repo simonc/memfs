@@ -20,6 +20,7 @@ module MemFs
     def self.getwd
       fs.getwd
     end
+    class << self; alias :pwd :getwd; end
 
     def self.mkdir(path)
       fs.mkdir path
@@ -27,10 +28,6 @@ module MemFs
 
     def self.rmdir(path)
       fs.rmdir path
-    end
-
-    class << self
-      alias :pwd :getwd
     end
   end
 end

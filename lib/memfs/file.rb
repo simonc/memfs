@@ -146,9 +146,7 @@ module MemFs
     def self.umask(integer = nil)
       old_value = @umask
 
-      if integer
-        @umask = integer
-      end
+      @umask = integer if integer
 
       old_value
     end
@@ -219,9 +217,7 @@ module MemFs
     end
 
     def puts(text)
-      unless writable?
-        raise IOError, 'not opened for writing'
-      end
+      raise IOError, 'not opened for writing' unless writable?
 
       content.puts text
     end
@@ -254,9 +250,7 @@ module MemFs
     end
 
     def write(string)
-      unless writable?
-        raise IOError, 'not opened for writing'
-      end
+      raise IOError, 'not opened for writing' unless writable?
 
       content.write(string.to_s)
     end
