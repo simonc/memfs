@@ -71,8 +71,6 @@ All the spec will be sandboxed in MemFs.
 You can choose to activate MemFs only for a specific test:
 
 ``` ruby
-require 'memfs'
-
 describe FileCreator do
   describe '.create_file' do
     it "creates a file" do
@@ -86,6 +84,22 @@ end
 ```
 
 No real file will be created during the test.
+
+You can also use it for a specific `describe` block:
+
+``` ruby
+describe FileCreator do
+  before { MemFs.activate! }
+  after { MemFs.deactivate! }
+
+  describe '.create_file' do
+    it "creates a file" do
+      subject.create_file('test.rb')
+      expect(File.exists?('test.rb')).to be_true
+    end
+  end
+end
+```
 
 ## Requirements
 
