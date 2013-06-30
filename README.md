@@ -5,9 +5,14 @@ MemFs is an in-memory filesystem that can be used for your tests.
 When you're writing code that manipulates files, directories, symlinks, you need
 to be able to test it without touching your hard drive. MemFs is made for it.
 
-MemFs is greatly inspired by the awesome [FakeFs](https://github.com/defunkt/fakefs).
+MemFs is intended for tests but you can use it for any other scenario needing in
+memory file system.
 
-The main goal of MemFs is to be 100% compatible with the Ruby libraries like FileUtils.
+MemFs is greatly inspired by the awesome
+[FakeFs](https://github.com/defunkt/fakefs).
+
+The main goal of MemFs is to be 100% compatible with the Ruby libraries like
+FileUtils.
 
 For french guys, the answer is yes, the joke in the name is intended ;)
 
@@ -41,16 +46,58 @@ Or install it yourself as:
 
     $ gem install memfs
 
+## Usage in tests
+
+### Global activation
+
+Add the following to your `spec_helper.rb`:
+
+``` ruby
+RSpec.configure do |config|
+  config.before do
+    MemFs.activate!
+  end
+
+  config.after do
+    MemFs.deactivate!
+  end
+end
+```
+
+All the spec will be sandboxed in MemFs.
+
+### Local activation
+
+You can choose to activate MemFs only for a specific test:
+
+``` ruby
+require 'memfs'
+
+describe FileCreator do
+  describe '.create_file' do
+    it "creates a file" do
+      MemFs.activate do
+        subject.create_file('test.rb')
+        expect(File.exists?('test.rb')).to be_true
+      end
+    end
+  end
+end
+```
+
+No real file will be created during the test.
+
 ## Requirements
 
 * Ruby 2.0+
 
-## Usage
-
-
 ## Known issues
 
 * MemFs doesn't implement IO so FileUtils.copy_stream is still the original one
+
+## TODO
+
+* Implement missing methods from `File`, `Dir` and `Stat`
 
 ## Contributing
 
