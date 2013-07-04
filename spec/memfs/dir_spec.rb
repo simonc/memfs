@@ -3,7 +3,6 @@ require 'spec_helper'
 module MemFs
   describe Dir do
     before :each do
-      Dir.mkdir '/'
       Dir.mkdir '/test'
     end
 
@@ -29,7 +28,6 @@ module MemFs
         end
     
         it "gets back to previous directory once the block is finished" do
-          Dir.mkdir '/'
           Dir.chdir '/'
           previous_dir = Dir.pwd
           Dir.chdir('/test') {}
@@ -40,7 +38,7 @@ module MemFs
 
     describe '.entries' do
       it "returns an array containing all of the filenames in the given directory" do
-        %w[/test /test/dir1 /test/dir2].each { |dir| Dir.mkdir dir }
+        %w[/test/dir1 /test/dir2].each { |dir| Dir.mkdir dir }
         fs.touch '/test/file1', '/test/file2'
         Dir.entries('/test').should == %w[. .. dir1 dir2 file1 file2]
       end
@@ -77,6 +75,12 @@ module MemFs
       it "creates a directory" do
         Dir.mkdir '/new-folder'
         expect(File.directory?('/new-folder')).to be_true
+      end
+
+      context "when the directory already exist" do
+        it "raises an exception" do
+          expect { Dir.mkdir('/') }.to raise_error(Errno::EEXIST)
+        end
       end
     end
 

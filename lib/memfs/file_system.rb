@@ -101,6 +101,7 @@ module MemFs
     end
 
     def mkdir(path)
+      raise Errno::EEXIST, path if find(path)
       find_parent!(path).add_entry Fake::Directory.new(path)
     end
 

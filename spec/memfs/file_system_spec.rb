@@ -42,7 +42,6 @@ module MemFs
         end
 
         it "gets back to previous directory once the block is finished" do
-          fs.mkdir '/'
           fs.chdir '/'
           previous_dir = fs.getwd
           fs.chdir('/test-dir') {}
@@ -52,7 +51,6 @@ module MemFs
 
       context "when the destination is a symlink" do
         it "sets current directory as the last link chain target" do
-          fs.mkdir '/test-dir'
           fs.symlink('/test-dir', '/test-link')
           fs.chdir('/test-link')
           expect(fs.getwd).to eq('/test-dir')
@@ -149,7 +147,6 @@ module MemFs
 
     describe '#clear!' do
       it "clear the registred entries" do
-        fs.mkdir '/test-dir'
         fs.clear!
         expect(fs.root.entry_names).to eq(%w[. ..])
       end
@@ -157,7 +154,7 @@ module MemFs
 
     describe '#entries' do
       it "returns an array containing all of the filenames in the given directory" do
-        %w[/test-dir /test-dir/new-dir /test-dir/new-dir2].each { |dir| fs.mkdir dir }
+        %w[/test-dir/new-dir /test-dir/new-dir2].each { |dir| fs.mkdir dir }
         fs.touch '/test-dir/test-file', '/test-dir/test-file2'
         expect(fs.entries('/test-dir')).to eq(%w[. .. new-dir new-dir2 test-file test-file2])
       end
@@ -196,7 +193,6 @@ module MemFs
 
     describe '#find_parent!' do
       it "returns the parent directory of the named entry" do
-        fs.mkdir '/test-dir'
         expect(fs.find_parent!('/test-dir/test-file')).to be_a(Fake::Directory)
       end
 
@@ -252,10 +248,15 @@ module MemFs
 
       context "when a relative path is given" do
         it "creates a directory in current directory" do
-          fs.mkdir '/test-dir'
           fs.chdir '/test-dir'
           fs.mkdir 'new-dir'
           expect(fs.find!('/test-dir/new-dir')).to be_a(Fake::Directory)
+        end
+      end
+
+      context "when the directory already exists" do
+        it "raises an exception" do
+          expect { fs.mkdir('/') }.to raise_error(Errno::EEXIST)
         end
       end
     end
@@ -281,7 +282,6 @@ module MemFs
 
       it "can move a file in another directory" do
         fs.touch('/test-file')
-        fs.mkdir('/test-dir')
         fs.rename('/test-file', '/test-dir/test-file')
         expect(fs.find('/test-dir/test-file')).not_to be_nil
       end
@@ -289,14 +289,12 @@ module MemFs
 
     describe "#rmdir" do
       it "removes the given directory" do
-        fs.mkdir('/test-dir')
         fs.rmdir('/test-dir')
         expect(fs.find('/test-dir')).to be_nil
       end
 
       context "when the directory is not empty" do
         it "raises an exception" do
-          fs.mkdir('/test-dir')
           fs.mkdir('/test-dir/test-sub-dir')
           expect { fs.rmdir('/test-dir') }.to raise_error(Errno::ENOTEMPTY)
         end
@@ -380,7 +378,6 @@ module MemFs
 
       context "when the entry is a directory" do
         it "raises an exception" do
-          fs.mkdir('/test-dir')
           expect { fs.unlink('/test-dir') }.to raise_error
         end
       end
