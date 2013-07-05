@@ -16,7 +16,7 @@ describe FileUtils do
   describe '.cd' do
     it "changes the current working directory" do
       FileUtils.cd '/test'
-      FileUtils.pwd.should == '/test'
+      expect(FileUtils.pwd).to eq('/test')
     end
 
     it "returns nil" do
@@ -35,7 +35,7 @@ describe FileUtils do
     context "when called with a block" do
       it "changes current working directory for the block execution" do
         FileUtils.cd '/test' do
-          FileUtils.pwd.should == '/test'
+          expect(FileUtils.pwd).to eq('/test')
         end
       end
 
@@ -43,7 +43,7 @@ describe FileUtils do
         FileUtils.cd '/'
         previous_dir = FileUtils.pwd
         FileUtils.cd('/test') {}
-        FileUtils.pwd.should == previous_dir
+        expect(FileUtils.pwd).to eq(previous_dir)
       end
     end
 
@@ -54,7 +54,7 @@ describe FileUtils do
 
       it "changes directory to the last target of the link chain" do
         FileUtils.cd('/test-link')
-        FileUtils.pwd.should == '/test'
+        expect(FileUtils.pwd).to eq('/test')
       end
 
       it "raises an error if the last target of the link chain doesn't exist" do
@@ -67,19 +67,19 @@ describe FileUtils do
     it "changes permission bits on the named file to the bit pattern represented by mode" do
       FileUtils.touch '/test-file'
       FileUtils.chmod 0777, '/test-file'
-      File.stat('/test-file').mode.should be(0100777)
+      expect(File.stat('/test-file').mode).to eq(0100777)
     end
 
     it "changes permission bits on the named files (in list) to the bit pattern represented by mode" do
       FileUtils.touch ['/test-file', '/test-file2']
       FileUtils.chmod 0777, ['/test-file', '/test-file2']
-      File.stat('/test-file2').mode.should be(0100777)
+      expect(File.stat('/test-file2').mode).to eq(0100777)
     end
 
     it "returns an array containing the file names" do
       file_names = %w[/test-file /test-file2]
       FileUtils.touch file_names
-      FileUtils.chmod(0777, file_names).should == file_names
+      expect(FileUtils.chmod(0777, file_names)).to eq(file_names)
     end
 
     it "raises an error if an entry does not exist" do
@@ -95,12 +95,12 @@ describe FileUtils do
       context "when File responds to lchmod" do
         it "changes the mode on the link" do
           FileUtils.chmod(0777, '/test-link')
-          File.lstat('/test-link').mode.should be(0100777)
+          expect(File.lstat('/test-link').mode).to eq(0100777)
         end
 
         it "doesn't change the mode of the link's target" do
           FileUtils.chmod(0777, '/test-link')
-          File.lstat('/test-file').mode.should be(0100644)
+          expect(File.lstat('/test-file').mode).to eq(0100644)
         end
       end
 
@@ -108,7 +108,7 @@ describe FileUtils do
         it "does nothing" do
           FileUtils::Entry_.any_instance.stub(:have_lchmod?).and_return(false)
           FileUtils.chmod(0777, '/test-link')
-          File.lstat('/test-link').mode.should be(0100644)
+          expect(File.lstat('/test-link').mode).to eq(0100644)
         end
       end
     end
@@ -121,51 +121,51 @@ describe FileUtils do
 
     it "changes the permission bits on the named entry" do
       FileUtils.chmod_R(0777, '/test')
-      File.stat('/test').mode.should be(0100777)
+      expect(File.stat('/test').mode).to eq(0100777)
     end
 
     it "changes the permission bits on any sub-directory of the named entry" do
       FileUtils.chmod_R(0777, '/')
-      File.stat('/test').mode.should be(0100777)
+      expect(File.stat('/test').mode).to eq(0100777)
     end
 
     it "changes the permission bits on any descendant file of the named entry" do
       FileUtils.chmod_R(0777, '/')
-      File.stat('/test/test-file').mode.should be(0100777)
+      expect(File.stat('/test/test-file').mode).to eq(0100777)
     end
   end
 
   describe '.chown' do
     it "changes owner on the named file" do
       FileUtils.chown(42, nil, '/test')
-      File.stat('/test').uid.should be(42)
+      expect(File.stat('/test').uid).to eq(42)
     end
 
     it "changes owner on the named files (in list)" do
       FileUtils.touch('/test-file')
       FileUtils.chown(42, nil, ['/test', '/test-file'])
-      File.stat('/test-file').uid.should be(42)
+      expect(File.stat('/test-file').uid).to eq(42)
     end
 
     it "changes group on the named entry" do
       FileUtils.chown(nil, 42, '/test')
-      File.stat('/test').gid.should be(42)
+      expect(File.stat('/test').gid).to eq(42)
     end
 
     it "changes group on the named entries in list" do
       FileUtils.touch('/test-file')
       FileUtils.chown(nil, 42, ['/test', '/test-file'])
-      File.stat('/test-file').gid.should be(42)
+      expect(File.stat('/test-file').gid).to eq(42)
     end
 
     it "doesn't change user if user is nil" do
       FileUtils.chown(nil, 42, '/test')
-      File.stat('/test').uid.should_not be(42)
+      expect(File.stat('/test').uid).not_to be(42)
     end
 
     it "doesn't change group if group is nil" do
       FileUtils.chown(42, nil, '/test')
-      File.stat('/test').gid.should_not be(42)
+      expect(File.stat('/test').gid).not_to be(42)
     end
 
     context "when the name entry is a symlink" do
@@ -176,22 +176,22 @@ describe FileUtils do
 
       it "changes the owner on the last target of the link chain" do
         FileUtils.chown(42, nil, '/test-link')
-        File.stat('/test-file').uid.should be(42)
+        expect(File.stat('/test-file').uid).to eq(42)
       end
 
       it "changes the group on the last target of the link chain" do
         FileUtils.chown(nil, 42, '/test-link')
-        File.stat('/test-file').gid.should be(42)
+        expect(File.stat('/test-file').gid).to eq(42)
       end
 
       it "doesn't change the owner of the symlink" do
         FileUtils.chown(42, nil, '/test-link')
-        File.lstat('/test-link').uid.should_not be(42)
+        expect(File.lstat('/test-link').uid).not_to be(42)
       end
 
       it "doesn't change the group of the symlink" do
         FileUtils.chown(nil, 42, '/test-link')
-        File.lstat('/test-link').gid.should_not be(42)
+        expect(File.lstat('/test-link').gid).not_to be(42)
       end
     end
   end
@@ -203,32 +203,32 @@ describe FileUtils do
 
     it "changes the owner on the named entry" do
       FileUtils.chown_R(42, nil, '/test')
-      File.stat('/test').uid.should be(42)
+      expect(File.stat('/test').uid).to eq(42)
     end
 
     it "changes the group on the named entry" do
       FileUtils.chown_R(nil, 42, '/test')
-      File.stat('/test').gid.should be(42)
+      expect(File.stat('/test').gid).to eq(42)
     end
 
     it "changes the owner on any sub-directory of the named entry" do
       FileUtils.chown_R(42, nil, '/')
-      File.stat('/test').uid.should be(42)
+      expect(File.stat('/test').uid).to eq(42)
     end
 
     it "changes the group on any sub-directory of the named entry" do
       FileUtils.chown_R(nil, 42, '/')
-      File.stat('/test').gid.should be(42)
+      expect(File.stat('/test').gid).to eq(42)
     end
 
     it "changes the owner on any descendant file of the named entry" do
       FileUtils.chown_R(42, nil, '/')
-      File.stat('/test/test-file').uid.should be(42)
+      expect(File.stat('/test/test-file').uid).to eq(42)
     end
 
     it "changes the group on any descendant file of the named entry" do
       FileUtils.chown_R(nil, 42, '/')
-      File.stat('/test/test-file').gid.should be(42)
+      expect(File.stat('/test/test-file').gid).to eq(42)
     end
   end
 
@@ -282,7 +282,7 @@ describe FileUtils do
     it "copies a file system entry +src+ to +dest+" do
       File.open('/test-file', 'w') { |f| f.puts 'test' }
       FileUtils.copy_entry('/test-file', '/test-copy')
-      File.read('/test-copy').should == "test\n"
+      expect(File.read('/test-copy')).to eq("test\n")
     end
 
     it "preserves file types" do
@@ -373,7 +373,7 @@ describe FileUtils do
 
     it "copies a file content +src+ to +dest+" do
       FileUtils.cp('/test-file', '/copy-file')
-      File.read('/copy-file').should == "test\n"
+      expect(File.read('/copy-file')).to eq("test\n")
     end
 
     context "when +src+ and +dest+ are the same file" do
@@ -386,7 +386,7 @@ describe FileUtils do
       it "copies +src+ to +dest/src+" do
         FileUtils.mkdir('/dest')
         FileUtils.cp('/test-file', '/dest/copy-file')
-        File.read('/dest/copy-file').should == "test\n"
+        expect(File.read('/dest/copy-file')).to eq("test\n")
       end
     end
 
@@ -405,7 +405,7 @@ describe FileUtils do
       File.open('/test-file', 'w') { |f| f.puts 'test' }
 
       FileUtils.cp_r('/test-file', '/copy-file')
-      File.read('/copy-file').should == "test\n"
+      expect(File.read('/copy-file')).to eq("test\n")
     end
 
     context "when +src+ is a directory" do
@@ -454,7 +454,7 @@ describe FileUtils do
 
     it "copies +src+ to +dest+" do
       FileUtils.install('/test-file', '/test-file2')
-      File.read('/test-file2').should == "test\n"
+      expect(File.read('/test-file2')).to eq("test\n")
     end
 
     context "when +:mode+ is set" do
@@ -499,7 +499,7 @@ describe FileUtils do
 
     it "creates a hard link +dest+ which points to +src+" do
       FileUtils.ln('/test-file', '/test-file2')
-      File.read('/test-file2').should == File.read('/test-file')
+      expect(File.read('/test-file2')).to eq(File.read('/test-file'))
     end
 
     it "creates a hard link, not a symlink" do
@@ -512,7 +512,7 @@ describe FileUtils do
         it "creates a link dest/src" do
           FileUtils.mkdir('/test-dir')
           FileUtils.ln('/test-file', '/test-dir')
-          File.read('/test-dir/test-file').should == File.read('/test-file')
+          expect(File.read('/test-dir/test-file')).to eq(File.read('/test-file'))
         end
       end
 
@@ -526,7 +526,7 @@ describe FileUtils do
           it "overwrites +dest+" do
             FileUtils.touch('/test-file2')
             FileUtils.ln('/test-file', '/test-file2', force: true)
-            File.read('/test-file2').should == File.read('/test-file')
+            expect(File.read('/test-file2')).to eq(File.read('/test-file'))
           end
         end
       end
@@ -564,7 +564,7 @@ describe FileUtils do
 
     it "creates a symbolic link which points to +old+" do
       FileUtils.ln_s('/test-file', '/test-link')
-      File.read('/test-link').should == File.read('/test-file')
+      expect(File.read('/test-link')).to eq(File.read('/test-file'))
     end
 
     context "when +new+ already exists" do
@@ -603,7 +603,7 @@ describe FileUtils do
 
       it "creates symbolic links pointing to each item in the list" do
         FileUtils.ln_s(['/test-file', '/test-file2'], '/test-dir')
-        File.read('/test-dir/test-file2').should == File.read('/test-file2')
+        expect(File.read('/test-dir/test-file2')).to eq(File.read('/test-file2'))
       end
 
       context "when +destdir+ is not a directory" do
@@ -621,7 +621,7 @@ describe FileUtils do
       File.open('/test-file', 'w') { |f| f.puts 'test' }
       File.open('/test-file2', 'w') { |f| f.puts 'test2' }
       FileUtils.ln_sf('/test-file', '/test-file2')
-      File.read('/test-file2').should == File.read('/test-file')
+      expect(File.read('/test-file2')).to eq(File.read('/test-file'))
     end
   end
 

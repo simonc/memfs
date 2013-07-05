@@ -11,7 +11,7 @@ module MemFs
     describe '.chdir' do
       it "changes the current working directory" do
         Dir.chdir '/test'
-        Dir.getwd.should == '/test'
+        expect(Dir.getwd).to eq('/test')
       end
 
       it "returns zero" do
@@ -25,7 +25,7 @@ module MemFs
       context "when a block is given" do
         it "changes current working directory for the block" do
           Dir.chdir '/test' do
-            Dir.pwd.should == '/test'
+            expect(Dir.pwd).to eq('/test')
           end
         end
     
@@ -33,7 +33,7 @@ module MemFs
           Dir.chdir '/'
           previous_dir = Dir.pwd
           Dir.chdir('/test') {}
-          Dir.pwd.should == previous_dir
+          expect(Dir.pwd).to eq(previous_dir)
         end
       end
     end
@@ -42,7 +42,7 @@ module MemFs
       it "returns an array containing all of the filenames in the given directory" do
         %w[/test/dir1 /test/dir2].each { |dir| Dir.mkdir dir }
         fs.touch '/test/file1', '/test/file2'
-        Dir.entries('/test').should == %w[. .. dir1 dir2 file1 file2]
+        expect(Dir.entries('/test')).to eq(%w[. .. dir1 dir2 file1 file2])
       end
     end
 
@@ -53,7 +53,6 @@ module MemFs
       end
 
       it "returns false if the given +path+ does not exist" do
-        Dir.exists?('/test-dir')
         expect(Dir.exists?('/test-dir')).to be_false
       end
 
@@ -65,7 +64,7 @@ module MemFs
 
     describe '.getwd' do
       it "returns the path to the current working directory" do
-        Dir.getwd.should == FileSystem.instance.getwd
+        expect(Dir.getwd).to eq(FileSystem.instance.getwd)
       end
     end
 

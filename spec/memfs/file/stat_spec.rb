@@ -18,7 +18,7 @@ module MemFs
         fs.touch('/test-file')
         entry = fs.find!('/test-file')
         entry.atime = time
-        File::Stat.new('/test-file').atime.should == time
+        expect(File::Stat.new('/test-file').atime).to eq(time)
       end
 
       context "when the entry is a symlink" do
@@ -28,7 +28,7 @@ module MemFs
             entry = fs.find!('/test-file')
             entry.atime = time
             fs.symlink('/test-file', '/test-link')
-            File::Stat.new('/test-link', true).atime.should == time
+            expect(File::Stat.new('/test-link', true).atime).to eq(time)
           end
         end
 
@@ -38,7 +38,7 @@ module MemFs
             entry = fs.find!('/test-file')
             entry.atime = time
             fs.symlink('/test-file', '/test-link')
-            File::Stat.new('/test-link').atime.should_not == time
+            expect(File::Stat.new('/test-link').atime).not_to eq(time)
           end
         end
       end
@@ -47,7 +47,7 @@ module MemFs
     describe "#blksize" do
       it "returns the block size of the file" do
         fs.touch('/test-file')
-        File::Stat.new('/test-file').blksize.should be(4096)
+        expect(File::Stat.new('/test-file').blksize).to be(4096)
       end
     end
 
@@ -135,7 +135,7 @@ module MemFs
       it "returns the group id of the named entry" do
         fs.touch('/test-file')
         fs.chown(nil, 42, '/test-file')
-        File::Stat.new('/test-file').gid.should be(42)
+        expect(File::Stat.new('/test-file').gid).to be(42)
       end
     end
 
@@ -150,7 +150,7 @@ module MemFs
       it "returns an integer representing the permission bits of stat" do
         fs.touch('/test-file')
         fs.chmod(0777, '/test-file')
-        File::Stat.new('/test-file').mode.should be(0100777)
+        expect(File::Stat.new('/test-file').mode).to be(0100777)
       end
     end
 
@@ -184,7 +184,7 @@ module MemFs
       it "returns the user id of the named entry" do
         fs.touch('/test-file')
         fs.chown(42, nil, '/test-file')
-        File::Stat.new('/test-file').uid.should be(42)
+        expect(File::Stat.new('/test-file').uid).to be(42)
       end
     end
 

@@ -4,13 +4,13 @@ describe MemFs do
   describe '.activate' do
     it "calls the given block with MemFs activated" do
       MemFs.activate do
-        ::Dir.should be(MemFs::Dir)
+        expect(::Dir).to be(MemFs::Dir)
       end
     end
 
     it "resets the original classes once finished" do
       MemFs.activate {}
-      ::Dir.should be(MemFs::OriginalDir)
+      expect(::Dir).to be(MemFs::OriginalDir)
     end
 
     it "deactivates MemFs even when an exception occurs" do
@@ -18,7 +18,7 @@ describe MemFs do
         MemFs.activate { raise 'Some error' }
       rescue
       end
-      ::Dir.should be(MemFs::OriginalDir)
+      expect(::Dir).to be(MemFs::OriginalDir)
     end
   end
 
@@ -27,11 +27,11 @@ describe MemFs do
     after(:each)  { MemFs.deactivate! }
 
     it "replaces Ruby Dir class with a fake one" do
-      ::Dir.should be(MemFs::Dir)
+      expect(::Dir).to be(MemFs::Dir)
     end
 
     it "replaces Ruby File class with a fake one" do
-      ::File.should be(MemFs::File)
+      expect(::File).to be(MemFs::File)
     end
   end
 
@@ -42,11 +42,11 @@ describe MemFs do
     end
 
     it "sets back the Ruby Dir class to the original one" do
-      ::Dir.should be(MemFs::OriginalDir)
+      expect(::Dir).to be(MemFs::OriginalDir)
     end
 
     it "sets back the Ruby File class to the original one" do
-      ::File.should be(MemFs::OriginalFile)
+      expect(::File).to be(MemFs::OriginalFile)
     end
   end
 end

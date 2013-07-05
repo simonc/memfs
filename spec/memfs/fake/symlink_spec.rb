@@ -7,7 +7,7 @@ module MemFs
         it "returns the target's content" do
           MemFs::File.open('/test-file', 'w') { |f| f.puts "test" }
           s = Symlink.new('/test-link', '/test-file')
-          s.content.should be(s.dereferenced.content)
+          expect(s.content).to be(s.dereferenced.content)
         end
       end
 
@@ -18,7 +18,7 @@ module MemFs
 
           s = Symlink.new('/test-link', '/test-file')
 
-          s.dereferenced.should == target
+          expect(s.dereferenced).to eq(target)
         end
 
         it "returns the last target of the chain" do
@@ -28,14 +28,14 @@ module MemFs
           fs.symlink '/test-file', '/test-link'
           s = Symlink.new('/test-link2', '/test-link')
 
-          s.dereferenced.should == target
+          expect(s.dereferenced).to eq(target)
         end
       end
 
       describe '#target' do
         it "returns the target of the symlink" do
           s = Symlink.new('/test-link', '/test-file')
-          s.target.should == '/test-file'
+          expect(s.target).to eq('/test-file')
         end
       end
     end

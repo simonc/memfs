@@ -64,7 +64,7 @@ module MemFs
       it "changes permission bits on the named file" do
         fs.touch('/some-file')
         fs.chmod(0777, '/some-file')
-        fs.find!('/some-file').mode.should be(0100777)
+        expect(fs.find!('/some-file').mode).to be(0100777)
       end
 
       context "when the named file is a symlink" do
@@ -72,7 +72,7 @@ module MemFs
           fs.touch('/some-file')
           fs.symlink('/some-file', '/some-link')
           fs.chmod(0777, '/some-link')
-          fs.find!('/some-link').mode.should be(0100777)
+          expect(fs.find!('/some-link').mode).to be(0100777)
         end
       end
     end
@@ -84,12 +84,12 @@ module MemFs
 
       it "changes the owner of the named file to the given numeric owner id" do
         fs.chown(42, nil, '/test-file')
-        fs.find!('/test-file').uid.should be(42)
+        expect(fs.find!('/test-file').uid).to be(42)
       end
 
       it "changes the group of the named file to the given numeric group id" do
         fs.chown(nil, 42, '/test-file')
-        fs.find!('/test-file').gid.should be(42)
+        expect(fs.find!('/test-file').gid).to be(42)
       end
 
       it "ignores nil user id" do
@@ -127,22 +127,22 @@ module MemFs
 
         it "changes the owner on the last target of the link chain" do
           fs.chown(42, nil, '/test-link')
-          fs.find!('/test-file').uid.should be(42)
+          expect(fs.find!('/test-file').uid).to be(42)
         end
 
         it "changes the group on the last target of the link chain" do
           fs.chown(nil, 42, '/test-link')
-          fs.find!('/test-file').gid.should be(42)
+          expect(fs.find!('/test-file').gid).to be(42)
         end
 
         it "doesn't change the owner of the symlink" do
           fs.chown(42, nil, '/test-link')
-          fs.find!('/test-link').uid.should_not be(42)
+          expect(fs.find!('/test-link').uid).not_to eq(42)
         end
 
         it "doesn't change the group of the symlink" do
           fs.chown(nil, 42, '/test-link')
-          fs.find!('/test-link').gid.should_not be(42)
+          expect(fs.find!('/test-link').gid).not_to eq(42)
         end
       end
     end
@@ -222,7 +222,7 @@ module MemFs
 
       it "creates a hard link +dest+ that points to +src+" do
         fs.link('/some-file', '/some-link')
-        fs.find!('/some-link').content.should be(fs.find!('/some-file').content)
+        expect(fs.find!('/some-link').content).to be(fs.find!('/some-file').content)
       end
 
       it "does not create a symbolic link" do
@@ -361,12 +361,12 @@ module MemFs
 
         it "sets the access time of the touched file" do
           fs.touch '/some-file'
-          fs.find!('/some-file').atime.should_not == time
+          expect(fs.find!('/some-file').atime).not_to eq(time)
         end
 
         it "sets the modification time of the touched file" do
           fs.touch '/some-file'
-          fs.find!('/some-file').atime.should_not == time
+          expect(fs.find!('/some-file').atime).not_to eq(time)
         end
       end
     end
