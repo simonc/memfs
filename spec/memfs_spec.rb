@@ -1,21 +1,23 @@
 require 'spec_helper'
 
 describe MemFs do
+  subject { MemFs }
+
   describe '.activate' do
     it "calls the given block with MemFs activated" do
-      MemFs.activate do
+      subject.activate do
         expect(::Dir).to be(MemFs::Dir)
       end
     end
 
     it "resets the original classes once finished" do
-      MemFs.activate {}
+      subject.activate {}
       expect(::Dir).to be(MemFs::OriginalDir)
     end
 
     it "deactivates MemFs even when an exception occurs" do
       begin
-        MemFs.activate { raise 'Some error' }
+        subject.activate { raise 'Some error' }
       rescue
       end
       expect(::Dir).to be(MemFs::OriginalDir)
@@ -23,8 +25,8 @@ describe MemFs do
   end
 
   describe '.activate!' do
-    before(:each) { MemFs.activate! }
-    after(:each)  { MemFs.deactivate! }
+    before(:each) { subject.activate! }
+    after(:each)  { subject.deactivate! }
 
     it "replaces Ruby Dir class with a fake one" do
       expect(::Dir).to be(MemFs::Dir)
@@ -37,8 +39,8 @@ describe MemFs do
 
   describe '.deactivate!' do
     before :each do
-      MemFs.activate!
-      MemFs.deactivate!
+      subject.activate!
+      subject.deactivate!
     end
 
     it "sets back the Ruby Dir class to the original one" do
