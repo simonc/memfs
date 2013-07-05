@@ -2,6 +2,8 @@ require 'spec_helper'
 
 module MemFs
   describe Dir do
+    subject { MemFs::Dir }
+
     before :each do
       Dir.mkdir '/test'
     end
@@ -65,10 +67,6 @@ module MemFs
       it "returns the path to the current working directory" do
         Dir.getwd.should == FileSystem.instance.getwd
       end
-
-      it "has a pwd alias" do
-        Dir.method(:pwd).should == Dir.method(:getwd)
-      end
     end
 
     describe '.mkdir' do
@@ -82,6 +80,10 @@ module MemFs
           expect { Dir.mkdir('/') }.to raise_error(Errno::EEXIST)
         end
       end
+    end
+
+    describe ".pwd" do
+      it_behaves_like 'aliased method', :pwd, :getwd
     end
 
     describe ".rmdir" do

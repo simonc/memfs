@@ -8,6 +8,12 @@ RSpec.configure do |config|
     MemFs::File.umask(0022)
     MemFs::FileSystem.instance.clear!
   end
+
+  shared_examples 'aliased method' do |method, original_method|
+    it "##{original_method}" do
+      expect(subject.method(method)).to eq(subject.method(original_method))
+    end
+  end
 end
 
 def fs

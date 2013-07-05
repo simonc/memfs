@@ -13,12 +13,6 @@ describe FileUtils do
     MemFs.deactivate!
   end
 
-  shared_examples 'aliased method' do |method, original_method|
-    it "is an alias for ##{original_method}" do
-      FileUtils.method(method).should == FileUtils.method(original_method)
-    end
-  end
-
   describe '.cd' do
     it "changes the current working directory" do
       FileUtils.cd '/test'

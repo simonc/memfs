@@ -2,6 +2,8 @@ require 'spec_helper'
 
 module MemFs
   describe FileSystem do
+    subject { fs }
+
     before :each do
       fs.mkdir '/test-dir'
     end
@@ -211,10 +213,6 @@ module MemFs
         fs.chdir '/test-dir'
         expect(fs.getwd).to eq('/test-dir')
       end
-
-      it "has a pwd alias" do
-        expect(fs.method(:pwd)).to eq(fs.method(:getwd))
-      end
     end
 
     describe '#link' do
@@ -265,6 +263,10 @@ module MemFs
       it "creates the root directory" do
         expect(fs.find!('/')).to be(fs.root)
       end
+    end
+
+    describe "#pwd" do
+      it_behaves_like 'aliased method', :pwd, :getwd
     end
 
     describe "#rename" do

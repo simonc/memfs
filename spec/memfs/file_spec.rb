@@ -2,6 +2,8 @@ require 'spec_helper'
 
 module MemFs
   describe File do
+    subject { MemFs::File }
+
     let(:file) { File.new('/test-file') }
     let(:random_string) { ('a'..'z').to_a.sample(10).join }
 
@@ -130,9 +132,7 @@ module MemFs
     end
 
     describe ".delete" do
-      it "is an alias for #unlink" do
-        expect(File.method(:delete)).to eq(File.method(:unlink))
-      end
+      it_behaves_like 'aliased method', :delete, :unlink
     end
 
     describe '.directory?' do
@@ -170,9 +170,7 @@ module MemFs
     end
 
     describe ".exist?" do
-      it "should be an alias for .exists?" do
-        expect(File.method(:exist?)).to eq(File.method(:exists?))
-      end
+      it_behaves_like 'aliased method', :exist?, :exists?
     end
 
     describe ".expand_path" do
