@@ -79,7 +79,6 @@ module MemFs
       const_set :File, MemFs::File
     end
 
-    MemFs::File.umask(MemFs::OriginalFile.umask)
     MemFs::FileSystem.instance.clear!
   end
 

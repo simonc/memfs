@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe FileUtils do
   before :each do
-    MemFs::File.umask(0022)
+    MemFs::File.umask(0020)
     MemFs.activate!
 
     FileUtils.mkdir '/test'
@@ -101,7 +101,7 @@ describe FileUtils do
 
         it "doesn't change the mode of the link's target" do
           FileUtils.chmod(0777, '/test-link')
-          expect(File.lstat('/test-file').mode).to eq(0100644)
+          expect(File.lstat('/test-file').mode).to eq(0100646)
         end
       end
 
@@ -109,7 +109,7 @@ describe FileUtils do
         it "does nothing" do
           FileUtils::Entry_.any_instance.stub(:have_lchmod?).and_return(false)
           FileUtils.chmod(0777, '/test-link')
-          expect(File.lstat('/test-link').mode).to eq(0100644)
+          expect(File.lstat('/test-link').mode).to eq(0100646)
         end
       end
     end
@@ -763,12 +763,14 @@ describe FileUtils do
     end
 
     it "removes a file system entry +path+" do
+      FileUtils.chmod(0755, '/')
       FileUtils.remove_entry_secure('/test-dir')
       expect(Dir.exists?('/test-dir')).to be_false
     end
 
     context "when +path+ is a directory" do
       it "removes it recursively" do
+        FileUtils.chmod(0755, '/')
         FileUtils.remove_entry_secure('/test-dir')
         expect(Dir.exists?('/test-dir/test-sub-dir')).to be_false
       end

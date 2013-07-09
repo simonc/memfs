@@ -200,6 +200,7 @@ module MemFs
       context "when +file_name+ is not writable by others" do
         it "returns nil" do
           fs.touch('/test-file')
+          fs.chmod(0644, '/test-file')
           expect(File::Stat.new('/test-file')).not_to be_world_writable
         end
       end

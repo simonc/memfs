@@ -35,10 +35,6 @@ describe MemFs do
     it "replaces Ruby File class with a fake one" do
       expect(::File).to be(MemFs::File)
     end
-
-    it "sets the umask to the same value than the system one" do
-      expect(MemFs::File.umask).to eq(MemFs::OriginalFile.umask)
-    end
   end
 
   describe '.deactivate!' do
