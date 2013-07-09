@@ -78,6 +78,9 @@ module MemFs
       const_set :Dir,  MemFs::Dir
       const_set :File, MemFs::File
     end
+
+    MemFs::File.umask(MemFs::OriginalFile.umask)
+    MemFs::FileSystem.instance.clear!
   end
 
   # Deactivates the fake file system.
