@@ -152,6 +152,11 @@ module MemFs
         subject.clear!
         expect(subject.root.entry_names).to eq(%w[. ..])
       end
+
+      it "sets the current directory to /" do
+        subject.clear!
+        expect(subject.getwd).to eq('/')
+      end
     end
 
     describe '#entries' do

@@ -30,6 +30,7 @@ module MemFs
 
     def clear!
       self.root = Fake::Directory.new('/')
+      self.chdir('/')
     end
 
     def chmod(mode_int, file_name)
