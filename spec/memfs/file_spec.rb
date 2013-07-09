@@ -557,6 +557,10 @@ module MemFs
     end
 
     describe '.umask' do
+      before :each do
+        subject.umask(0022)
+      end
+
       it "returns the current umask value for this process" do
         expect(subject.umask).to eq(0022)
       end

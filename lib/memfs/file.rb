@@ -144,7 +144,7 @@ module MemFs
     end
 
     def self.umask(integer = nil)
-      old_value = @umask
+      old_value = @umask || original_file_class.umask
 
       @umask = integer if integer
 

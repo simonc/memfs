@@ -4,6 +4,7 @@ require 'spec_helper'
 
 describe FileUtils do
   before :each do
+    MemFs::File.umask(0022)
     MemFs.activate!
 
     FileUtils.mkdir '/test'
