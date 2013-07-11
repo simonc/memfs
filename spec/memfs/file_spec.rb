@@ -290,8 +290,9 @@ module MemFs
         end
 
         it "does not change permission bits on the link's target" do
+          mode = subject.stat('/test-file').mode
           subject.lchmod(0777, '/test-link')
-          expect(subject.stat('/test-file').mode).to eq(0100646)
+          expect(subject.stat('/test-file').mode).to eq(mode)
         end
       end
     end

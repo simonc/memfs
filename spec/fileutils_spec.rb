@@ -100,16 +100,18 @@ describe FileUtils do
         end
 
         it "doesn't change the mode of the link's target" do
+          mode = File.lstat('/test-file').mode
           FileUtils.chmod(0777, '/test-link')
-          expect(File.lstat('/test-file').mode).to eq(0100646)
+          expect(File.lstat('/test-file').mode).to eq(mode)
         end
       end
 
       context "when File doesn't respond to lchmod" do
         it "does nothing" do
           FileUtils::Entry_.any_instance.stub(:have_lchmod?).and_return(false)
+          mode = File.lstat('/test-link').mode
           FileUtils.chmod(0777, '/test-link')
-          expect(File.lstat('/test-link').mode).to eq(0100646)
+          expect(File.lstat('/test-link').mode).to eq(mode)
         end
       end
     end
