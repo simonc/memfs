@@ -156,6 +156,26 @@ module MemFs
       end
     end
 
+    describe ".ctime" do
+      it "returns the change time for the named file as a Time object" do
+        expect(subject.ctime('/test-file')).to be_a(Time)
+      end
+
+      it "raises an error if the entry does not exist" do
+        expect { subject.ctime('/no-file') }.to raise_error(Errno::ENOENT)
+      end
+
+      context "when the entry is a symlink" do
+        let(:time) { Time.now - 500000 }
+
+        it "returns the last access time of the last target of the link chain" do
+          fs.find!('/test-file').ctime = time
+          subject.symlink('/test-link', '/test-link2')
+          expect(subject.ctime('/test-link2')).to eq(time)
+        end
+      end
+    end
+
     describe ".delete" do
       it_behaves_like 'aliased method', :delete, :unlink
     end

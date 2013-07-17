@@ -14,6 +14,7 @@ module MemFs
       USTICK = 05000
 
       attr_accessor :atime,
+                    :ctime,
                     :gid,
                     :mtime,
                     :name,
@@ -45,6 +46,7 @@ module MemFs
         current_user = Etc.getpwuid
         time = Time.now
         self.atime = time
+        self.ctime = time
         self.gid = current_user.gid
         self.mode = 0666 - MemFs::File.umask
         self.mtime = time

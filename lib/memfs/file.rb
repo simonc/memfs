@@ -50,6 +50,10 @@ module MemFs
       paths.size
     end
 
+    def self.ctime(path)
+      stat(path).ctime
+    end
+
     def self.directory?(path)
       fs.directory? path
     end

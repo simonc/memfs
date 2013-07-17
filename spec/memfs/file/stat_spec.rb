@@ -51,6 +51,39 @@ module MemFs
       end
     end
 
+    describe '#ctime' do
+      let(:time) { Time.now - 500000 }
+
+      it "returns the access time of the entry" do
+        fs.touch('/test-file')
+        entry = fs.find!('/test-file')
+        entry.ctime = time
+        expect(File::Stat.new('/test-file').ctime).to eq(time)
+      end
+
+      context "when the entry is a symlink" do
+        context "and the optional follow_symlink argument is true" do
+          it "returns the access time of the last target of the link chain" do
+            fs.touch('/test-file')
+            entry = fs.find!('/test-file')
+            entry.ctime = time
+            fs.symlink('/test-file', '/test-link')
+            expect(File::Stat.new('/test-link', true).ctime).to eq(time)
+          end
+        end
+
+        context "and the optional follow_symlink argument is false" do
+          it "returns the access time of the symlink itself" do
+            fs.touch('/test-file')
+            entry = fs.find!('/test-file')
+            entry.ctime = time
+            fs.symlink('/test-file', '/test-link')
+            expect(File::Stat.new('/test-link').ctime).not_to eq(time)
+          end
+        end
+      end
+    end
+
     describe "#dev" do
       it "returns an integer representing the device on which stat resides" do
         fs.touch('/test-file')
