@@ -28,6 +28,11 @@ module MemFs
                    :join,
                    :path
 
+    def self.absolute_path(path, dir_string = nil)
+      basedir = dir_string || Dir.pwd
+      original_file_class.absolute_path(path, basedir)
+    end
+
     def self.atime(path)
       stat(path).atime
     end

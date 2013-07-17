@@ -14,6 +14,31 @@ module MemFs
       subject.symlink '/no-file', '/no-link'
     end
 
+    describe '.absolute_path' do
+      before :each do
+        MemFs::Dir.chdir('/test-dir')
+      end
+
+      it "converts a pathname to an absolute pathname" do
+        path = subject.absolute_path('./test-file')
+        expect(path).to eq('/test-dir/test-file')
+      end
+
+      context "when +dir_string+ is given" do
+        it "uses it as the starting point" do
+          path = subject.absolute_path('./test-file', '/no-dir')
+          expect(path).to eq('/no-dir/test-file')
+        end
+      end
+
+      context "when the given pathname starts with a '~'" do
+        it "does not expanded" do
+          path = subject.absolute_path('~/test-file')
+          expect(path).to eq('/test-dir/~/test-file')
+        end
+      end
+    end
+
     describe '.atime' do
       it "returns the last access time for the named file as a Time object" do
         expect(subject.atime('/test-file')).to be_a(Time)
