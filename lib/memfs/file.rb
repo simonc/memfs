@@ -58,6 +58,10 @@ module MemFs
       fs.directory? path
     end
 
+    def self.executable?(path)
+      fs.find(path) && stat(path).executable?
+    end
+
     def self.exists?(path)
       not fs.find(path).nil?
     end

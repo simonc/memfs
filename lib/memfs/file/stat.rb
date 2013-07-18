@@ -24,6 +24,18 @@ module MemFs
         File.directory? entry.path
       end
 
+      def executable?
+        current_user = Etc.getpwuid
+
+        if current_user.uid == uid
+          !!(mode & Fake::Entry::UEXEC).nonzero?
+        elsif current_user.gid == gid
+          !!(mode & Fake::Entry::GEXEC).nonzero?
+        else
+          !!(mode & Fake::Entry::OEXEC).nonzero?
+        end
+      end
+
       def file?
         File.file? entry.path
       end
