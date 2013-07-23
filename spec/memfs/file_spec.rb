@@ -410,6 +410,24 @@ module MemFs
       end
     end
 
+    describe ".fnmatch" do
+      context "when the given path matches against the given pattern" do
+        it "returns true" do
+          expect(File.fnmatch('c?t', 'cat')).to be_true
+        end
+      end
+
+      context "when the given path does not match against the given pattern" do
+        it "returns false" do
+          expect(File.fnmatch('c?t', 'tac')).to be_false
+        end
+      end
+    end
+
+    describe ".fnmatch?" do
+      it_behaves_like 'aliased method', :fnmatch?, :fnmatch
+    end
+
     describe ".identical?" do
       before :each do
         subject.open('/test-file', 'w') { |f| f.puts 'test' }

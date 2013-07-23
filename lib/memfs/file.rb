@@ -26,6 +26,7 @@ module MemFs
                    :basename,
                    :dirname,
                    :extname,
+                   :fnmatch,
                    :join,
                    :path
 
@@ -79,6 +80,8 @@ module MemFs
     def self.file?(path)
       fs.find(path).is_a?(Fake::File)
     end
+
+    class << self; alias :fnmatch? :fnmatch; end
 
     def self.identical?(path1, path2)
       fs.find!(path1).dereferenced === fs.find!(path2).dereferenced
