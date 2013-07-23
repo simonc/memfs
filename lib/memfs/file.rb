@@ -62,6 +62,10 @@ module MemFs
       fs.find(path) && stat(path).executable?
     end
 
+    def self.executable_real?(path)
+      fs.find(path) && stat(path).executable_real?
+    end
+
     def self.exists?(path)
       not fs.find(path).nil?
     end

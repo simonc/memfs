@@ -267,6 +267,69 @@ module MemFs
       end
     end
 
+    describe ".executable_real?" do
+      let(:access) { 0 }
+      let(:gid) { 0 }
+      let(:uid) { 0 }
+
+      before :each do
+        subject.chmod(access, '/test-file')
+        subject.chown(uid, gid, '/test-file')
+      end
+
+      context "when the file is not executable by anyone" do
+        it "return false" do
+          executable = subject.executable_real?('/test-file')
+          expect(executable).to be_false
+        end
+      end
+
+      context "when the file is user executable" do
+        let(:access) { MemFs::Fake::Entry::UEXEC }
+
+        context "and the current user owns the file" do
+          before(:each) { subject.chown(uid, 0, '/test-file') }
+          let(:uid) { Process.uid }
+
+          it "returns true" do
+            executable = subject.executable_real?('/test-file')
+            expect(executable).to be_true
+          end
+        end
+      end
+
+      context "when the file is group executable" do
+        let(:access) { MemFs::Fake::Entry::GEXEC }
+
+        context "and the current user is part of the owner group" do
+          let(:gid) { Process.gid }
+
+          it "returns true" do
+            executable = subject.executable_real?('/test-file')
+            expect(executable).to be_true
+          end
+        end
+      end
+
+      context "when the file is executable by anyone" do
+        let(:access) { MemFs::Fake::Entry::OEXEC }
+
+        context "and the user has no specific right on it" do
+          it "returns true" do
+            executable = subject.executable_real?('/test-file')
+            expect(executable).to be_true
+          end
+        end
+      end
+
+      context "when the file does not exist" do
+        it "returns false" do
+          executable = subject.executable_real?('/no-file')
+          expect(executable).to be_false
+        end
+      end
+    end
+
     describe ".exists?" do
       it "returns true if the file exists" do
         expect(subject.exists?('/test-file')).to be_true

@@ -199,6 +199,67 @@ module MemFs
       end
     end
 
+    describe "#executable_real?" do
+      subject { File::Stat.new('/test-file') }
+      let(:entry) { fs.find!('/test-file') }
+      let(:access) { 0 }
+      let(:gid) { 0 }
+      let(:uid) { 0 }
+
+      before :each do
+        fs.touch('/test-file')
+        entry.mode = access
+        entry.uid = uid
+        entry.gid = gid
+      end
+
+      context "when the file is not executable by anyone" do
+        it "return false" do
+          expect(subject.executable_real?).to be_false
+        end
+      end
+
+      context "when the file is user executable" do
+        let(:access) { MemFs::Fake::Entry::UEXEC }
+
+        context "and the current user owns the file" do
+          let(:uid) { Process.uid }
+
+          it "returns true" do
+            expect(subject.executable_real?).to be_true
+          end
+        end
+      end
+
+      context "when the file is group executable" do
+        let(:access) { MemFs::Fake::Entry::GEXEC }
+
+        context "and the current user is part of the owner group" do
+          let(:gid) { Process.gid }
+
+          it "returns true" do
+            expect(subject.executable_real?).to be_true
+          end
+        end
+      end
+
+      context "when the file is executable by anyone" do
+        let(:access) { MemFs::Fake::Entry::OEXEC }
+
+        context "and the user has no specific right on it" do
+          it "returns true" do
+            expect(subject.executable_real?).to be_true
+          end
+        end
+      end
+
+      context "when the file does not exist" do
+        it "returns false" do
+          expect(subject.executable_real?).to be_false
+        end
+      end
+    end
+
     describe "#file?" do
       it "returns true if the entry is a regular file" do
         fs.touch('/test-file')

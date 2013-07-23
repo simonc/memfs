@@ -34,6 +34,16 @@ module MemFs
         end
       end
 
+      def executable_real?
+        if Process.uid == uid
+          !!(mode & Fake::Entry::UEXEC).nonzero?
+        elsif Process.gid == gid
+          !!(mode & Fake::Entry::GEXEC).nonzero?
+        else
+          !!(mode & Fake::Entry::OEXEC).nonzero?
+        end
+      end
+
       def file?
         File.file? entry.path
       end
