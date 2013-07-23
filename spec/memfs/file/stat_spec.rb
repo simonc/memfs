@@ -309,6 +309,24 @@ module MemFs
       end
     end
 
+    describe "#owned?" do
+      context "when the effective user owns of the file" do
+        it "returns true" do
+          fs.touch('/test-file')
+          fs.chown(Process.euid, 0, '/test-file')
+          expect(File::Stat.new('/test-file').owned?).to be_true
+        end
+      end
+
+      context "when the effective user does not own of the file" do
+        it "returns false" do
+          fs.touch('/test-file')
+          fs.chown(0, 0, '/test-file')
+          expect(File::Stat.new('/test-file').owned?).to be_false
+        end
+      end
+    end
+
     describe "#sticky?" do
       it "returns true if the named file has the sticky bit set" do
         fs.touch('/test-file')

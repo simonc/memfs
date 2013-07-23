@@ -53,6 +53,10 @@ module MemFs
         @entry = dereference ? entry.dereferenced : entry
       end
 
+      def owned?
+        uid == Process.euid
+      end
+
       def sticky?
         !!(entry.mode & Fake::Entry::USTICK).nonzero?
       end

@@ -609,6 +609,30 @@ module MemFs
       end
     end
 
+    describe ".owned?" do
+      context "when the named file exists" do
+        context "and the effective user owns of the file" do
+          it "returns true" do
+            subject.chown(Process.euid, 0, '/test-file')
+            expect(File.owned?('/test-file')).to be_true
+          end
+        end
+
+        context "and the effective user does not own of the file" do
+          it "returns false" do
+            subject.chown(0, 0, '/test-file')
+            expect(File.owned?('/test-file')).to be_false
+          end
+        end
+      end
+
+      context "when the named file does not exist" do
+        it "returns false" do
+          expect(File.owned?('/no-file')).to be_false
+        end
+      end
+    end
+
     describe '.path' do
       context "when the path is a string" do
         let(:path) { '/some/path' }

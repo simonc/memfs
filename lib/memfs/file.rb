@@ -124,6 +124,10 @@ module MemFs
       file.close if file && block_given?
     end
 
+    def self.owned?(path)
+      fs.find(path) && stat(path).owned?
+    end
+
     def self.read(path, length = nil, offset = 0, mode: RDONLY, encoding: nil, open_args: nil)
       open_args ||= [mode, encoding: encoding]
 
