@@ -362,6 +362,32 @@ module MemFs
       end
     end
 
+    describe ".extname" do
+      it "returns the extension of the given path" do
+        expect(subject.extname('test-file.txt')).to eq('.txt')
+      end
+
+      context "when the given path starts with a period" do
+        context "and the path has no extension" do
+          it "returns an empty string" do
+            expect(subject.extname('.test-file')).to eq('')
+          end
+        end
+
+        context "and the path has an extension" do
+          it "returns the extension" do
+            expect(subject.extname('.test-file.txt')).to eq('.txt')
+          end
+        end
+      end
+
+      context "when the period is the last character in path" do
+        it "returns an empty string" do
+          expect(subject.extname('test-file.')).to eq('')
+        end
+      end
+    end
+
     describe ".file?" do
       context "when the named file exists" do
         context "and it is a regular file" do

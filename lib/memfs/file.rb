@@ -25,6 +25,7 @@ module MemFs
     def_delegators :original_file_class,
                    :basename,
                    :dirname,
+                   :extname,
                    :join,
                    :path
 
