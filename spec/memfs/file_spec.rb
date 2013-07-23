@@ -206,7 +206,6 @@ module MemFs
 
     describe ".executable?" do
       let(:access) { 0 }
-      let(:current_user) { Etc.getpwuid }
       let(:gid) { 0 }
       let(:uid) { 0 }
 
@@ -227,7 +226,7 @@ module MemFs
 
         context "and the current user owns the file" do
           before(:each) { subject.chown(uid, 0, '/test-file') }
-          let(:uid) { current_user.uid }
+          let(:uid) { Process.euid }
 
           it "returns true" do
             executable = subject.executable?('/test-file')
@@ -240,7 +239,7 @@ module MemFs
         let(:access) { MemFs::Fake::Entry::GEXEC }
 
         context "and the current user is part of the owner group" do
-          let(:gid) { current_user.gid }
+          let(:gid) { Process.egid }
 
           it "returns true" do
             executable = subject.executable?('/test-file')

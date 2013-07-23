@@ -25,11 +25,9 @@ module MemFs
       end
 
       def executable?
-        current_user = Etc.getpwuid
-
-        if current_user.uid == uid
+        if Process.euid == uid
           !!(mode & Fake::Entry::UEXEC).nonzero?
-        elsif current_user.gid == gid
+        elsif Process.egid == gid
           !!(mode & Fake::Entry::GEXEC).nonzero?
         else
           !!(mode & Fake::Entry::OEXEC).nonzero?

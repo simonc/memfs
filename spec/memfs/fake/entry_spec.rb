@@ -75,11 +75,11 @@ module MemFs
 
       describe ".new" do
         it "sets its default uid to the current user's uid" do
-          expect(entry.uid).to eq(Etc.getpwuid.uid)
+          expect(entry.uid).to eq(Process.euid)
         end
 
         it "sets its default gid to the current user's gid" do
-          expect(entry.gid).to eq(Etc.getpwuid.gid)
+          expect(entry.gid).to eq(Process.egid)
         end
 
         it "extract its name from the path passed as argument" do

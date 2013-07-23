@@ -43,15 +43,14 @@ module MemFs
       end
 
       def initialize(path = nil)
-        current_user = Etc.getpwuid
         time = Time.now
         self.atime = time
         self.ctime = time
-        self.gid = current_user.gid
+        self.gid = Process.egid
         self.mode = 0666 - MemFs::File.umask
         self.mtime = time
         self.name = MemFs::File.basename(path || '')
-        self.uid = current_user.uid
+        self.uid = Process.euid
       end
 
       def ino

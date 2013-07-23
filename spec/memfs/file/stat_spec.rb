@@ -142,7 +142,6 @@ module MemFs
       subject { File::Stat.new('/test-file') }
       let(:entry) { fs.find!('/test-file') }
       let(:access) { 0 }
-      let(:current_user) { Etc.getpwuid }
       let(:gid) { 0 }
       let(:uid) { 0 }
 
@@ -163,7 +162,7 @@ module MemFs
         let(:access) { MemFs::Fake::Entry::UEXEC }
 
         context "and the current user owns the file" do
-          let(:uid) { current_user.uid }
+          let(:uid) { Process.euid }
 
           it "returns true" do
             expect(subject.executable?).to be_true
@@ -175,7 +174,7 @@ module MemFs
         let(:access) { MemFs::Fake::Entry::GEXEC }
 
         context "and the current user is part of the owner group" do
-          let(:gid) { current_user.gid }
+          let(:gid) { Process.egid }
 
           it "returns true" do
             expect(subject.executable?).to be_true
