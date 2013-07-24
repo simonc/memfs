@@ -327,6 +327,67 @@ module MemFs
       end
     end
 
+    describe "#readable?" do
+      subject { File::Stat.new('/test-file') }
+      let(:entry) { fs.find!('/test-file') }
+      let(:access) { 0 }
+      let(:gid) { 0 }
+      let(:uid) { 0 }
+
+      before :each do
+        fs.touch('/test-file')
+        entry.mode = access
+        entry.uid = uid
+        entry.gid = gid
+      end
+
+      context "when the file is not readable by anyone" do
+        it "return false" do
+          expect(subject.readable?).to be_false
+        end
+      end
+
+      context "when the file is user readable" do
+        let(:access) { MemFs::Fake::Entry::UREAD }
+
+        context "and the current user owns the file" do
+          let(:uid) { Process.euid }
+
+          it "returns true" do
+            expect(subject.readable?).to be_true
+          end
+        end
+      end
+
+      context "when the file is group readable" do
+        let(:access) { MemFs::Fake::Entry::GREAD }
+
+        context "and the current user is part of the owner group" do
+          let(:gid) { Process.egid }
+
+          it "returns true" do
+            expect(subject.readable?).to be_true
+          end
+        end
+      end
+
+      context "when the file is readable by anyone" do
+        let(:access) { MemFs::Fake::Entry::OREAD }
+
+        context "and the user has no specific right on it" do
+          it "returns true" do
+            expect(subject.readable?).to be_true
+          end
+        end
+      end
+
+      context "when the file does not exist" do
+        it "returns false" do
+          expect(subject.readable?).to be_false
+        end
+      end
+    end
+
     describe "#sticky?" do
       it "returns true if the named file has the sticky bit set" do
         fs.touch('/test-file')

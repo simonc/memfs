@@ -25,7 +25,7 @@ module MemFs
       end
 
       def executable?
-        if Process.euid == uid
+        if owned?
           !!(mode & Fake::Entry::UEXEC).nonzero?
         elsif Process.egid == gid
           !!(mode & Fake::Entry::GEXEC).nonzero?
@@ -55,6 +55,16 @@ module MemFs
 
       def owned?
         uid == Process.euid
+      end
+
+      def readable?
+        if owned?
+          !!(mode & Fake::Entry::UREAD).nonzero?
+        elsif Process.egid == gid
+          !!(mode & Fake::Entry::GREAD).nonzero?
+        else
+          !!(mode & Fake::Entry::OREAD).nonzero?
+        end
       end
 
       def sticky?

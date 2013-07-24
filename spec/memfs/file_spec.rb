@@ -703,6 +703,69 @@ module MemFs
       end
     end
 
+    describe ".readable?" do
+      let(:access) { 0 }
+      let(:gid) { 0 }
+      let(:uid) { 0 }
+
+      before :each do
+        subject.chmod(access, '/test-file')
+        subject.chown(uid, gid, '/test-file')
+      end
+
+      context "when the file is not readable by anyone" do
+        it "return false" do
+          readable = subject.readable?('/test-file')
+          expect(readable).to be_false
+        end
+      end
+
+      context "when the file is user readable" do
+        let(:access) { MemFs::Fake::Entry::UREAD }
+
+        context "and the current user owns the file" do
+          before(:each) { subject.chown(uid, 0, '/test-file') }
+          let(:uid) { Process.euid }
+
+          it "returns true" do
+            readable = subject.readable?('/test-file')
+            expect(readable).to be_true
+          end
+        end
+      end
+
+      context "when the file is group readable" do
+        let(:access) { MemFs::Fake::Entry::GREAD }
+
+        context "and the current user is part of the owner group" do
+          let(:gid) { Process.egid }
+
+          it "returns true" do
+            readable = subject.readable?('/test-file')
+            expect(readable).to be_true
+          end
+        end
+      end
+
+      context "when the file is readable by anyone" do
+        let(:access) { MemFs::Fake::Entry::OREAD }
+
+        context "and the user has no specific right on it" do
+          it "returns true" do
+            readable = subject.readable?('/test-file')
+            expect(readable).to be_true
+          end
+        end
+      end
+
+      context "when the file does not exist" do
+        it "returns false" do
+          readable = subject.readable?('/no-file')
+          expect(readable).to be_false
+        end
+      end
+    end
+
     describe ".readlink" do
       it "returns the name of the file referenced by the given link" do
         expect(subject.readlink('/test-link')).to eq('/test-file')

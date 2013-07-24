@@ -138,6 +138,10 @@ module MemFs
       file.close if file
     end
 
+    def self.readable?(path)
+      fs.find(path) && stat(path).readable?
+    end
+
     def self.readlink(path)
       fs.find!(path).target
     end
