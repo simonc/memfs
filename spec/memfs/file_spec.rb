@@ -428,6 +428,30 @@ module MemFs
       it_behaves_like 'aliased method', :fnmatch?, :fnmatch
     end
 
+    describe ".grpowned?" do
+      context "when the named file exists" do
+        context "and the effective user group owns of the file" do
+          it "returns true" do
+            subject.chown(0, Process.egid, '/test-file')
+            expect(File.grpowned?('/test-file')).to be_true
+          end
+        end
+
+        context "and the effective user group does not own of the file" do
+          it "returns false" do
+            subject.chown(0, 0, '/test-file')
+            expect(File.grpowned?('/test-file')).to be_false
+          end
+        end
+      end
+
+      context "when the named file does not exist" do
+        it "returns false" do
+          expect(File.grpowned?('/no-file')).to be_false
+        end
+      end
+    end
+
     describe ".identical?" do
       before :each do
         subject.open('/test-file', 'w') { |f| f.puts 'test' }

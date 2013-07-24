@@ -294,6 +294,24 @@ module MemFs
       end
     end
 
+    describe "#grpowned?" do
+      context "when the effective user group owns of the file" do
+        it "returns true" do
+          fs.touch('/test-file')
+          fs.chown(0, Process.egid, '/test-file')
+          expect(File::Stat.new('/test-file').grpowned?).to be_true
+        end
+      end
+
+      context "when the effective user group does not own of the file" do
+        it "returns false" do
+          fs.touch('/test-file')
+          fs.chown(0, 0, '/test-file')
+          expect(File::Stat.new('/test-file').grpowned?).to be_false
+        end
+      end
+    end
+
     describe "#ino" do
       it "returns the inode number for stat." do
         fs.touch('/test-file')

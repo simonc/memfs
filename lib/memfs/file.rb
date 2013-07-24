@@ -83,6 +83,10 @@ module MemFs
 
     class << self; alias :fnmatch? :fnmatch; end
 
+    def self.grpowned?(path)
+      fs.find(path) && stat(path).grpowned?
+    end
+
     def self.identical?(path1, path2)
       fs.find!(path1).dereferenced === fs.find!(path2).dereferenced
     rescue Errno::ENOENT

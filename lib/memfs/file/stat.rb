@@ -27,7 +27,7 @@ module MemFs
       def executable?
         if owned?
           !!(mode & Fake::Entry::UEXEC).nonzero?
-        elsif Process.egid == gid
+        elsif grpowned?
           !!(mode & Fake::Entry::GEXEC).nonzero?
         else
           !!(mode & Fake::Entry::OEXEC).nonzero?
@@ -48,6 +48,10 @@ module MemFs
         File.file? entry.path
       end
 
+      def grpowned?
+        gid == Process.egid
+      end
+
       def initialize(path, dereference = false)
         entry = fs.find!(path)
         @entry = dereference ? entry.dereferenced : entry
@@ -60,7 +64,7 @@ module MemFs
       def readable?
         if owned?
           !!(mode & Fake::Entry::UREAD).nonzero?
-        elsif Process.egid == gid
+        elsif grpowned?
           !!(mode & Fake::Entry::GREAD).nonzero?
         else
           !!(mode & Fake::Entry::OREAD).nonzero?
