@@ -92,6 +92,16 @@ module MemFs
       def world_writable?
         entry.mode if (entry.mode & Fake::Entry::OWRITE).nonzero?
       end
+
+      def writable?
+        if owned?
+          !!(mode & Fake::Entry::UWRITE).nonzero?
+        elsif grpowned?
+          !!(mode & Fake::Entry::GWRITE).nonzero?
+        else
+          !!(mode & Fake::Entry::OWRITE).nonzero?
+        end
+      end
     end
   end
 end

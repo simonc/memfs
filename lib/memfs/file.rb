@@ -204,6 +204,10 @@ module MemFs
       file_names.size
     end
 
+    def self.writable?(path)
+      fs.find(path) && stat(path).writable?
+    end
+
     attr_accessor :closed,
                   :entry,
                   :opening_mode

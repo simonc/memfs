@@ -518,5 +518,66 @@ module MemFs
         end
       end
     end
+
+    describe "#writable?" do
+      subject { File::Stat.new('/test-file') }
+      let(:entry) { fs.find!('/test-file') }
+      let(:access) { 0 }
+      let(:gid) { 0 }
+      let(:uid) { 0 }
+
+      before :each do
+        fs.touch('/test-file')
+        entry.mode = access
+        entry.uid = uid
+        entry.gid = gid
+      end
+
+      context "when the file is not executable by anyone" do
+        it "return false" do
+          expect(subject.writable?).to be_false
+        end
+      end
+
+      context "when the file is user executable" do
+        let(:access) { MemFs::Fake::Entry::UWRITE }
+
+        context "and the current user owns the file" do
+          let(:uid) { Process.euid }
+
+          it "returns true" do
+            expect(subject.writable?).to be_true
+          end
+        end
+      end
+
+      context "when the file is group executable" do
+        let(:access) { MemFs::Fake::Entry::GWRITE }
+
+        context "and the current user is part of the owner group" do
+          let(:gid) { Process.egid }
+
+          it "returns true" do
+            expect(subject.writable?).to be_true
+          end
+        end
+      end
+
+      context "when the file is executable by anyone" do
+        let(:access) { MemFs::Fake::Entry::OWRITE }
+
+        context "and the user has no specific right on it" do
+          it "returns true" do
+            expect(subject.writable?).to be_true
+          end
+        end
+      end
+
+      context "when the file does not exist" do
+        it "returns false" do
+          expect(subject.writable?).to be_false
+        end
+      end
+    end
   end
 end

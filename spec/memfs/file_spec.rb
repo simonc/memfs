@@ -1015,6 +1015,69 @@ module MemFs
       end
     end
 
+    describe "writable?" do
+      let(:access) { 0 }
+      let(:gid) { 0 }
+      let(:uid) { 0 }
+
+      before :each do
+        subject.chmod(access, '/test-file')
+        subject.chown(uid, gid, '/test-file')
+      end
+
+      context "when the file is not writable by anyone" do
+        it "return false" do
+          writable = subject.writable?('/test-file')
+          expect(writable).to be_false
+        end
+      end
+
+      context "when the file is user writable" do
+        let(:access) { MemFs::Fake::Entry::UWRITE }
+
+        context "and the current user owns the file" do
+          before(:each) { subject.chown(uid, 0, '/test-file') }
+          let(:uid) { Process.euid }
+
+          it "returns true" do
+            writable = subject.writable?('/test-file')
+            expect(writable).to be_true
+          end
+        end
+      end
+
+      context "when the file is group writable" do
+        let(:access) { MemFs::Fake::Entry::GWRITE }
+
+        context "and the current user is part of the owner group" do
+          let(:gid) { Process.egid }
+
+          it "returns true" do
+            writable = subject.writable?('/test-file')
+            expect(writable).to be_true
+          end
+        end
+      end
+
+      context "when the file is writable by anyone" do
+        let(:access) { MemFs::Fake::Entry::OWRITE }
+
+        context "and the user has no specific right on it" do
+          it "returns true" do
+            writable = subject.writable?('/test-file')
+            expect(writable).to be_true
+          end
+        end
+      end
+
+      context "when the file does not exist" do
+        it "returns false" do
+          writable = subject.writable?('/no-file')
+          expect(writable).to be_false
+        end
+      end
+    end
+
     describe '#chmod' do
       it "changes permission bits on the file" do
         file.chmod(0777)
