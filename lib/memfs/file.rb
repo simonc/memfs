@@ -142,6 +142,10 @@ module MemFs
       fs.find(path) && stat(path).readable?
     end
 
+    def self.readable_real?(path)
+      fs.find(path) && stat(path).readable_real?
+    end
+
     def self.readlink(path)
       fs.find!(path).target
     end

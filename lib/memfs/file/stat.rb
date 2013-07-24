@@ -67,6 +67,16 @@ module MemFs
         end
       end
 
+      def readable_real?
+        if Process.uid == uid
+          !!(mode & Fake::Entry::UREAD).nonzero?
+        elsif Process.gid == gid
+          !!(mode & Fake::Entry::GREAD).nonzero?
+        else
+          !!(mode & Fake::Entry::OREAD).nonzero?
+        end
+      end
+
       def sticky?
         !!(entry.mode & Fake::Entry::USTICK).nonzero?
       end
