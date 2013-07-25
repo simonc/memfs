@@ -171,6 +171,10 @@ module MemFs
       Stat.new(path, true)
     end
 
+    def self.sticky?(path)
+      fs.find(path) && stat(path).sticky?
+    end
+
     def self.symlink(old_name, new_name)
       fs.symlink old_name, new_name
       SUCCESS

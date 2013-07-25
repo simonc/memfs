@@ -906,6 +906,27 @@ module MemFs
       end
     end
 
+    describe ".sticky?" do
+      context "when the named file exists" do
+        it "returns true if the named file has the sticky bit set" do
+          fs.touch('/test-file')
+          fs.chmod(01777, '/test-file')
+          expect(File.sticky?('/test-file')).to be_true
+        end
+
+        it "returns false if the named file hasn't' the sticky bit set" do
+          fs.touch('/test-file')
+          expect(File.sticky?('/test-file')).not_to be_true
+        end
+      end
+
+      context "when the named file does not exist" do
+        it "returns false" do
+          expect(File.sticky?('/no-file')).to be_false
+        end
+      end
+    end
+
     describe '.symlink' do
       it "creates a symbolic link named new_name" do
         expect(subject.symlink?('/test-link')).to be_true
