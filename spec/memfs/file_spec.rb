@@ -877,6 +877,29 @@ module MemFs
       end
     end
 
+    describe ".size?" do
+      context "when the named file exists" do
+        context "and it is empty" do
+          it "returns false" do
+            expect(File.size?('/empty-file')).to be_false
+          end
+        end
+
+        context "and it is not empty" do
+          it "returns the size of the file" do
+            File.open('/content-file', 'w') { |f| f.write 'test' }
+            expect(File.size?('/content-file')).to eq(4)
+          end
+        end
+      end
+
+      context "when the named file does not exist" do
+        it "returns false" do
+          expect(File.size?('/no-file')).to be_false
+        end
+      end
+    end
+
     describe '.stat' do
       it "returns a File::Stat object for the named file" do
         expect(subject.stat('/test-file')).to be_a(File::Stat)

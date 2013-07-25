@@ -167,6 +167,11 @@ module MemFs
       fs.find!(path).size
     end
 
+    def self.size?(path)
+      file = fs.find(path)
+      file && file.size > 0 && file.size
+    end
+
     def self.stat(path)
       Stat.new(path, true)
     end
