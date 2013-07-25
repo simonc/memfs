@@ -102,6 +102,16 @@ module MemFs
           !!(mode & Fake::Entry::OWRITE).nonzero?
         end
       end
+
+      def writable_real?
+        if Process.uid == uid
+          !!(mode & Fake::Entry::UWRITE).nonzero?
+        elsif Process.gid == gid
+          !!(mode & Fake::Entry::GWRITE).nonzero?
+        else
+          !!(mode & Fake::Entry::OWRITE).nonzero?
+        end
+      end
     end
   end
 end

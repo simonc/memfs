@@ -208,6 +208,10 @@ module MemFs
       fs.find(path) && stat(path).writable?
     end
 
+    def self.writable_real?(path)
+      fs.find(path) && stat(path).writable_real?
+    end
+
     attr_accessor :closed,
                   :entry,
                   :opening_mode
