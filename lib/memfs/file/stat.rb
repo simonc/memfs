@@ -21,7 +21,7 @@ module MemFs
                      :uid
 
       def directory?
-        File.directory? entry.path
+        entry.is_a?(Fake::Directory)
       end
 
       def executable?
@@ -45,7 +45,7 @@ module MemFs
       end
 
       def file?
-        File.file? entry.path
+        entry.is_a?(Fake::File)
       end
 
       def grpowned?
@@ -86,7 +86,7 @@ module MemFs
       end
 
       def symlink?
-        File.symlink? entry.path
+        entry.is_a?(Fake::Symlink)
       end
 
       def world_writable?
