@@ -30,6 +30,24 @@ module MemFs
                    :join,
                    :path
 
+    %i[
+      directory?
+      executable?
+      executable_real?
+      file?
+      grpowned?
+      owned?
+      readable?
+      readable_real?
+      sticky?
+      writable?
+      writable_real?
+    ].each do |query_method|
+      define_singleton_method(query_method) do |path|    # def directory?(path)
+        stat_query(path, query_method)                   #   stat_query(path, :directory?)
+      end                                                # end
+    end
+
     def self.absolute_path(path, dir_string = nil)
       basedir = dir_string || Dir.pwd
       original_file_class.absolute_path(path, basedir)
@@ -56,18 +74,6 @@ module MemFs
       stat(path).ctime
     end
 
-    def self.directory?(path)
-      fs.find(path) && stat(path).directory?
-    end
-
-    def self.executable?(path)
-      fs.find(path) && stat(path).executable?
-    end
-
-    def self.executable_real?(path)
-      fs.find(path) && stat(path).executable_real?
-    end
-
     def self.exists?(path)
       !!fs.find(path)
     end
@@ -77,15 +83,7 @@ module MemFs
       original_file_class.expand_path(file_name, dir_string)
     end
 
-    def self.file?(path)
-      fs.find(path) && stat(path).file?
-    end
-
     class << self; alias :fnmatch? :fnmatch; end
-
-    def self.grpowned?(path)
-      fs.find(path) && stat(path).grpowned?
-    end
 
     def self.identical?(path1, path2)
       fs.find!(path1).dereferenced === fs.find!(path2).dereferenced
@@ -128,10 +126,6 @@ module MemFs
       file.close if file && block_given?
     end
 
-    def self.owned?(path)
-      fs.find(path) && stat(path).owned?
-    end
-
     def self.read(path, length = nil, offset = 0, mode: RDONLY, encoding: nil, open_args: nil)
       open_args ||= [mode, encoding: encoding]
 
@@ -140,14 +134,6 @@ module MemFs
       file.read(length)
     ensure
       file.close if file
-    end
-
-    def self.readable?(path)
-      fs.find(path) && stat(path).readable?
-    end
-
-    def self.readable_real?(path)
-      fs.find(path) && stat(path).readable_real?
     end
 
     def self.readlink(path)
@@ -176,17 +162,13 @@ module MemFs
       Stat.new(path, true)
     end
 
-    def self.sticky?(path)
-      fs.find(path) && stat(path).sticky?
-    end
-
     def self.symlink(old_name, new_name)
       fs.symlink old_name, new_name
       SUCCESS
     end
 
     def self.symlink?(path)
-      fs.find(path) && lstat(path).symlink?
+      lstat_query(path, :symlink?)
     end
 
     def self.umask(integer = nil)
@@ -211,14 +193,6 @@ module MemFs
         fs.find!(file_name).mtime = mtime
       end
       file_names.size
-    end
-
-    def self.writable?(path)
-      fs.find(path) && stat(path).writable?
-    end
-
-    def self.writable_real?(path)
-      fs.find(path) && stat(path).writable_real?
     end
 
     attr_accessor :closed,
@@ -313,6 +287,14 @@ module MemFs
 
     def self.original_file_class
       MemFs::OriginalFile
+    end
+
+    def self.stat_query(path, query)
+      fs.find(path) && stat(path).public_send(query)
+    end
+
+    def self.lstat_query(path, query)
+      fs.find(path) && lstat(path).public_send(query)
     end
 
     def str_to_mode_int(mode)
