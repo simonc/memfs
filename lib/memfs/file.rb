@@ -57,7 +57,7 @@ module MemFs
     end
 
     def self.directory?(path)
-      fs.directory? path
+      fs.find(path) && stat(path).directory?
     end
 
     def self.executable?(path)
@@ -69,7 +69,7 @@ module MemFs
     end
 
     def self.exists?(path)
-      not fs.find(path).nil?
+      !!fs.find(path)
     end
     class << self; alias :exist? :exists?; end
 
@@ -78,7 +78,7 @@ module MemFs
     end
 
     def self.file?(path)
-      fs.find(path).is_a?(Fake::File)
+      fs.find(path) && stat(path).file?
     end
 
     class << self; alias :fnmatch? :fnmatch; end
@@ -186,7 +186,7 @@ module MemFs
     end
 
     def self.symlink?(path)
-      fs.symlink? path
+      fs.find(path) && lstat(path).symlink?
     end
 
     def self.umask(integer = nil)
