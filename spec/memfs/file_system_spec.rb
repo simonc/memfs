@@ -8,17 +8,6 @@ module MemFs
       subject.mkdir '/test-dir'
     end
 
-    describe '#directory?' do
-      it "returns true if an entry is a directory" do
-        expect(subject.directory?('/test-dir')).to be_true
-      end
-
-      it "returns false if an entry is not a directory" do
-        subject.touch('/some-file')
-        expect(subject.directory?('/some-file')).to be_false
-      end
-    end
-
     describe '#chdir' do
       it "changes the current working directory" do
         subject.chdir '/test-dir'
@@ -320,22 +309,6 @@ module MemFs
           subject.touch('/some-file2')
           expect { subject.symlink('/some-file', '/some-file2') }.to raise_error(Errno::EEXIST)
         end
-      end
-    end
-
-    describe '#symlink?' do
-      it "returns true if the entry is a symlink" do
-        subject.symlink('/test-file', '/test-link')
-        expect(subject.symlink?('/test-link')).to be_true
-      end
-
-      it "returns false if the entry is not a symlink" do
-        subject.touch('/test-file')
-        expect(subject.symlink?('/test-file')).to be_false
-      end
-
-      it "returns false if the entry doesn't exist" do
-        expect(subject.symlink?('/test-file')).to be_false
       end
     end
 

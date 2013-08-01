@@ -43,10 +43,6 @@ module MemFs
       entry.gid = gid if gid && gid != -1
     end
 
-    def directory?(path)
-      find(path).is_a?(Fake::Directory)
-    end
-
     def dirname(path)
       File.dirname(path)
     end
@@ -126,10 +122,6 @@ module MemFs
       raise Errno::EEXIST, new_name if find(new_name)
 
       find_parent!(new_name).add_entry Fake::Symlink.new(new_name, old_name)
-    end
-
-    def symlink?(path)
-      find(path).is_a?(Fake::Symlink)
     end
 
     def touch(*paths)

@@ -14,7 +14,7 @@ module MemFs
     end
 
     def self.exists?(path)
-      fs.directory?(path)
+      File.directory?(path)
     end
 
     def self.getwd
