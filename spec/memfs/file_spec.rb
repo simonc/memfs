@@ -1059,7 +1059,7 @@ module MemFs
       end
     end
 
-    describe "writable?" do
+    describe ".writable?" do
       let(:access) { 0 }
       let(:gid) { 0 }
       let(:uid) { 0 }
@@ -1122,7 +1122,7 @@ module MemFs
       end
     end
 
-    describe "writable_real?" do
+    describe ".writable_real?" do
       let(:access) { 0 }
       let(:gid) { 0 }
       let(:uid) { 0 }
