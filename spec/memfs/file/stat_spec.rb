@@ -566,15 +566,15 @@ module MemFs
     describe "#world_writable?" do
       context "when +file_name+ is writable by others" do
         it "returns an integer representing the file permission bits of +file_name+" do
-          fs.chmod(0777, '/test-file')
-          expect(file_stat.world_writable?).to be_true
+          fs.chmod(MemFs::Fake::Entry::OWRITE, '/test-file')
+          expect(file_stat.world_writable?).to eq(MemFs::Fake::Entry::OWRITE)
         end
       end
 
       context "when +file_name+ is not writable by others" do
         it "returns nil" do
-          fs.chmod(0644, '/test-file')
-          expect(file_stat.world_writable?).to be_false
+          fs.chmod(MemFs::Fake::Entry::UWRITE, '/test-file')
+          expect(file_stat.world_writable?).to be_nil
         end
       end
     end

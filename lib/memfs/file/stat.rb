@@ -94,7 +94,7 @@ module MemFs
       end
 
       def world_writable?
-        entry.mode if (entry.mode & Fake::Entry::OWRITE).nonzero?
+        entry.mode - 0100000 if (entry.mode & Fake::Entry::OWRITE).nonzero?
       end
 
       def writable?

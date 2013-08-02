@@ -41,6 +41,7 @@ module MemFs
       readable_real?
       sticky?
       world_readable?
+      world_writable?
       writable?
       writable_real?
     ].each do |query_method|

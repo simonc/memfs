@@ -1083,6 +1083,30 @@ module MemFs
       end
     end
 
+    describe '.world_writable?' do
+      before :each do
+        subject.chmod(access, '/test-file')
+      end
+
+      context 'when file_name is writable by others' do
+        let(:access) { MemFs::Fake::Entry::OWRITE }
+
+        it 'returns an integer representing the file permission bits' do
+          writable = subject.world_writable?('/test-file')
+          expect(writable).to eq(MemFs::Fake::Entry::OWRITE)
+        end
+      end
+
+      context 'when file_name is not writable by others' do
+        let(:access) { MemFs::Fake::Entry::UWRITE }
+
+        it 'returns nil' do
+          writable = subject.world_writable?('/test-file')
+          expect(writable).to be_nil
+        end
+      end
+    end
+
     describe ".writable?" do
       let(:access) { 0 }
       let(:gid) { 0 }
