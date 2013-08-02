@@ -67,7 +67,7 @@ module MemFs
         elsif grpowned?
           !!(mode & Fake::Entry::GREAD).nonzero?
         else
-          !!(mode & Fake::Entry::OREAD).nonzero?
+          !!world_readable?
         end
       end
 
@@ -77,7 +77,7 @@ module MemFs
         elsif Process.gid == gid
           !!(mode & Fake::Entry::GREAD).nonzero?
         else
-          !!(mode & Fake::Entry::OREAD).nonzero?
+          !!world_readable?
         end
       end
 
@@ -103,7 +103,7 @@ module MemFs
         elsif grpowned?
           !!(mode & Fake::Entry::GWRITE).nonzero?
         else
-          !!(mode & Fake::Entry::OWRITE).nonzero?
+          !!world_writable?
         end
       end
 
@@ -113,7 +113,7 @@ module MemFs
         elsif Process.gid == gid
           !!(mode & Fake::Entry::GWRITE).nonzero?
         else
-          !!(mode & Fake::Entry::OWRITE).nonzero?
+          !!world_writable?
         end
       end
     end
