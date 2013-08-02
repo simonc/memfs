@@ -900,6 +900,13 @@ module MemFs
       end
     end
 
+    describe '.split' do
+      it "splits the given string into a directory and a file component" do
+        result = subject.split('/path/to/some-file')
+        expect(result).to eq(['/path/to', 'some-file'])
+      end
+    end
+
     describe '.stat' do
       it "returns a File::Stat object for the named file" do
         expect(subject.stat('/test-file')).to be_a(File::Stat)

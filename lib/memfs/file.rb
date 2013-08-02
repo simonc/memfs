@@ -28,7 +28,8 @@ module MemFs
                    :extname,
                    :fnmatch,
                    :join,
-                   :path
+                   :path,
+                   :split
 
     %i[
       directory?
