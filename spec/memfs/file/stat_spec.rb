@@ -547,6 +547,22 @@ module MemFs
       end
     end
 
+    describe "#world_reable?" do
+      context "when +file_name+ is readable by others" do
+        it "returns an integer representing the file permission bits of +file_name+" do
+          fs.chmod(MemFs::Fake::Entry::OREAD, '/test-file')
+          expect(file_stat.world_readable?).to eq(MemFs::Fake::Entry::OREAD)
+        end
+      end
+
+      context "when +file_name+ is not readable by others" do
+        it "returns nil" do
+          fs.chmod(MemFs::Fake::Entry::UREAD, '/test-file')
+          expect(file_stat.world_readable?).to be_nil
+        end
+      end
+    end
+
     describe "#world_writable?" do
       context "when +file_name+ is writable by others" do
         it "returns an integer representing the file permission bits of +file_name+" do

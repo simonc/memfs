@@ -1059,6 +1059,30 @@ module MemFs
       end
     end
 
+    describe '.world_readable?' do
+      before :each do
+        subject.chmod(access, '/test-file')
+      end
+
+      context 'when file_name is readable by others' do
+        let(:access) { MemFs::Fake::Entry::OREAD }
+
+        it 'returns an integer representing the file permission bits' do
+          readable = subject.world_readable?('/test-file')
+          expect(readable).to eq(MemFs::Fake::Entry::OREAD)
+        end
+      end
+
+      context 'when file_name is not readable by others' do
+        let(:access) { MemFs::Fake::Entry::UREAD }
+
+        it 'returns nil' do
+          readable = subject.world_readable?('/test-file')
+          expect(readable).to be_nil
+        end
+      end
+    end
+
     describe ".writable?" do
       let(:access) { 0 }
       let(:gid) { 0 }

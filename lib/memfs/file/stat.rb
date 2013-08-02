@@ -89,6 +89,10 @@ module MemFs
         entry.is_a?(Fake::Symlink)
       end
 
+      def world_readable?
+        entry.mode - 0100000 if (entry.mode & Fake::Entry::OREAD).nonzero?
+      end
+
       def world_writable?
         entry.mode if (entry.mode & Fake::Entry::OWRITE).nonzero?
       end
