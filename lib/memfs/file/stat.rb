@@ -62,23 +62,11 @@ module MemFs
       end
 
       def readable?
-        if owned?
-          !!(mode & Fake::Entry::UREAD).nonzero?
-        elsif grpowned?
-          !!(mode & Fake::Entry::GREAD).nonzero?
-        else
-          !!world_readable?
-        end
+        user_readable? || group_readable? || !!world_readable?
       end
 
       def readable_real?
-        if Process.uid == uid
-          !!(mode & Fake::Entry::UREAD).nonzero?
-        elsif Process.gid == gid
-          !!(mode & Fake::Entry::GREAD).nonzero?
-        else
-          !!world_readable?
-        end
+        user_readable_real? || group_readable_real? || !!world_readable?
       end
 
       def sticky?
@@ -98,23 +86,45 @@ module MemFs
       end
 
       def writable?
-        if owned?
-          !!(mode & Fake::Entry::UWRITE).nonzero?
-        elsif grpowned?
-          !!(mode & Fake::Entry::GWRITE).nonzero?
-        else
-          !!world_writable?
-        end
+        user_writable? || group_writable? || !!world_writable?
       end
 
       def writable_real?
-        if Process.uid == uid
-          !!(mode & Fake::Entry::UWRITE).nonzero?
-        elsif Process.gid == gid
-          !!(mode & Fake::Entry::GWRITE).nonzero?
-        else
-          !!world_writable?
-        end
+        user_writable_real? || group_writable_real? || !!world_writable?
+      end
+
+      private
+
+      def group_readable?
+        grpowned? && !!(mode & Fake::Entry::GREAD).nonzero?
+      end
+
+      def group_readable_real?
+        Process.gid == gid && !!(mode & Fake::Entry::GREAD).nonzero?
+      end
+
+      def group_writable?
+        grpowned? && !!(mode & Fake::Entry::GWRITE).nonzero?
+      end
+
+      def group_writable_real?
+        Process.gid == gid && !!(mode & Fake::Entry::GWRITE).nonzero?
+      end
+
+      def user_readable?
+        owned? && !!(mode & Fake::Entry::UREAD).nonzero?
+      end
+
+      def user_readable_real?
+        Process.uid == uid && !!(mode & Fake::Entry::UREAD).nonzero?
+      end
+
+      def user_writable?
+        owned? && !!(mode & Fake::Entry::UWRITE).nonzero?
+      end
+
+      def user_writable_real?
+        Process.uid == uid && !!(mode & Fake::Entry::UWRITE).nonzero?
       end
     end
   end
