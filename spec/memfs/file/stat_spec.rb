@@ -694,5 +694,23 @@ module MemFs
         end
       end
     end
+
+    describe "#zero?" do
+      context "when the file has a zero size" do
+        it "returns true" do
+          expect(file_stat.zero?).to be_true
+        end
+      end
+
+      context "when the file does not have a zero size" do
+        before :each do
+          fs.find!('/test-file').content << 'test'
+        end
+
+        it "returns false" do
+          expect(file_stat.zero?).to be_false
+        end
+      end
+    end
   end
 end

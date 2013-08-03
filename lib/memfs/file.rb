@@ -45,6 +45,7 @@ module MemFs
       world_writable?
       writable?
       writable_real?
+      zero?
     ].each do |query_method|
       define_singleton_method(query_method) do |path|    # def directory?(path)
         stat_query(path, query_method)                   #   stat_query(path, :directory?)

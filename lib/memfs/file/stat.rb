@@ -93,6 +93,10 @@ module MemFs
         user_writable_real? || group_writable_real? || !!world_writable?
       end
 
+      def zero?
+        entry.content && entry.content.empty?
+      end
+
       private
 
       def group_readable?

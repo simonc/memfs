@@ -1268,6 +1268,35 @@ module MemFs
       end
     end
 
+    describe ".zero?" do
+      context "when the named file exists" do
+        context "and has a zero size" do
+          it "returns true" do
+            zero = subject.zero?('/test-file')
+            expect(zero).to be_true
+          end
+        end
+
+        context "and does not have a zero size" do
+          before :each do
+            File.open('/test-file', 'w') { |f| f.puts 'test' }
+          end
+
+          it "returns false" do
+            zero = subject.zero?('/test-file')
+            expect(zero).to be_false
+          end
+        end
+      end
+
+      context "when the named file does not exist" do
+        it "returns false" do
+          zero = subject.zero?('/no-file')
+          expect(zero).to be_false
+        end
+      end
+    end
+
     describe '#chmod' do
       it "changes permission bits on the file" do
         file.chmod(0777)
