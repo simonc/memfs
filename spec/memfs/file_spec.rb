@@ -997,6 +997,34 @@ module MemFs
       end
     end
 
+    describe '.truncate' do
+      before :each do
+        subject.open('/test-file', 'w') { |f| f.write 'x' * 50 }
+      end
+
+      it "truncates the named file to the given size" do
+        subject.truncate('/test-file', 5)
+        expect(subject.size('/test-file')).to eq(5)
+      end
+
+      it "returns zero" do
+        return_value = subject.truncate('/test-file', 5)
+        expect(return_value).to eq(0)
+      end
+
+      context "when the named file does not exist" do
+        it "raises an exception" do
+          expect { subject.truncate('/no-file', 5) }.to raise_error
+        end
+      end
+
+      context "when the given size is negative" do
+        it "it raises an exception" do
+          expect { subject.truncate('/test-file', -1) }.to raise_error
+        end
+      end
+    end
+
     describe '.umask' do
       before :each do
         subject.umask(0022)

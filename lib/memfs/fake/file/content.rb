@@ -31,6 +31,10 @@ module MemFs
           buffer.empty? ? nil : buffer
         end
 
+        def truncate(length)
+          @string.replace @string[0, length]
+        end
+
         def to_s
           @string
         end

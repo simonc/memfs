@@ -79,6 +79,15 @@ module MemFs
         end
       end
 
+      describe "#truncate" do
+        subject { File::Content.new('x'*50) }
+
+        it "truncates the content to length characters" do
+          subject.truncate(5)
+          expect(subject.length).to eq(5)
+        end
+      end
+
       describe "#write" do
         it "writes the given string in content" do
           subject.write 'test'

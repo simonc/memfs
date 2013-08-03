@@ -174,6 +174,11 @@ module MemFs
       lstat_query(path, :symlink?)
     end
 
+    def self.truncate(path, length)
+      fs.find!(path).content.truncate(length)
+      SUCCESS
+    end
+
     def self.umask(integer = nil)
       old_value = @umask || original_file_class.umask
 
