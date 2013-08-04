@@ -25,23 +25,11 @@ module MemFs
       end
 
       def executable?
-        if owned?
-          !!(mode & Fake::Entry::UEXEC).nonzero?
-        elsif grpowned?
-          !!(mode & Fake::Entry::GEXEC).nonzero?
-        else
-          !!(mode & Fake::Entry::OEXEC).nonzero?
-        end
+        user_executable? || group_executable? || !!world_executable?
       end
 
       def executable_real?
-        if Process.uid == uid
-          !!(mode & Fake::Entry::UEXEC).nonzero?
-        elsif Process.gid == gid
-          !!(mode & Fake::Entry::GEXEC).nonzero?
-        else
-          !!(mode & Fake::Entry::OEXEC).nonzero?
-        end
+        user_executable_real? || group_executable_real? || !!world_executable?
       end
 
       def file?
@@ -99,6 +87,14 @@ module MemFs
 
       private
 
+      def group_executable?
+        grpowned? && !!(mode & Fake::Entry::GEXEC).nonzero?
+      end
+
+      def group_executable_real?
+        Process.gid == gid && !!(mode & Fake::Entry::GEXEC).nonzero?
+      end
+
       def group_readable?
         grpowned? && !!(mode & Fake::Entry::GREAD).nonzero?
       end
@@ -115,6 +111,14 @@ module MemFs
         Process.gid == gid && !!(mode & Fake::Entry::GWRITE).nonzero?
       end
 
+      def user_executable?
+        owned? && !!(mode & Fake::Entry::UEXEC).nonzero?
+      end
+
+      def user_executable_real?
+        Process.uid == uid && !!(mode & Fake::Entry::UEXEC).nonzero?
+      end
+
       def user_readable?
         owned? && !!(mode & Fake::Entry::UREAD).nonzero?
       end
@@ -129,6 +133,10 @@ module MemFs
 
       def user_writable_real?
         Process.uid == uid && !!(mode & Fake::Entry::UWRITE).nonzero?
+      end
+
+      def world_executable?
+        entry.mode - 0100000 if (entry.mode & Fake::Entry::OEXEC).nonzero?
       end
     end
   end
