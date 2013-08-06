@@ -68,6 +68,24 @@ module MemFs
       end
     end
 
+    describe "#blockdev?" do
+      context "when the file is a block device" do
+        it "returns true" do
+          fs.touch('/block-file')
+          file = fs.find('/block-file')
+          file.block_device = true
+          block_stat = File::Stat.new('/block-file')
+          expect(block_stat.blockdev?).to be_true
+        end
+      end
+
+      context "when the file is not a block device" do
+        it "returns false" do
+          expect(file_stat.blockdev?).to be_false
+        end
+      end
+    end
+
     describe '#ctime' do
       let(:time) { Time.now - 500000 }
 

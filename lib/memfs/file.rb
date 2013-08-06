@@ -32,6 +32,7 @@ module MemFs
                    :split
 
     %i[
+      blockdev?
       directory?
       executable?
       executable_real?

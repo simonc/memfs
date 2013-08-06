@@ -14,6 +14,7 @@ module MemFs
       USTICK = 05000
 
       attr_accessor :atime,
+                    :block_device,
                     :ctime,
                     :gid,
                     :mtime,

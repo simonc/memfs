@@ -59,6 +59,34 @@ module MemFs
       end
     end
 
+    describe ".blockdev?" do
+      context "when the name file exists" do
+        context "and it is a block device" do
+          it "returns true" do
+            fs.touch('/block-file')
+            file = fs.find('/block-file')
+            file.block_device = true
+            blockdev = subject.blockdev?('/block-file')
+            expect(blockdev).to be_true
+          end
+        end
+
+        context "and it is not a block device" do
+          it "returns false" do
+            blockdev = subject.blockdev?('/test-file')
+            expect(blockdev).to be_false
+          end
+        end
+      end
+
+      context "when the name file does not exist" do
+        it "returns false" do
+          blockdev = subject.blockdev?('/no-file')
+          expect(blockdev).to be_false
+        end
+      end
+    end
+
     describe ".basename" do
       it "returns the last component of the filename given in +file_name+" do
         expect(subject.basename('/path/to/file.txt')).to eq('file.txt')

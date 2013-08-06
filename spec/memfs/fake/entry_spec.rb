@@ -29,6 +29,10 @@ module MemFs
         let(:value) { time }
       end
 
+      it_behaves_like 'it has accessors for', :block_device do
+        let(:value) { true }
+      end
+
       it_behaves_like 'it has accessors for', :ctime do
         let(:value) { time }
       end

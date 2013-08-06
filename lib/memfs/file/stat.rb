@@ -20,6 +20,10 @@ module MemFs
                      :mtime,
                      :uid
 
+      def blockdev?
+        !!entry.block_device
+      end
+
       def directory?
         entry.is_a?(Fake::Directory)
       end
