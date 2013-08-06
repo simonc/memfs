@@ -86,6 +86,24 @@ module MemFs
       end
     end
 
+    describe "#chardev?" do
+      context "when the file is a character device" do
+        it "returns true" do
+          fs.touch('/character-file')
+          file = fs.find('/character-file')
+          file.character_device = true
+          character_stat = File::Stat.new('/character-file')
+          expect(character_stat.chardev?).to be_true
+        end
+      end
+
+      context "when the file is not a character device" do
+        it "returns false" do
+          expect(file_stat.chardev?).to be_false
+        end
+      end
+    end
+
     describe '#ctime' do
       let(:time) { Time.now - 500000 }
 

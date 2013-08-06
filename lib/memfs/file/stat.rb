@@ -24,6 +24,10 @@ module MemFs
         !!entry.block_device
       end
 
+      def chardev?
+        !!entry.character_device
+      end
+
       def directory?
         entry.is_a?(Fake::Directory)
       end

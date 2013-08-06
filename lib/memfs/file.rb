@@ -33,6 +33,7 @@ module MemFs
 
     %i[
       blockdev?
+      chardev?
       directory?
       executable?
       executable_real?

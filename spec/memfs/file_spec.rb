@@ -101,6 +101,34 @@ module MemFs
       end
     end
 
+    describe ".chardev?" do
+      context "when the name file exists" do
+        context "and it is a character device" do
+          it "returns true" do
+            fs.touch('/character-file')
+            file = fs.find('/character-file')
+            file.character_device = true
+            chardev = subject.chardev?('/character-file')
+            expect(chardev).to be_true
+          end
+        end
+
+        context "and it is not a character device" do
+          it "returns false" do
+            chardev = subject.chardev?('/test-file')
+            expect(chardev).to be_false
+          end
+        end
+      end
+
+      context "when the name file does not exist" do
+        it "returns false" do
+          chardev = subject.chardev?('/no-file')
+          expect(chardev).to be_false
+        end
+      end
+    end
+
     describe '.chmod' do
       it "changes permission bits on the named file" do
         subject.chmod(0777, '/test-file')

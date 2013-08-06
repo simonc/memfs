@@ -15,6 +15,7 @@ module MemFs
 
       attr_accessor :atime,
                     :block_device,
+                    :character_device,
                     :ctime,
                     :gid,
                     :mtime,
