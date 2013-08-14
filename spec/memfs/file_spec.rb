@@ -484,6 +484,54 @@ module MemFs
       it_behaves_like 'aliased method', :fnmatch?, :fnmatch
     end
 
+    describe ".ftype" do
+      context "when the named entry is a regular file" do
+        it "returns 'file'" do
+          expect(subject.ftype('/test-file')).to eq('file')
+        end
+      end
+
+      context "when the named entry is a directory" do
+        it "returns 'directory'" do
+          expect(subject.ftype('/test-dir')).to eq('directory')
+        end
+      end
+
+      context "when the named entry is a block device" do
+        it "returns 'blockSpecial'" do
+          fs.touch('/block-file')
+          file = fs.find('/block-file')
+          file.block_device = true
+          expect(subject.ftype('/block-file')).to eq('blockSpecial')
+        end
+      end
+
+      context "when the named entry is a character device" do
+        it "returns 'characterSpecial'" do
+          fs.touch('/character-file')
+          file = fs.find('/character-file')
+          file.character_device = true
+          expect(subject.ftype('/character-file')).to eq('characterSpecial')
+        end
+      end
+
+      context "when the named entry is a symlink" do
+        it "returns 'link'" do
+          expect(subject.ftype('/test-link')).to eq('link')
+        end
+      end
+
+      # fifo and socket not handled for now
+
+      context "when the named entry has no specific type" do
+        it "returns 'unknown'" do
+          root = fs.find('/')
+          root.add_entry Fake::Entry.new('test-entry')
+          expect(subject.ftype('/test-entry')).to eq('unknown')
+        end
+      end
+    end
+
     describe ".grpowned?" do
       context "when the named file exists" do
         context "and the effective user group owns of the file" do

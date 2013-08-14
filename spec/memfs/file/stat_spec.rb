@@ -373,6 +373,57 @@ module MemFs
       end
     end
 
+    describe "#ftype" do
+      context "when the entry is a regular file" do
+        it "returns 'file'" do
+          expect(file_stat.ftype).to eq('file')
+        end
+      end
+
+      context "when the entry is a directory" do
+        it "returns 'directory'" do
+          expect(dir_stat.ftype).to eq('directory')
+        end
+      end
+
+      context "when the entry is a block device" do
+        it "returns 'blockSpecial'" do
+          fs.touch('/block-file')
+          file = fs.find('/block-file')
+          file.block_device = true
+          block_stat = File::Stat.new('/block-file')
+          expect(block_stat.ftype).to eq('blockSpecial')
+        end
+      end
+
+      context "when the entry is a character device" do
+        it "returns 'characterSpecial'" do
+          fs.touch('/character-file')
+          file = fs.find('/character-file')
+          file.character_device = true
+          character_stat = File::Stat.new('/character-file')
+          expect(character_stat.ftype).to eq('characterSpecial')
+        end
+      end
+
+      context "when the entry is a symlink" do
+        it "returns 'link'" do
+          expect(link_stat.ftype).to eq('link')
+        end
+      end
+
+      # fifo and socket not handled for now
+
+      context "when the entry has no specific type" do
+        it "returns 'unknown'" do
+          root = fs.find('/')
+          root.add_entry Fake::Entry.new('test-entry')
+          entry_stat = File::Stat.new('/test-entry')
+          expect(entry_stat.ftype).to eq('unknown')
+        end
+      end
+    end
+
     describe "#gid" do
       it "returns the group id of the named entry" do
         fs.chown(nil, 42, '/test-file')

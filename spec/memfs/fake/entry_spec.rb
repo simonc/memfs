@@ -147,6 +147,12 @@ module MemFs
           expect(entry.mtime).not_to eq(time)
         end
       end
+
+      describe "#type" do
+        it "returns 'unknown" do
+          expect(entry.type).to eq('unknown')
+        end
+      end
     end
   end
 end

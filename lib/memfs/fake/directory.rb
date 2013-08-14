@@ -46,6 +46,10 @@ module MemFs
       def remove_entry(entry)
         entries.delete(entry.name)
       end
+
+      def type
+        'directory'
+      end
     end
   end
 end

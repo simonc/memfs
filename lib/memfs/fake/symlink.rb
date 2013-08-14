@@ -27,6 +27,10 @@ module MemFs
       def respond_to_missing?(meth, include_private)
         dereferenced.respond_to?(meth, include_private) || super
       end
+
+      def type
+        'link'
+      end
     end
   end
 end

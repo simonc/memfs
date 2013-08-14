@@ -31,6 +31,14 @@ module MemFs
       def size
         content.size
       end
+
+      def type
+        case
+        when block_device     then 'blockSpecial'
+        when character_device then 'characterSpecial'
+        else 'file'
+        end
+      end
     end
   end
 end

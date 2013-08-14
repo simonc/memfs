@@ -38,6 +38,13 @@ module MemFs
           expect(s.target).to eq('/test-file')
         end
       end
+
+      describe "#type" do
+        it "returns 'link'" do
+          s = Symlink.new('/test-link', '/test-file')
+          expect(s.type).to eq('link')
+        end
+      end
     end
   end
 end

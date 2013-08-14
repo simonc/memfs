@@ -32,6 +32,28 @@ module MemFs
           end
         end
       end
+
+      describe "#type" do
+        context "when the file is a regular file" do
+          it "returns 'file'" do
+            expect(file.type).to eq('file')
+          end
+        end
+
+        context "when the file is a block device" do
+          it "returns 'blockSpecial'" do
+            file.block_device = true
+            expect(file.type).to eq('blockSpecial')
+          end
+        end
+
+        context "when the file is a character device" do
+          it "returns 'characterSpecial'" do
+            file.character_device = true
+            expect(file.type).to eq('characterSpecial')
+          end
+        end
+      end
     end
   end
 end

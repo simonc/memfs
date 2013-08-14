@@ -44,6 +44,10 @@ module MemFs
         entry.is_a?(Fake::File)
       end
 
+      def ftype
+        entry.type
+      end
+
       def grpowned?
         gid == Process.egid
       end

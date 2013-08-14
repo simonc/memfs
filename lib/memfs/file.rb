@@ -89,6 +89,10 @@ module MemFs
       original_file_class.expand_path(file_name, dir_string)
     end
 
+    def self.ftype(path)
+      fs.find!(path) && lstat(path).ftype
+    end
+
     class << self; alias :fnmatch? :fnmatch; end
 
     def self.identical?(path1, path2)

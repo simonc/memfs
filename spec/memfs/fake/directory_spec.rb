@@ -110,6 +110,12 @@ module MemFs
           expect(directory.entries).not_to have_value(file)
         end
       end
+
+      describe "#type" do
+        it "returns 'directory'" do
+          expect(directory.type).to eq('directory')
+        end
+      end
     end
   end
 end

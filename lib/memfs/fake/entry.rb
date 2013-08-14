@@ -71,6 +71,10 @@ module MemFs
       def touch
         self.atime = self.mtime = Time.now
       end
+
+      def type
+        'unknown'
+      end
     end
   end
 end
