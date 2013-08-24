@@ -985,6 +985,29 @@ module MemFs
       end
     end
 
+    describe ".setuid?" do
+      context "when the named file exists" do
+        context "and the named file has the setuid bit set" do
+          it "returns true" do
+            fs.chmod(04000, '/test-file')
+            expect(File.setuid?('/test-file')).to be_true
+          end
+        end
+
+        context "and the named file does not have the setuid bit set" do
+          it "returns false" do
+            expect(File.setuid?('/test-file')).not_to be_true
+          end
+        end
+      end
+
+      context "when the named file does not exist" do
+        it "returns false" do
+          expect(File.setuid?('/no-file')).to be_false
+        end
+      end
+    end
+
     describe ".size" do
       it "returns the size of the file" do
         subject.open('/test-file', 'w') { |f| f.puts random_string }

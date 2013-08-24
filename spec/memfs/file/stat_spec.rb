@@ -596,6 +596,21 @@ module MemFs
       end
     end
 
+    describe "#setuid?" do
+      context "when the file has the setuid bit set" do
+        it "returns true" do
+          fs.chmod(04000, '/test-file')
+          expect(file_stat.setuid?).to be_true
+        end
+      end
+
+      context "when the file does not have the setuid bit set" do
+        it "returns false" do
+          expect(file_stat.setuid?).to be_false
+        end
+      end
+    end
+
     describe "#socket?" do
       # Sockets are not handled for now
 
