@@ -985,6 +985,29 @@ module MemFs
       end
     end
 
+    describe ".setgid?" do
+      context "when the named file exists" do
+        context "and the named file has the setgid bit set" do
+          it "returns true" do
+            fs.chmod(02000, '/test-file')
+            expect(File.setgid?('/test-file')).to be_true
+          end
+        end
+
+        context "and the named file does not have the setgid bit set" do
+          it "returns false" do
+            expect(File.setgid?('/test-file')).not_to be_true
+          end
+        end
+      end
+
+      context "when the named file does not exist" do
+        it "returns false" do
+          expect(File.setgid?('/no-file')).to be_false
+        end
+      end
+    end
+
     describe ".setuid?" do
       context "when the named file exists" do
         context "and the named file has the setuid bit set" do

@@ -73,6 +73,10 @@ module MemFs
         user_readable_real? || group_readable_real? || !!world_readable?
       end
 
+      def setgid?
+        !!(entry.mode & Fake::Entry::SETGID).nonzero?
+      end
+
       def setuid?
         !!(entry.mode & Fake::Entry::SETUID).nonzero?
       end

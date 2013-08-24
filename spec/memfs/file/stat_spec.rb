@@ -596,6 +596,21 @@ module MemFs
       end
     end
 
+    describe "#setgid?" do
+      context "when the file has the setgid bit set" do
+        it "returns true" do
+          fs.chmod(02000, '/test-file')
+          expect(file_stat.setgid?).to be_true
+        end
+      end
+
+      context "when the file does not have the setgid bit set" do
+        it "returns false" do
+          expect(file_stat.setgid?).to be_false
+        end
+      end
+    end
+
     describe "#setuid?" do
       context "when the file has the setuid bit set" do
         it "returns true" do

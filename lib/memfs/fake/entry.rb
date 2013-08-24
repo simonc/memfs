@@ -13,6 +13,7 @@ module MemFs
       RSTICK = 01000
       USTICK = 05000
       SETUID = 04000
+      SETGID = 02000
 
       attr_accessor :atime,
                     :block_device,
