@@ -61,6 +61,10 @@ module MemFs
         uid == Process.euid
       end
 
+      def pipe?
+        false
+      end
+
       def readable?
         user_readable? || group_readable? || !!world_readable?
       end

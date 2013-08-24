@@ -779,6 +779,17 @@ module MemFs
       end
     end
 
+    describe ".pipe?" do
+      # Pipes are not handled for now
+
+      context "when the named file is not a pipe" do
+        it "returns false" do
+          pipe = File.pipe?('/test-file')
+          expect(pipe).to be_false
+        end
+      end
+    end
+
     describe ".read" do
       before :each do
         subject.open('/test-file', 'w') { |f| f.puts "test" }

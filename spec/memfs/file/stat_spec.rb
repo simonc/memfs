@@ -476,6 +476,16 @@ module MemFs
       end
     end
 
+    describe "#pipe?" do
+      # Pipes are not handled for now
+
+      context "when the file is not a pipe" do
+        it "returns false" do
+          expect(file_stat.pipe?).to be_false
+        end
+      end
+    end
+
     describe "#readable?" do
       let(:access) { 0 }
       let(:gid) { 0 }

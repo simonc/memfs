@@ -40,6 +40,7 @@ module MemFs
       file?
       grpowned?
       owned?
+      pipe?
       readable?
       readable_real?
       sticky?
