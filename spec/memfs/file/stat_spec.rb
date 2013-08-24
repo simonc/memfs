@@ -596,6 +596,16 @@ module MemFs
       end
     end
 
+    describe "#socket?" do
+      # Sockets are not handled for now
+
+      context "when the file is not a socket" do
+        it "returns false" do
+          expect(file_stat.socket?).to be_false
+        end
+      end
+    end
+
     describe "#sticky?" do
       it "returns true if the named file has the sticky bit set" do
         fs.chmod(01777, '/test-file')

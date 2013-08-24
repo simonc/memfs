@@ -43,6 +43,7 @@ module MemFs
       pipe?
       readable?
       readable_real?
+      socket?
       sticky?
       world_readable?
       world_writable?

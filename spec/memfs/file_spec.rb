@@ -1015,6 +1015,17 @@ module MemFs
       end
     end
 
+    describe ".socket?" do
+      # Sockets are not handled for now
+
+      context "when the named file is not a socket" do
+        it "returns false" do
+          socket = File.socket?('/test-file')
+          expect(socket).to be_false
+        end
+      end
+    end
+
     describe '.split' do
       it "splits the given string into a directory and a file component" do
         result = subject.split('/path/to/some-file')

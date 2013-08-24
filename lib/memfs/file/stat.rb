@@ -73,6 +73,10 @@ module MemFs
         user_readable_real? || group_readable_real? || !!world_readable?
       end
 
+      def socket?
+        false
+      end
+
       def sticky?
         !!(entry.mode & Fake::Entry::USTICK).nonzero?
       end
