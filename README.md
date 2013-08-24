@@ -119,6 +119,7 @@ end
 ## Known issues
 
 * MemFs doesn't implement IO so FileUtils.copy_stream is still the original one
+* Pipes and Sockets are not handled for now
 
 ## TODO
 
