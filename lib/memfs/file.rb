@@ -58,9 +58,8 @@ module MemFs
       end                                                # end
     end
 
-    def self.absolute_path(path, dir_string = nil)
-      basedir = dir_string || Dir.pwd
-      original_file_class.absolute_path(path, basedir)
+    def self.absolute_path(path, dir_string = fs.pwd)
+      original_file_class.absolute_path(path, dir_string)
     end
 
     def self.atime(path)
