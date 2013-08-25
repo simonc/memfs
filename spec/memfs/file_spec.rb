@@ -1636,7 +1636,7 @@ module MemFs
 
       it "does not follow the last symbolic link" do
         file = subject.new('/test-link')
-        expect(file.lstat).to be_symlink
+        expect(file.lstat.symlink?).to be_true
       end
 
       context "when the named file is a symlink" do
