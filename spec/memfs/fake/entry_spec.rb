@@ -62,37 +62,6 @@ module MemFs
         let(:value) { parent }
       end
 
-      describe ".delete" do
-        it "removes the entry from its parent" do
-          entry.delete
-          expect(parent.entries).not_to have_value(entry)
-        end
-      end
-
-      describe '.dereferenced' do
-        it "returns the entry itself" do
-          expect(entry.dereferenced).to be(entry)
-        end
-      end
-
-      describe "#dereferenced_name" do
-        it "returns the entry name" do
-          expect(entry.dereferenced_name).to eq('test')
-        end
-      end
-
-      describe "#dereferenced_path" do
-        it "returns the entry path" do
-          expect(entry.dereferenced_path).to eq('/parent/test')
-        end
-      end
-
-      describe '.find' do
-        it "raises an error" do
-          expect { entry.find('test') }.to raise_error(Errno::ENOTDIR)
-        end
-      end
-
       describe ".new" do
         it "sets its default uid to the current user's uid" do
           expect(entry.uid).to eq(Process.euid)
@@ -123,9 +92,34 @@ module MemFs
         end
       end
 
-      describe ".path" do
-        it "returns the complete path of the entry" do
-          expect(entry.path).to eq('/parent/test')
+      describe "#delete" do
+        it "removes the entry from its parent" do
+          entry.delete
+          expect(parent.entries).not_to have_value(entry)
+        end
+      end
+
+      describe '#dereferenced' do
+        it "returns the entry itself" do
+          expect(entry.dereferenced).to be(entry)
+        end
+      end
+
+      describe "#dereferenced_name" do
+        it "returns the entry name" do
+          expect(entry.dereferenced_name).to eq('test')
+        end
+      end
+
+      describe "#dereferenced_path" do
+        it "returns the entry path" do
+          expect(entry.dereferenced_path).to eq('/parent/test')
+        end
+      end
+
+      describe '#find' do
+        it "raises an error" do
+          expect { entry.find('test') }.to raise_error(Errno::ENOTDIR)
         end
       end
 
@@ -138,6 +132,12 @@ module MemFs
       describe "#ino" do
         it "Returns the inode number for the entry" do
           expect(entry.ino).to be_a(Fixnum)
+        end
+      end
+
+      describe "#path" do
+        it "returns the complete path of the entry" do
+          expect(entry.path).to eq('/parent/test')
         end
       end
 
