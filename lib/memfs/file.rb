@@ -154,6 +154,10 @@ module MemFs
       fs.find!(path).target
     end
 
+    def self.realpath(path, dir_string = fs.pwd)
+      dereference_path(absolute_path(path, dir_string))
+    end
+
     def self.rename(old_name, new_name)
       fs.rename(old_name, new_name)
       SUCCESS
@@ -303,6 +307,10 @@ module MemFs
     end
 
     private
+
+    def self.dereference_path(path)
+      fs.find!(path).path
+    end
 
     def self.original_file_class
       MemFs::OriginalFile

@@ -157,22 +157,77 @@ module MemFs
     end
 
     describe '#find' do
-      it "finds the entry if it exists" do
-        expect(subject.find('/test-dir').name).to eq('test-dir')
+      context "when the entry for the given path exists" do
+        it "returns the entry" do
+          entry = subject.find('/test-dir')
+          expect(entry).not_to be_nil
+        end
       end
 
-      it "doesn't raise an error if path does not exist" do
-        expect { subject.find('/nowhere') }.not_to raise_error(Errno::ENOENT)
+      context "when there is no entry for the given path" do
+        it "returns nil" do
+          entry = subject.find('/no-file')
+          expect(entry).to be_nil
+        end
+      end
+
+      context "when a part of the given path is a symlink" do
+        before :each do
+          subject.symlink('/test-dir', '/test-dir-link')
+          subject.symlink('/no-dir', '/test-no-link')
+          subject.touch('/test-dir/test-file')
+        end
+
+        context "and the symlink's target exists" do
+          it "returns the entry" do
+            entry = subject.find('/test-dir-link/test-file')
+            expect(entry).not_to be_nil
+          end
+        end
+
+        context "and the symlink's target does not exist" do
+          it "returns nil" do
+            entry = subject.find('/test-no-link/test-file')
+            expect(entry).to be_nil
+          end
+        end
       end
     end
 
     describe '#find!' do
-      it "finds the entry if it exists" do
-        expect(subject.find!('/test-dir').name).to eq('test-dir')
+      context "when the entry for the given path exists" do
+        it "returns the entry" do
+          entry = subject.find!('/test-dir')
+          expect(entry).not_to be_nil
+        end
       end
 
-      it "raises an error if path does not exist" do
-        expect { subject.find!('/nowhere') }.to raise_error(Errno::ENOENT)
+      context "when there is no entry for the given path" do
+        it "raises an exception" do
+          expect { subject.find!('/no-file') }.to raise_exception
+        end
+      end
+
+      context "when a part of the given path is a symlink" do
+        before :each do
+          fs.symlink('/test-dir', '/test-dir-link')
+          fs.touch('/test-dir/test-file')
+        end
+
+        context "and the symlink's target exists" do
+          it "returns the entry" do
+            entry = subject.find!('/test-dir-link/test-file')
+            expect(entry).not_to be_nil
+          end
+        end
+
+        context "and the symlink's target does not exist" do
+          it "raises an exception" do
+            expect {
+              subject.find!('/test-no-link/test-file')
+            }.to raise_error
+          end
+        end
       end
     end
 

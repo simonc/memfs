@@ -32,6 +32,33 @@ module MemFs
         end
       end
 
+      describe '#find' do
+        let(:file) { fs.find!('/test-dir/test-file') }
+
+        before :each do
+          fs.mkdir '/test-dir'
+          fs.touch '/test-dir/test-file'
+        end
+
+        context "when the symlink's target exists" do
+          subject { Symlink.new('/test-dir-link', '/test-dir') }
+
+          it "forwards the search to it" do
+            entry = subject.find('test-file')
+            expect(entry).to eq(file)
+          end
+        end
+
+        context "when the symlink's target does not exist" do
+          subject { Symlink.new('/test-no-link', '/no-dir') }
+
+          it "returns nil" do
+            entry = subject.find('test-file')
+            expect(entry).to be_nil
+          end
+        end
+      end
+
       describe '#target' do
         it "returns the target of the symlink" do
           s = Symlink.new('/test-link', '/test-file')

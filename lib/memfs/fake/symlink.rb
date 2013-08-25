@@ -11,6 +11,12 @@ module MemFs
         @dereferenced ||= fs.find!(target).dereferenced
       end
 
+      def find(path)
+        dereferenced.find(path)
+      rescue Errno::ENOENT
+        nil
+      end
+
       def initialize(path, target)
         super(path)
         @target = target
