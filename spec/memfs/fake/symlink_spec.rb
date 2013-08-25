@@ -32,6 +32,23 @@ module MemFs
         end
       end
 
+      describe "#dereferenced_name" do
+        context "when the symlink's target exists" do
+          it "returns its target name" do
+            fs.touch('/test-file')
+            symlink = Symlink.new('/test-link', '/test-file')
+            expect(symlink.dereferenced_name).to eq('test-file')
+          end
+        end
+
+        context "when the symlink's target does not exist" do
+          it "returns its target name" do
+            symlink = Symlink.new('/test-link', '/no-file')
+            expect(symlink.dereferenced_name).to eq('no-file')
+          end
+        end
+      end
+
       describe "#dereferenced_path" do
         context "when the symlink's target exists" do
           it "returns its target path" do

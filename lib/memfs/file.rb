@@ -153,6 +153,10 @@ module MemFs
       fs.find!(path).target
     end
 
+    def self.realdirpath(path, dir_string = fs.pwd)
+      loose_dereference_path(absolute_path(path, dir_string))
+    end
+
     def self.realpath(path, dir_string = fs.pwd)
       dereference_path(absolute_path(path, dir_string))
     end
@@ -307,8 +311,24 @@ module MemFs
 
     private
 
+    def self.dereference_name(path)
+      if entry = fs.find(path)
+        entry.dereferenced_name
+      else
+        basename(path)
+      end
+    end
+
+    def self.dereference_dir_path(path)
+      dereference_path(dirname(path))
+    end
+
     def self.dereference_path(path)
       fs.find!(path).dereferenced_path
+    end
+
+    def self.loose_dereference_path(path)
+      join(dereference_dir_path(path), dereference_name(path))
     end
 
     def self.original_file_class

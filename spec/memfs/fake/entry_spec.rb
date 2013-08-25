@@ -75,6 +75,12 @@ module MemFs
         end
       end
 
+      describe "#dereferenced_name" do
+        it "returns the entry name" do
+          expect(entry.dereferenced_name).to eq('test')
+        end
+      end
+
       describe "#dereferenced_path" do
         it "returns the entry path" do
           expect(entry.dereferenced_path).to eq('/parent/test')

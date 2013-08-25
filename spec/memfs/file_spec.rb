@@ -974,6 +974,89 @@ module MemFs
       end
     end
 
+    describe ".realdirpath" do
+      before :each do
+        fs.mkdir('/test-dir/sub-dir')
+        fs.symlink('/test-dir/sub-dir', '/test-dir/sub-dir-link')
+        fs.touch('/test-dir/sub-dir/test-file')
+      end
+
+      context "when the path does not contain any symlink or useless dots" do
+        it "returns the path itself" do
+          path = subject.realdirpath('/test-file')
+          expect(path).to eq('/test-file')
+        end
+      end
+
+      context "when the path contains a symlink" do
+        context "and the symlink is a middle part" do
+          it "returns the path with the symlink dereferrenced" do
+            path = subject.realdirpath('/test-dir/sub-dir-link/test-file')
+            expect(path).to eq('/test-dir/sub-dir/test-file')
+          end
+        end
+
+        context "and the symlink is the last part" do
+          it "returns the path with the symlink dereferrenced" do
+            path = subject.realdirpath('/test-dir/sub-dir-link')
+            expect(path).to eq('/test-dir/sub-dir')
+          end
+        end
+      end
+
+      context "when the path contains useless dots" do
+        it "returns the path with the useless dots interpolated" do
+          path = subject.realdirpath('/test-dir/../test-dir/./sub-dir/test-file')
+          expect(path).to eq('/test-dir/sub-dir/test-file')
+        end
+      end
+
+      context 'when the given path is relative' do
+        context "and +dir_string+ is not provided" do
+          it "uses the current working directory has base directory" do
+            fs.chdir('/test-dir')
+            path = subject.realdirpath('../test-dir/./sub-dir/test-file')
+            expect(path).to eq('/test-dir/sub-dir/test-file')
+          end
+        end
+
+        context "and +dir_string+ is provided" do
+          it "uses the given directory has base directory" do
+            path = subject.realdirpath('../test-dir/./sub-dir/test-file', '/test-dir')
+            expect(path).to eq('/test-dir/sub-dir/test-file')
+          end
+        end
+      end
+
+      context "when the last part of the given path is a symlink" do
+        context "and its target does not exist" do
+          before :each do
+            fs.symlink('/test-dir/sub-dir/test', '/test-dir/sub-dir/test-link')
+          end
+
+          it "uses the name of the target in the resulting path" do
+            path = subject.realdirpath('/test-dir/sub-dir/test-link')
+            expect(path).to eq('/test-dir/sub-dir/test')
+          end
+        end
+      end
+
+      context "when the last part of the given path does not exist" do
+        it "uses its name in the resulting path" do
+          path = subject.realdirpath('/test-dir/sub-dir/test')
+          expect(path).to eq('/test-dir/sub-dir/test')
+        end
+      end
+
+      context "when a middle part of the given path does not exist" do
+        it "raises an exception" do
+          expect {
+            subject.realdirpath('/no-dir/test-file')
+          }.to raise_error
+        end
+      end
+    end
+
     describe ".realpath" do
       before :each do
         fs.mkdir('/test-dir/sub-dir')

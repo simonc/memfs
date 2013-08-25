@@ -38,6 +38,10 @@ module MemFs
         self
       end
 
+      def dereferenced_name
+        name
+      end
+
       def dereferenced_path
         path
       end

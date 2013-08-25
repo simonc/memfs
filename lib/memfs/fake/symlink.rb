@@ -11,6 +11,10 @@ module MemFs
         @dereferenced ||= fs.find!(target).dereferenced
       end
 
+      def dereferenced_name
+        real_target.dereferenced_name
+      end
+
       def dereferenced_path
         dereferenced.dereferenced_path
       end
@@ -40,6 +44,12 @@ module MemFs
 
       def type
         'link'
+      end
+
+      private
+
+      def real_target
+        fs.find(target) || Entry.new(target)
       end
     end
   end
