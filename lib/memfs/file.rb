@@ -308,7 +308,7 @@ module MemFs
     private
 
     def self.dereference_path(path)
-      fs.find!(path).path
+      fs.find!(path).dereferenced_path
     end
 
     def self.original_file_class

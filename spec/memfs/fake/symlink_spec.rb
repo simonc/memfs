@@ -32,6 +32,25 @@ module MemFs
         end
       end
 
+      describe "#dereferenced_path" do
+        context "when the symlink's target exists" do
+          it "returns its target path" do
+            fs.touch('/test-file')
+            symlink = Symlink.new('/test-link', '/test-file')
+            expect(symlink.dereferenced_path).to eq('/test-file')
+          end
+        end
+
+        context "when the symlink's target does not exist" do
+          it "raises an exception" do
+            symlink = Symlink.new('/test-link', '/no-file')
+            expect {
+              symlink.dereferenced_path
+            }.to raise_exception
+          end
+        end
+      end
+
       describe '#find' do
         let(:file) { fs.find!('/test-dir/test-file') }
 

@@ -38,6 +38,10 @@ module MemFs
         self
       end
 
+      def dereferenced_path
+        path
+      end
+
       def dev
         @dev ||= rand(1000)
       end

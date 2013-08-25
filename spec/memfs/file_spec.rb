@@ -989,9 +989,18 @@ module MemFs
       end
 
       context "when the path contains a symlink" do
-        it "returns the path with the symlink dereferrenced" do
-          path = subject.realpath('/test-dir/sub-dir-link/test-file')
-          expect(path).to eq('/test-dir/sub-dir/test-file')
+        context "and the symlink is a middle part" do
+          it "returns the path with the symlink dereferrenced" do
+            path = subject.realpath('/test-dir/sub-dir-link/test-file')
+            expect(path).to eq('/test-dir/sub-dir/test-file')
+          end
+        end
+
+        context "and the symlink is the last part" do
+          it "returns the path with the symlink dereferrenced" do
+            path = subject.realpath('/test-dir/sub-dir-link')
+            expect(path).to eq('/test-dir/sub-dir')
+          end
         end
       end
 
