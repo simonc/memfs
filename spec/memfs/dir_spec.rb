@@ -104,5 +104,9 @@ module MemFs
         end
       end
     end
+
+    describe ".unlink" do
+      it_behaves_like 'aliased method', :unlink, :rmdir
+    end
   end
 end

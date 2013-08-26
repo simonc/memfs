@@ -29,6 +29,10 @@ module MemFs
     def self.rmdir(path)
       fs.rmdir path
     end
-    class << self; alias :delete :rmdir; end
+
+    class << self
+      alias :delete :rmdir
+      alias :unlink :rmdir
+    end
   end
 end
