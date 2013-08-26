@@ -50,6 +50,10 @@ module MemFs
       end
     end
 
+    describe ".exist?" do
+      it_behaves_like 'aliased method', :exist?, :exists?
+    end
+
     describe ".exists?" do
       it "returns true if the given +path+ exists and is a directory" do
         subject.mkdir('/test-dir')

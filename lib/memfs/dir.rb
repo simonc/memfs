@@ -16,6 +16,7 @@ module MemFs
     def self.exists?(path)
       File.directory?(path)
     end
+    class << self; alias :exist? :exists?; end
 
     def self.getwd
       fs.getwd
