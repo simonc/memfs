@@ -38,6 +38,10 @@ module MemFs
       end
     end
 
+    describe ".delete" do
+      it_behaves_like 'aliased method', :delete, :rmdir
+    end
+
     describe '.entries' do
       it "returns an array containing all of the filenames in the given directory" do
         %w[/test/dir1 /test/dir2].each { |dir| subject.mkdir dir }
