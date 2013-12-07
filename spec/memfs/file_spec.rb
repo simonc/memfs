@@ -162,31 +162,27 @@ module MemFs
       end
 
       it "ignores nil user id" do
-        previous_uid = subject.stat('/test-file').uid
-
-        subject.chown(nil, 42, '/test-file')
-        expect(subject.stat('/test-file').uid).to eq(previous_uid)
+        expect {
+          subject.chown(nil, 42, '/test-file')
+        }.to_not change{subject.stat('/test-file').uid}
       end
 
       it "ignores nil group id" do
-        previous_gid = subject.stat('/test-file').gid
-
-        subject.chown(42, nil, '/test-file')
-        expect(subject.stat('/test-file').gid).to eq(previous_gid)
+        expect {
+          subject.chown(42, nil, '/test-file')
+        }.to_not change{subject.stat('/test-file').gid}
       end
 
       it "ignores -1 user id" do
-        previous_uid = subject.stat('/test-file').uid
-
-        subject.chown(-1, 42, '/test-file')
-        expect(subject.stat('/test-file').uid).to eq(previous_uid)
+        expect {
+          subject.chown(-1, 42, '/test-file')
+        }.to_not change{subject.stat('/test-file').uid}
       end
 
       it "ignores -1 group id" do
-        previous_gid = subject.stat('/test-file').gid
-
-        subject.chown(42, -1, '/test-file')
-        expect(subject.stat('/test-file').gid).to eq(previous_gid)
+        expect {
+          subject.chown(42, -1, '/test-file')
+        }.to_not change{subject.stat('/test-file').gid}
       end
 
       context "when the named entry is a symlink" do
@@ -1647,31 +1643,27 @@ module MemFs
       end
 
       it "ignores nil user id" do
-        previous_uid = file.stat.uid
-
-        file.chown(nil, 42)
-        expect(file.stat.uid).to eq(previous_uid)
+        expect {
+          file.chown(nil, 42)
+        }.to_not change{file.stat.uid}
       end
 
       it "ignores nil group id" do
-        previous_gid = file.stat.gid
-
-        file.chown(42, nil)
-        expect(file.stat.gid).to eq(previous_gid)
+        expect {
+          file.chown(42, nil)
+        }.to_not change{file.stat.gid}
       end
 
       it "ignores -1 user id" do
-        previous_uid = file.stat.uid
-
-        file.chown(-1, 42)
-        expect(file.stat.uid).to eq(previous_uid)
+        expect {
+          file.chown(-1, 42)
+        }.to_not change{file.stat.uid}
       end
 
       it "ignores -1 group id" do
-        previous_gid = file.stat.gid
-
-        file.chown(42, -1)
-        expect(file.stat.gid).to eq(previous_gid)
+        expect {
+          file.chown(42, -1)
+        }.to_not change{file.stat.gid}
       end
 
       context "when the named entry is a symlink" do

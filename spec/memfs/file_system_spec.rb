@@ -34,9 +34,9 @@ module MemFs
 
         it "gets back to previous directory once the block is finished" do
           subject.chdir '/'
-          previous_dir = subject.getwd
-          subject.chdir('/test-dir') {}
-          expect(subject.getwd).to eq(previous_dir)
+          expect {
+            subject.chdir('/test-dir') {}
+          }.to_not change{subject.getwd}
         end
       end
 
@@ -82,31 +82,27 @@ module MemFs
       end
 
       it "ignores nil user id" do
-        previous_uid = subject.find!('/test-file').uid
-
-        subject.chown(nil, 42, '/test-file')
-        expect(subject.find!('/test-file').uid).to eq(previous_uid)
+        expect {
+          subject.chown(nil, 42, '/test-file')
+        }.to_not change{subject.find!('/test-file').uid}
       end
 
       it "ignores nil group id" do
-        previous_gid = subject.find!('/test-file').gid
-
-        subject.chown(42, nil, '/test-file')
-        expect(subject.find!('/test-file').gid).to eq(previous_gid)
+        expect {
+          subject.chown(42, nil, '/test-file')
+        }.to_not change{subject.find!('/test-file').gid}
       end
 
       it "ignores -1 user id" do
-        previous_uid = subject.find!('/test-file').uid
-
-        subject.chown(-1, 42, '/test-file')
-        expect(subject.find!('/test-file').uid).to eq(previous_uid)
+        expect {
+          subject.chown(-1, 42, '/test-file')
+        }.to_not change{subject.find!('/test-file').uid}
       end
 
       it "ignores -1 group id" do
-        previous_gid = subject.find!('/test-file').gid
-
-        subject.chown(42, -1, '/test-file')
-        expect(subject.find!('/test-file').gid).to eq(previous_gid)
+        expect {
+          subject.chown(42, -1, '/test-file')
+        }.to_not change{subject.find!('/test-file').gid}
       end
 
       context "when the named entry is a symlink" do

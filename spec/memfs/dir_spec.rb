@@ -31,9 +31,9 @@ module MemFs
     
         it "gets back to previous directory once the block is finished" do
           subject.chdir '/'
-          previous_dir = subject.pwd
-          subject.chdir('/test') {}
-          expect(subject.pwd).to eq(previous_dir)
+          expect {
+            subject.chdir('/test') {}
+          }.to_not change{subject.pwd}
         end
       end
     end

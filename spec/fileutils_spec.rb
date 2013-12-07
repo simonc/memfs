@@ -42,9 +42,9 @@ describe FileUtils do
 
       it "resumes to the old working directory after the block execution finished" do
         FileUtils.cd '/'
-        previous_dir = FileUtils.pwd
-        FileUtils.cd('/test') {}
-        expect(FileUtils.pwd).to eq(previous_dir)
+        expect {
+          FileUtils.cd('/test') {}
+        }.to_not change{FileUtils.pwd}
       end
     end
 
