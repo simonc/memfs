@@ -3,6 +3,7 @@ require 'memfs/filesystem_access'
 module MemFs
   class Dir
     extend FilesystemAccess
+    include Enumerable
 
     def self.chdir(path, &block)
       fs.chdir path, &block
@@ -44,6 +45,11 @@ module MemFs
 
     def initialize(path)
       self.entry = fs.find_directory!(path)
+    end
+
+    def each(&block)
+      return to_enum(__callee__) unless block
+      entry.entry_names.each(&block)
     end
 
     private

@@ -4,8 +4,14 @@ module MemFs
   describe Dir do
     subject { MemFs::Dir }
 
+    let(:instance) { MemFs::Dir.new('/test') }
+
     before :each do
       subject.mkdir '/test'
+    end
+
+    it 'is Enumerable' do
+      expect(instance).to be_an(Enumerable)
     end
 
     describe '.chdir' do
@@ -72,20 +78,19 @@ module MemFs
 
     describe ".foreach" do
       before :each do
-        fs.mkdir('/test-dir')
-        fs.touch('/test-dir/test-file', '/test-dir/test-file2')
+        fs.touch('/test/test-file', '/test/test-file2')
       end
 
       context "when a block is given" do
         it "calls the block once for each entry in the named directory" do
           expect{ |blk|
-            subject.foreach('/test-dir', &blk)
+            subject.foreach('/test', &blk)
           }.to yield_control.exactly(4).times
         end
 
         it "passes each entry as a parameter to the block" do
           expect{ |blk|
-            subject.foreach('/test-dir', &blk)
+            subject.foreach('/test', &blk)
           }.to yield_successive_args('.', '..', 'test-file', 'test-file2')
         end
 
@@ -98,7 +103,7 @@ module MemFs
         context "and the given path is not a directory" do
           it "raises an exception" do
             expect{
-              subject.foreach('/test-dir/test-file') {}
+              subject.foreach('/test/test-file') {}
             }.to raise_error
           end
         end
@@ -183,6 +188,26 @@ module MemFs
 
     describe ".unlink" do
       it_behaves_like 'aliased method', :unlink, :rmdir
+    end
+
+    describe '#each' do
+      before { fs.touch('/test/test-file', '/test/test-file2') }
+
+      it 'calls the block once for each entry in this directory' do
+        expect{ |blk| instance.each(&blk) }.to yield_control.exactly(4).times
+      end
+
+      it 'passes the filename of each entry as a parameter to the block' do
+        expect{ |blk|
+          instance.each(&blk)
+        }.to yield_successive_args('.', '..', 'test-file', 'test-file2')
+      end
+
+      context 'when no block is given' do
+        it 'returns an enumerator' do
+          expect(instance.each).to be_an(Enumerator)
+        end
+      end
     end
   end
 end
