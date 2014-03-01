@@ -18,6 +18,12 @@ module MemFs
     end
     class << self; alias :exist? :exists?; end
 
+    def self.foreach(dirname, &block)
+      return to_enum(__callee__, dirname) unless block
+
+      entries(dirname).each(&block)
+    end
+
     def self.getwd
       fs.getwd
     end

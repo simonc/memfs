@@ -70,6 +70,62 @@ module MemFs
       end
     end
 
+    describe ".foreach" do
+      before :each do
+        fs.mkdir('/test-dir')
+        fs.touch('/test-dir/test-file', '/test-dir/test-file2')
+      end
+
+      context "when a block is given" do
+        it "calls the block once for each entry in the named directory" do
+          expect{ |blk|
+            subject.foreach('/test-dir', &blk)
+          }.to yield_control.exactly(4).times
+        end
+
+        it "passes each entry as a parameter to the block" do
+          expect{ |blk|
+            subject.foreach('/test-dir', &blk)
+          }.to yield_successive_args('.', '..', 'test-file', 'test-file2')
+        end
+
+        context "and the directory doesn't exist" do
+          it "raises an exception" do
+            expect{ subject.foreach('/no-dir') {} }.to raise_error
+          end
+        end
+
+        context "and the given path is not a directory" do
+          it "raises an exception" do
+            expect{
+              subject.foreach('/test-dir/test-file') {}
+            }.to raise_error
+          end
+        end
+      end
+
+      context "when no block is given" do
+        it "returns an enumerator" do
+          list = subject.foreach('/test-dir')
+          expect(list).to be_an(Enumerator)
+        end
+
+        context "and the directory doesn't exist" do
+          it "returns an enumerator" do
+            list = subject.foreach('/no-dir')
+            expect(list).to be_an(Enumerator)
+          end
+        end
+
+        context "and the given path is not a directory" do
+          it "returns an enumerator" do
+            list = subject.foreach('/test-dir/test-file')
+            expect(list).to be_an(Enumerator)
+          end
+        end
+      end
+    end
+
     describe '.getwd' do
       it "returns the path to the current working directory" do
         expect(subject.getwd).to eq(FileSystem.instance.getwd)
