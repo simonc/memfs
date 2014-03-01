@@ -1,4 +1,5 @@
 require 'memfs/version'
+require 'fileutils'
 
 # Provides a clean way to interact with a fake file system.
 #
@@ -96,5 +97,19 @@ module MemFs
       const_set :Dir,  MemFs::OriginalDir
       const_set :File, MemFs::OriginalFile
     end
+  end
+
+  # Creates a file and all its parent directories.
+  #
+  # @param path: The path of the file to create.
+  #
+  # @return nothing.
+  def touch(path)
+    if ::File != MemFs::File
+      fail 'Always call MemFs.touch inside a MemFs active context.'
+    end
+
+    FileUtils.mkdir_p File.dirname(path)
+    FileUtils.touch path
   end
 end

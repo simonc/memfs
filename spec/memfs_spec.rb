@@ -51,4 +51,23 @@ describe MemFs do
       expect(::File).to be(MemFs::OriginalFile)
     end
   end
+
+  describe '.touch' do
+    around(:each) { |example| MemFs.activate { example.run } }
+
+    it 'creates the specified file' do
+      fs.mkdir('/path')
+      fs.mkdir('/path/to')
+      fs.mkdir('/path/to/some')
+      subject.touch('/path/to/some/file.rb')
+      expect(File.exist?('/path/to/some/file.rb')).to be_true
+    end
+
+    context 'when the parent folder do not exist' do
+      it 'creates them all' do
+        subject.touch('/path/to/some/file.rb')
+        expect(File.exist?('/path/to/some/file.rb')).to be_true
+      end
+    end
+  end
 end

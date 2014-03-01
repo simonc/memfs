@@ -77,6 +77,26 @@ end
 
 All the spec will be sandboxed in MemFs.
 
+If you want to set it globally with flag activation, you can do the following in
+you `spec_helper.rb` file:
+
+``` ruby
+Rspec.configure do |c|
+  c.around(:each, memfs: true) do |example|
+  MemFs.activate { example.run }
+  end
+end
+```
+
+And then write your specs like this:
+
+``` ruby
+it "creates a file", memfs: true do
+  subject.create_file('test.rb')
+  expect(File.exists?('test.rb')).to be_true
+end
+```
+
 ### Local activation
 
 You can choose to activate MemFs only for a specific test:
@@ -109,6 +129,17 @@ describe FileCreator do
       expect(File.exists?('test.rb')).to be_true
     end
   end
+end
+```
+
+### Utilities
+
+You can use `MemFs.touch` to quickly create a file and its parent directories:
+
+``` ruby
+MemFs.activate do
+  MemFs.touch('/path/to/some/file.rb')
+  File.exist?('/path/to/some/file.rb') # => true
 end
 ```
 
