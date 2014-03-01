@@ -41,5 +41,13 @@ module MemFs
       alias :delete :rmdir
       alias :unlink :rmdir
     end
+
+    def initialize(path)
+      self.entry = fs.find_directory!(path)
+    end
+
+    private
+
+    attr_accessor :entry
   end
 end

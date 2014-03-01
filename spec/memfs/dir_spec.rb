@@ -145,6 +145,22 @@ module MemFs
       end
     end
 
+    describe '.new' do
+      context "when the given directory doesn't exist" do
+        it 'raises an exception' do
+          expect{ subject.new('/no-dir') }.to raise_error
+        end
+      end
+
+      context 'when the given path is not a directory' do
+        before { fs.touch('/test/test-file') }
+
+        it 'raises an exception' do
+          expect{ subject.new('/test/test-file') }.to raise_error
+        end
+      end
+    end
+
     describe ".pwd" do
       it_behaves_like 'aliased method', :pwd, :getwd
     end
