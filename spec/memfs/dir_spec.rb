@@ -137,6 +137,19 @@ module MemFs
       end
     end
 
+    describe '.home' do
+      it 'returns the home directory of the current user' do
+        expect(Dir.home).to eq ENV['HOME']
+      end
+
+      context 'when a username is given' do
+        it 'returns the home directory of the given user' do
+          home_dir = Dir.home(ENV['USER'])
+          expect(home_dir).to eq ENV['HOME']
+        end
+      end
+    end
+
     describe '.mkdir' do
       it "creates a directory" do
         subject.mkdir '/new-folder'

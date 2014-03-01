@@ -30,6 +30,10 @@ module MemFs
     end
     class << self; alias :pwd :getwd; end
 
+    def self.home(*args)
+      original_dir_class.home(*args)
+    end
+
     def self.mkdir(path)
       fs.mkdir path
     end
@@ -55,5 +59,9 @@ module MemFs
     private
 
     attr_accessor :entry
+
+    def self.original_dir_class
+      MemFs::OriginalDir
+    end
   end
 end
