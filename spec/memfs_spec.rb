@@ -69,5 +69,13 @@ describe MemFs do
         expect(File.exist?('/path/to/some/file.rb')).to be_true
       end
     end
+
+    context 'when several files are specified' do
+      it 'creates every file' do
+        subject.touch('/some/path', '/other/path')
+        expect(File.exist?('/some/path')).to be_true
+        expect(File.exist?('/other/path')).to be_true
+      end
+    end
   end
 end

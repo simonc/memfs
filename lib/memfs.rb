@@ -104,12 +104,14 @@ module MemFs
   # @param path: The path of the file to create.
   #
   # @return nothing.
-  def touch(path)
+  def touch(*paths)
     if ::File != MemFs::File
       fail 'Always call MemFs.touch inside a MemFs active context.'
     end
 
-    FileUtils.mkdir_p File.dirname(path)
-    FileUtils.touch path
+    paths.each do |path|
+      FileUtils.mkdir_p File.dirname(path)
+      FileUtils.touch path
+    end
   end
 end
