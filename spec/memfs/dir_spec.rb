@@ -139,12 +139,12 @@ module MemFs
 
     describe '.home' do
       it 'returns the home directory of the current user' do
-        expect(Dir.home).to eq ENV['HOME']
+        expect(subject.home).to eq ENV['HOME']
       end
 
       context 'when a username is given' do
         it 'returns the home directory of the given user' do
-          home_dir = Dir.home(ENV['USER'])
+          home_dir = subject.home(ENV['USER'])
           expect(home_dir).to eq ENV['HOME']
         end
       end

@@ -713,7 +713,7 @@ module MemFs
         context "and it specifies that the file must be created" do
           context "and the file already exists" do
             it "changes the mtime of the file" do
-              fs.should_receive(:touch).with('/test-file')
+              expect(fs).to receive(:touch).with('/test-file')
               subject.new('/test-file', 'w')
             end
           end
@@ -832,7 +832,7 @@ module MemFs
 
       context "when the last argument is a hash" do
         it "passes the contained options to +open+" do
-          subject.should_receive(:open)
+          expect(subject).to receive(:open)
               .with('/test-file', File::RDONLY, encoding: 'UTF-8')
               .and_return(file)
           subject.read('/test-file', encoding: 'UTF-8')
@@ -840,7 +840,7 @@ module MemFs
 
         context "when it contains the +open_args+ key" do
           it "takes precedence over the other options" do
-            subject.should_receive(:open)
+            expect(subject).to receive(:open)
                 .with('/test-file', 'r')
                 .and_return(file)
             subject.read('/test-file', mode: 'w', open_args: ['r'])

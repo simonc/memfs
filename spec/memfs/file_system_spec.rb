@@ -376,7 +376,7 @@ module MemFs
 
       it "creates an entry only if it doesn't exist" do
         subject.touch '/some-file'
-        MemFs::Fake::File.should_not_receive(:new)
+        expect(MemFs::Fake::File).not_to receive(:new)
         subject.touch '/some-file'
       end
 

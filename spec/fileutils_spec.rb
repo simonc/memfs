@@ -343,7 +343,7 @@ describe FileUtils do
     context "when +remove_destination+ is true" do
       it "removes each destination file before copy" do
         FileUtils.touch(['/test-file', '/test-copy'])
-        File.should_receive(:unlink).with('/test-copy')
+        expect(File).to receive(:unlink).with('/test-copy')
         FileUtils.copy_entry('/test-file', '/test-copy', false, false, true)
       end
     end
@@ -462,7 +462,7 @@ describe FileUtils do
 
     context "when +:mode+ is set" do
       it "changes the permission mode to +mode+" do
-        File.should_receive(:chmod).with(0777, '/test-file2')
+        expect(File).to receive(:chmod).with(0777, '/test-file2')
         FileUtils.install('/test-file', '/test-file2', mode: 0777)
       end
     end
@@ -477,7 +477,7 @@ describe FileUtils do
 
     context "when +dest+ already exists" do
       it "removes destination before copy" do
-        File.should_receive(:unlink).with('/test-file2')
+        expect(File).to receive(:unlink).with('/test-file2')
         FileUtils.install('/test-file', '/test-file2')
       end
 
@@ -781,14 +781,14 @@ describe FileUtils do
         it "calls chown(2) on it" do
           FileUtils.chmod(01777, '/')
           directory = fs.find('/test-dir')
-          directory.should_receive(:uid=).at_least(:once)
+          expect(directory).to receive(:uid=).at_least(:once)
           FileUtils.remove_entry_secure('/test-dir')
         end
 
         it "calls chmod(2) on all sub directories" do
           FileUtils.chmod(01777, '/')
           directory = fs.find('/test-dir')
-          directory.should_receive(:mode=).at_least(:once)
+          expect(directory).to receive(:mode=).at_least(:once)
           FileUtils.remove_entry_secure('/test-dir')
         end
       end
@@ -839,7 +839,7 @@ describe FileUtils do
 
   describe '.rm_f' do
     it "calls rm with +:force+ set to true" do
-      FileUtils.should_receive(:rm).with('test', force: true)
+      expect(FileUtils).to receive(:rm).with('test', force: true)
       FileUtils.rm_f('test')
     end
   end
@@ -874,7 +874,7 @@ describe FileUtils do
 
   describe '.rm_rf' do
     it "calls rm with +:force+ set to true" do
-      FileUtils.should_receive(:rm_r).with('test', force: true)
+      expect(FileUtils).to receive(:rm_r).with('test', force: true)
       FileUtils.rm_rf('test')
     end
   end
