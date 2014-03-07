@@ -238,6 +238,8 @@ module MemFs
       fs.touch(filename) if create_file?
 
       self.entry = fs.find(filename)
+
+      entry.content.clear if truncate_file?
     end
 
     def chmod(mode_int)
@@ -356,6 +358,10 @@ module MemFs
 
     def create_file?
       (opening_mode & File::CREAT).nonzero?
+    end
+
+    def truncate_file?
+      (opening_mode & File::TRUNC).nonzero?
     end
 
     def writable?

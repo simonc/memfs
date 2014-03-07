@@ -718,6 +718,17 @@ module MemFs
             end
           end
         end
+
+        context 'and it specifies that the file must be truncated' do
+          context 'and the file already exists' do
+            it 'truncates its content' do
+              subject.open('/test-file', 'w') { |f| f.puts 'hello' }
+              file = subject.new('/test-file', 'w')
+              file.close
+              expect(subject.read('/test-file')).to eq ''
+            end
+          end
+        end
       end
 
       context "when no argument is given" do
