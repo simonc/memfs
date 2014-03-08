@@ -31,27 +31,27 @@ module MemFs
                    :path,
                    :split
 
-    %i[
-      blockdev?
-      chardev?
-      directory?
-      executable?
-      executable_real?
-      file?
-      grpowned?
-      owned?
-      pipe?
-      readable?
-      readable_real?
-      setgid?
-      setuid?
-      socket?
-      sticky?
-      world_readable?
-      world_writable?
-      writable?
-      writable_real?
-      zero?
+    [
+      :blockdev?,
+      :chardev?,
+      :directory?,
+      :executable?,
+      :executable_real?,
+      :file?,
+      :grpowned?,
+      :owned?,
+      :pipe?,
+      :readable?,
+      :readable_real?,
+      :setgid?,
+      :setuid?,
+      :socket?,
+      :sticky?,
+      :world_readable?,
+      :world_writable?,
+      :writable?,
+      :writable_real?,
+      :zero?
     ].each do |query_method|
       define_singleton_method(query_method) do |path|    # def directory?(path)
         stat_query(path, query_method)                   #   stat_query(path, :directory?)
@@ -139,11 +139,16 @@ module MemFs
       file.close if file && block_given?
     end
 
-    def self.read(path, length = nil, offset = 0, mode: RDONLY, encoding: nil, open_args: nil)
-      open_args ||= [mode, encoding: encoding]
+    def self.read(path, *args)
+      options = args.last.is_a?(Hash) ? args.pop : {}
+      options = { mode: RDONLY, encoding: nil, open_args: nil }.merge(options)
+      open_args = options[:open_args] ||
+                  [options[:mode], encoding: options[:encoding]]
+
+      length, offset = args
 
       file = open(path, *open_args)
-      file.seek(offset)
+      file.seek(offset || 0)
       file.read(length)
     ensure
       file.close if file
