@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+
+* FIX: The gem is now Ruby 1.9 compatible
+
 ## 0.2.0
 
 * ADD: Allowing magic creation of files with `MemFs.touch`
