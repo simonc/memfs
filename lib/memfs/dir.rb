@@ -79,6 +79,7 @@ module MemFs
     def path
       entry.path
     end
+    alias :to_path :path
 
     private
 
