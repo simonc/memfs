@@ -6,9 +6,7 @@ module MemFs
 
     let(:instance) { MemFs::Dir.new('/test') }
 
-    before :each do
-      subject.mkdir '/test'
-    end
+    before { subject.mkdir '/test' }
 
     it 'is Enumerable' do
       expect(instance).to be_an(Enumerable)
@@ -34,7 +32,7 @@ module MemFs
             expect(subject.pwd).to eq('/test')
           end
         end
-    
+
         it "gets back to previous directory once the block is finished" do
           subject.chdir '/'
           expect {
@@ -163,6 +161,44 @@ module MemFs
       end
     end
 
+    describe '.open' do
+      context 'when no block is given' do
+        it 'returns the opened directory' do
+          expect(subject.open('/test')).to be_a(Dir)
+        end
+      end
+
+      context 'when a block is given' do
+        it 'calls the block with the opened directory as argument' do
+          expect{ |blk| subject.open('/test', &blk) }.to yield_with_args(Dir)
+        end
+
+        it 'returns nil' do
+          expect(subject.open('/test') {}).to be_nil
+        end
+
+        it 'ensures the directory is closed' do
+          dir = nil
+          subject.open('/test') { |d| dir = d }
+          expect{ dir.close }.to raise_error(IOError)
+        end
+      end
+
+      context "when the given directory doesn't exist" do
+        it 'raises an exception' do
+          expect{ subject.open('/no-dir') }.to raise_error
+        end
+      end
+
+      context 'when the given path is not a directory' do
+        before { fs.touch('/test/test-file') }
+
+        it 'raises an exception' do
+          expect{ subject.open('/test/test-file') }.to raise_error
+        end
+      end
+    end
+
     describe '.new' do
       context "when the given directory doesn't exist" do
         it 'raises an exception' do
@@ -201,6 +237,14 @@ module MemFs
 
     describe ".unlink" do
       it_behaves_like 'aliased method', :unlink, :rmdir
+    end
+
+    describe '#close' do
+      it 'closes the directory' do
+        dir = subject.open('/test')
+        dir.close
+        expect{ dir.close }.to raise_error(IOError)
+      end
     end
 
     describe '#each' do

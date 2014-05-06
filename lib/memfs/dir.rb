@@ -38,6 +38,18 @@ module MemFs
       fs.mkdir path
     end
 
+    def self.open(dirname)
+      dir = new(dirname)
+
+      if block_given?
+        yield dir
+      else
+        dir
+      end
+    ensure
+      dir && dir.close if block_given?
+    end
+
     def self.rmdir(path)
       fs.rmdir path
     end
@@ -49,6 +61,14 @@ module MemFs
 
     def initialize(path)
       self.entry = fs.find_directory!(path)
+      self.state = :open
+    end
+
+    def close
+      if state == :closed
+        fail IOError, 'closed directory'
+      end
+      self.state = :closed
     end
 
     def each(&block)
@@ -58,7 +78,7 @@ module MemFs
 
     private
 
-    attr_accessor :entry
+    attr_accessor :entry, :state
 
     def self.original_dir_class
       MemFs::OriginalDir
