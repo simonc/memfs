@@ -226,9 +226,6 @@ module MemFs
       file_names.size
     end
 
-    attr_accessor :closed,
-                  :entry,
-                  :opening_mode
     attr_reader :path
 
     def initialize(filename, mode = RDONLY, perm = nil, opt = nil)
@@ -263,10 +260,6 @@ module MemFs
 
     def closed?
       closed
-    end
-
-    def content
-      entry.content
     end
 
     def lstat
@@ -318,6 +311,10 @@ module MemFs
 
     private
 
+    attr_accessor :closed,
+                  :entry,
+                  :opening_mode
+
     def self.dereference_name(path)
       if entry = fs.find(path)
         entry.dereferenced_name
@@ -325,29 +322,40 @@ module MemFs
         basename(path)
       end
     end
+    private_class_method :dereference_name
 
     def self.dereference_dir_path(path)
       dereference_path(dirname(path))
     end
+    private_class_method :dereference_dir_path
 
     def self.dereference_path(path)
       fs.find!(path).dereferenced_path
     end
+    private_class_method :dereference_path
 
     def self.loose_dereference_path(path)
       join(dereference_dir_path(path), dereference_name(path))
     end
+    private_class_method :loose_dereference_path
 
     def self.original_file_class
       MemFs::OriginalFile
     end
+    private_class_method :original_file_class
 
     def self.stat_query(path, query)
       fs.find(path) && stat(path).public_send(query)
     end
+    private_class_method :stat_query
 
     def self.lstat_query(path, query)
       fs.find(path) && lstat(path).public_send(query)
+    end
+    private_class_method :lstat_query
+
+    def content
+      entry.content
     end
 
     def str_to_mode_int(mode)

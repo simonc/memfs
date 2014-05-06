@@ -699,14 +699,14 @@ module MemFs
         context "and it is an integer" do
           it "sets the mode to the integer value" do
             file = subject.new('/test-file', File::RDWR)
-            expect(file.opening_mode).to eq(File::RDWR)
+            expect(file.send(:opening_mode)).to eq(File::RDWR)
           end
         end
 
         context "and it is a string" do
           it "sets the mode to the integer value" do
             file = subject.new('/test-file', 'r+')
-            expect(file.opening_mode).to eq(File::RDWR)
+            expect(file.send(:opening_mode)).to eq(File::RDWR)
           end
         end
 
@@ -1771,7 +1771,7 @@ module MemFs
         file = subject.new('/test-file', 'w')
         file.puts "test"
         file.close
-        expect(file.content.to_s).to eq("test\n")
+        expect(file.send(:content).to_s).to eq("test\n")
       end
 
       it "does not override the file's content" do
@@ -1779,7 +1779,7 @@ module MemFs
         file.puts "test"
         file.puts "test"
         file.close
-        expect(file.content.to_s).to eq("test\ntest\n")
+        expect(file.send(:content).to_s).to eq("test\ntest\n")
       end
 
       it "raises an exception if the file is not writable" do

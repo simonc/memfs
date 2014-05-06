@@ -120,5 +120,6 @@ module MemFs
     def self.original_dir_class
       MemFs::OriginalDir
     end
+    private_class_method :original_dir_class
   end
 end
