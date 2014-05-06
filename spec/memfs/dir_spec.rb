@@ -273,6 +273,38 @@ module MemFs
       end
     end
 
+    describe '#pos' do
+      it "returns the current position in dir" do
+        3.times { instance.read }
+        expect(instance.pos).to eq 3
+      end
+    end
+
+    describe '#read' do
+      before do
+        fs.touch('/test/a')
+        fs.touch('/test/b')
+      end
+
+      it 'reads the next entry from dir and returns it' do
+        expect(instance.read).to eq '.'
+      end
+
+      context "when calling several times" do
+        it 'returns the next entry each time' do
+          2.times { instance.read }
+          expect(instance.read).to eq 'a'
+        end
+      end
+
+      context 'when there are no entries left' do
+        it 'returns nil' do
+          4.times { instance.read }
+          expect(instance.read).to be_nil
+        end
+      end
+    end
+
     describe '#to_path' do
       it "returns the path parameter passed to dir’s constructor" do
         expect(instance.to_path).to eq '/test'

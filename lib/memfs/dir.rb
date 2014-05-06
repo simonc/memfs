@@ -5,6 +5,8 @@ module MemFs
     extend FilesystemAccess
     include Enumerable
 
+    attr_accessor :pos
+
     def self.chdir(path, &block)
       fs.chdir path, &block
       return 0
@@ -62,6 +64,7 @@ module MemFs
     def initialize(path)
       self.entry = fs.find_directory!(path)
       self.state = :open
+      self.pos = 0
     end
 
     def close
@@ -80,6 +83,12 @@ module MemFs
       entry.path
     end
     alias :to_path :path
+
+    def read
+      name = entries[pos]
+      self.pos += 1
+      name
+    end
 
     private
 
