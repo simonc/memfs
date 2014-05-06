@@ -280,6 +280,33 @@ module MemFs
       end
     end
 
+    describe '#pos=' do
+      before { 3.times { instance.read } }
+
+      it 'seeks to a particular location in dir' do
+        instance.pos = 1
+        expect(instance.pos).to eq 1
+      end
+
+      it 'returns the given position' do
+        expect(instance.pos = 2).to eq 2
+      end
+
+      context 'when the location has not been seeked yet' do
+        it "doesn't change the location" do
+          instance.pos = 42
+          expect(instance.pos).to eq 3
+        end
+      end
+
+      context 'when the location is negative' do
+        it "doesn't change the location" do
+          instance.pos = -1
+          expect(instance.pos).to eq 3
+        end
+      end
+    end
+
     describe '#read' do
       before do
         fs.touch('/test/a')
