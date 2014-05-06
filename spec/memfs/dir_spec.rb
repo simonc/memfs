@@ -266,5 +266,11 @@ module MemFs
         end
       end
     end
+
+    describe '#path' do
+      it "returns the path parameter passed to dir’s constructor" do
+        expect(instance.path).to eq '/test'
+      end
+    end
   end
 end

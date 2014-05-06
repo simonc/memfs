@@ -76,6 +76,10 @@ module MemFs
       entry.entry_names.each(&block)
     end
 
+    def path
+      entry.path
+    end
+
     private
 
     attr_accessor :entry, :state
