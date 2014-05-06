@@ -65,6 +65,7 @@ module MemFs
       self.entry = fs.find_directory!(path)
       self.state = :open
       self.pos = 0
+      self.max_seek = 0
     end
 
     def close
@@ -87,12 +88,20 @@ module MemFs
     def read
       name = entries[pos]
       self.pos += 1
+      self.max_seek = pos
       name
+    end
+
+    def seek(position)
+      if (0..max_seek).cover?(position)
+        self.pos = position
+      end
+      self
     end
 
     private
 
-    attr_accessor :entry, :state
+    attr_accessor :entry, :max_seek, :state
 
     def self.original_dir_class
       MemFs::OriginalDir

@@ -305,6 +305,33 @@ module MemFs
       end
     end
 
+    describe '#seek' do
+      before { 3.times { instance.read } }
+
+      it 'seeks to a particular location in dir' do
+        instance.seek(1)
+        expect(instance.pos).to eq 1
+      end
+
+      it 'returns the dir itself' do
+        expect(instance.seek(2)).to be instance
+      end
+
+      context 'when the location has not been seeked yet' do
+        it "doesn't change the location" do
+          instance.seek(42)
+          expect(instance.pos).to eq 3
+        end
+      end
+
+      context 'when the location is negative' do
+        it "doesn't change the location" do
+          instance.seek(-1)
+          expect(instance.pos).to eq 3
+        end
+      end
+    end
+
     describe '#to_path' do
       it "returns the path parameter passed to dir’s constructor" do
         expect(instance.to_path).to eq '/test'
