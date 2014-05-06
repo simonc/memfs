@@ -371,6 +371,13 @@ module MemFs
       end
     end
 
+    describe '#tell' do
+      it 'returns the current position in dir' do
+        3.times { instance.read }
+        expect(instance.tell).to eq 3
+      end
+    end
+
     describe '#to_path' do
       it "returns the path parameter passed to dir’s constructor" do
         expect(instance.to_path).to eq '/test'

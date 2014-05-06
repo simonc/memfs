@@ -109,6 +109,10 @@ module MemFs
       self
     end
 
+    def tell
+      @pos
+    end
+
     private
 
     attr_accessor :entry, :max_seek, :state
