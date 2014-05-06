@@ -97,6 +97,11 @@ module MemFs
       name
     end
 
+    def rewind
+      @pos = 0
+      self
+    end
+
     def seek(position)
       if (0..max_seek).cover?(position)
         @pos = position

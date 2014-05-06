@@ -332,6 +332,18 @@ module MemFs
       end
     end
 
+    describe '#rewind' do
+      it 'repositions dir to the first entry' do
+        3.times { instance.read }
+        instance.rewind
+        expect(instance.read).to eq '.'
+      end
+
+      it 'returns the dir itself' do
+        expect(instance.rewind).to be instance
+      end
+    end
+
     describe '#seek' do
       before { 3.times { instance.read } }
 
