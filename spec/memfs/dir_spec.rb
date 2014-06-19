@@ -235,6 +235,12 @@ module MemFs
       end
     end
 
+    describe '.tmpdir' do
+      it 'returns /tmp' do
+        expect(subject.tmpdir).to eq '/tmp'
+      end
+    end
+
     describe ".unlink" do
       it_behaves_like 'aliased method', :unlink, :rmdir
     end

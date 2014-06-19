@@ -135,7 +135,7 @@ module MemFs
     describe '#clear!' do
       it "clear the registred entries" do
         subject.clear!
-        expect(subject.root.entry_names).to eq(%w[. ..])
+        expect(subject.root.entry_names).to eq(%w[. .. tmp])
       end
 
       it "sets the current directory to /" do

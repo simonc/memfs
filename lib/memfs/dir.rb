@@ -56,6 +56,10 @@ module MemFs
       fs.rmdir path
     end
 
+    def self.tmpdir
+      '/tmp'
+    end
+
     class << self
       alias :delete :rmdir
       alias :unlink :rmdir

@@ -30,6 +30,7 @@ module MemFs
 
     def clear!
       self.root = Fake::Directory.new('/')
+      self.mkdir('/tmp')
       self.chdir('/')
     end
 
