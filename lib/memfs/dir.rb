@@ -12,6 +12,17 @@ module MemFs
       return 0
     end
 
+    def self.chroot(path)
+      unless Process.uid.zero?
+        raise Errno::EPERM, path
+      end
+
+      dir = fs.find_directory!(path)
+      dir.name = '/'
+      fs.root = dir
+      0
+    end
+
     def self.entries(dirname, opts = {})
       fs.entries(dirname)
     end

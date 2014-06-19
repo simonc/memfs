@@ -42,6 +42,44 @@ module MemFs
       end
     end
 
+    describe '.chroot' do
+      before { Process.stub(uid: 0) }
+
+      it "changes the process's idea of the file system root" do
+
+        subject.mkdir('/test/subdir')
+        subject.chroot('/test')
+
+        expect(File.exist?('/subdir')).to be true
+      end
+
+      it 'returns zero' do
+        expect(subject.chroot('/test')).to eq 0
+      end
+
+      context "when the given path is a file" do
+        before { fs.touch('/test/test-file') }
+
+        it 'raises an exception' do
+          expect{ subject.chroot('/test/test-file') }.to raise_error(Errno::ENOTDIR)
+        end
+      end
+
+      context "when the given path doesn't exist" do
+        it 'raises an exception' do
+          expect{ subject.chroot('/no-dir') }.to raise_error(Errno::ENOENT)
+        end
+      end
+
+      context 'when the user is not root' do
+        before { Process.stub(uid: 42) }
+
+        it 'raises an exception' do
+          expect{ subject.chroot('/no-dir') }.to raise_error(Errno::EPERM)
+        end
+      end
+    end
+
     describe ".delete" do
       it_behaves_like 'aliased method', :delete, :rmdir
     end
