@@ -19,7 +19,7 @@ MemFs is greatly inspired by the awesome
 The main goal of MemFs is to be 100% compatible with the Ruby libraries like
 FileUtils.
 
-For french guys, the answer is yes, the joke in the name is intended ;)
+For French people, the answer is yes, the joke in the name is intended ;)
 
 ## Take a look
 
