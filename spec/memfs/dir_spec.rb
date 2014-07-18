@@ -12,6 +12,20 @@ module MemFs
       expect(instance).to be_an(Enumerable)
     end
 
+    describe '[]' do
+      context 'when a string is given' do
+        it 'acts like calling glob' do
+          expect(subject['/*']).to eq %w[/tmp /test]
+        end
+      end
+
+      context 'when a list of strings is given' do
+        it 'acts like calling glob' do
+          expect(subject['/tm*', '/te*']).to eq %w[/tmp /test]
+        end
+      end
+    end
+
     describe '.chdir' do
       it "changes the current working directory" do
         subject.chdir '/test'

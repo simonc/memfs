@@ -7,6 +7,10 @@ module MemFs
 
     attr_reader :pos
 
+    def self.[](*patterns)
+      glob(patterns)
+    end
+
     def self.chdir(path, &block)
       fs.chdir path, &block
       return 0
