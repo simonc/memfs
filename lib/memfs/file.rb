@@ -5,6 +5,7 @@ module MemFs
   class File
     extend FilesystemAccess
     extend SingleForwardable
+    include Enumerable
     include FilesystemAccess
     include OriginalFile::Constants
 
@@ -259,6 +260,13 @@ module MemFs
       closed
     end
 
+    def each(sep = $/, &block)
+      return to_enum(__callee__) unless block_given?
+      fail IOError, 'not opened for reading' unless readable?
+      content.each_line(sep) { |line| block.call(line) }
+      self
+    end
+
     def lstat
       File.lstat(path)
     end
@@ -368,6 +376,11 @@ module MemFs
 
     def create_file?
       (opening_mode & File::CREAT).nonzero?
+    end
+
+    def readable?
+      (opening_mode & File::RDWR).nonzero? ||
+      (opening_mode | File::RDONLY).zero?
     end
 
     def truncate_file?

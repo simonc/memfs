@@ -14,6 +14,10 @@ module MemFs
       subject.symlink '/no-file', '/no-link'
     end
 
+    it 'implements Enumerable' do
+      expect(subject.ancestors).to include(Enumerable)
+    end
+
     describe '.absolute_path' do
       before :each do
         MemFs::Dir.chdir('/test-dir')
@@ -1721,6 +1725,60 @@ module MemFs
         file = subject.open('/test-file')
         expect(file.closed?).to be_false
         file.close
+      end
+    end
+
+    describe '#each' do
+      let(:file) { subject.open('/test-file') }
+      let(:lines) do
+        ["Hello this is a file\n", "with some lines\n", "for test purpose\n"]
+      end
+
+      before do
+        subject.open('/test-file', 'w') do |f|
+          lines.each { |line| f.puts line }
+        end
+      end
+
+      it 'executes the block for every line in the file' do
+        expect{ |blk| file.each(&blk) }.to \
+          yield_successive_args(*lines)
+      end
+
+      it 'returns the file itself' do
+        expect(file.each {}).to be file
+      end
+
+      context 'when a separator is given' do
+        it 'uses this separator to split lines' do
+          expected_lines = [
+            "Hello this is a f",
+            "ile\nwith some lines\nf",
+            "or test purpose\n"
+          ]
+          expect{ |blk| file.each('f', &blk) }.to \
+            yield_successive_args(*expected_lines)
+        end
+      end
+
+      context 'when the file is not open for reading' do
+        let(:file) { subject.open('/test-file', 'w') }
+
+        it 'raises an exception' do
+          expect{ file.each { |l| puts l } }.to raise_error(IOError)
+        end
+
+        context 'when no block is given' do
+          it 'does not raise an exception' do
+            expect{ file.each }.not_to raise_error
+          end
+        end
+      end
+
+      context 'when no block is given' do
+        it 'returns an enumerator' do
+          expect(file.each.next).to eq "Hello this is a file\n"
+        end
       end
     end
 
