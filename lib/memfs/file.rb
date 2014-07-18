@@ -6,10 +6,7 @@ module MemFs
     extend FilesystemAccess
     extend SingleForwardable
     include FilesystemAccess
-
-    OriginalFile.constants.grep(/^[A-Z_]+$/).each do |const|
-      const_set const, OriginalFile.const_get(const)
-    end
+    include OriginalFile::Constants
 
     MODE_MAP = {
       'r'  => RDONLY,
