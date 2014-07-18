@@ -3,7 +3,7 @@ require 'spec_helper'
 module MemFs
   module Fake
     describe Directory do
-      let(:directory) { Directory.new('/test') }
+      let(:directory) { Directory.new('test') }
 
       describe '.new' do
         it "sets . in the entries list" do
@@ -98,6 +98,20 @@ module MemFs
           it "returns /" do
             expect(root.path).to eq('/')
           end
+        end
+      end
+
+      describe '#paths' do
+        before do
+          subdir = Directory.new('subdir')
+          directory.add_entry(subdir)
+          subdir.add_entry File.new('file1')
+          subdir.add_entry File.new('file2')
+        end
+
+        it 'returns the path of the directory and its entries recursively' do
+          expect(directory.paths).to eq \
+            %w[test test/subdir test/subdir/file1 test/subdir/file2]
         end
       end
 

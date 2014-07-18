@@ -103,6 +103,10 @@ module MemFs
       find_parent!(path).add_entry Fake::Directory.new(path)
     end
 
+    def paths
+      root.paths
+    end
+
     def rename(old_name, new_name)
       file = find!(old_name)
       file.delete

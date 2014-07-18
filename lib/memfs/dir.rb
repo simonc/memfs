@@ -43,6 +43,19 @@ module MemFs
     end
     class << self; alias :pwd :getwd; end
 
+    def self.glob(patterns, flags = 0)
+      patterns = [*patterns]
+      list = fs.paths.select do |path|
+               patterns.any? do |pattern|
+                 File.fnmatch?(pattern, path, flags | GLOB_FLAGS)
+               end
+             end
+      # FIXME: ugly special case for /* and /
+      list.delete('/') if patterns.first == '/*'
+      return list unless block_given?
+      list.each { |path| yield path } and nil
+    end
+
     def self.home(*args)
       original_dir_class.home(*args)
     end
@@ -129,6 +142,8 @@ module MemFs
     end
 
     private
+
+    GLOB_FLAGS = File::FNM_EXTGLOB | File::FNM_PATHNAME
 
     attr_accessor :entry, :max_seek, :state
 

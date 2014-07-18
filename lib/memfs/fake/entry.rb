@@ -78,6 +78,10 @@ module MemFs
         MemFs::File.join(parts)
       end
 
+      def paths
+        [path]
+      end
+
       def touch
         self.atime = self.mtime = Time.now
       end

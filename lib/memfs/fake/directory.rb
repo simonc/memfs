@@ -43,6 +43,10 @@ module MemFs
         name == '/' ? '/' : super
       end
 
+      def paths
+        [path] + entries.reject { |p| %w[. ..].include?(p) }.values.map(&:paths).flatten
+      end
+
       def remove_entry(entry)
         entries.delete(entry.name)
       end

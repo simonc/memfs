@@ -310,6 +310,18 @@ module MemFs
       end
     end
 
+    describe '#paths' do
+      before do
+        subject.mkdir('/test-dir/subdir')
+        subject.touch('/test-dir/subdir/file1', '/test-dir/subdir/file2')
+      end
+
+      it 'returns the list of all the existing paths' do
+        expect(subject.paths).to eq \
+          %w[/ /tmp /test-dir /test-dir/subdir /test-dir/subdir/file1 /test-dir/subdir/file2]
+      end
+    end
+
     describe "#pwd" do
       it_behaves_like 'aliased method', :pwd, :getwd
     end

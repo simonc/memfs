@@ -141,6 +141,12 @@ module MemFs
         end
       end
 
+      describe 'paths' do
+        it 'returns an array containing the entry path' do
+          expect(entry.paths).to eq ['/parent/test']
+        end
+      end
+
       describe "#touch" do
         let(:time) { Time.now - 5000 }
 

@@ -173,6 +173,61 @@ module MemFs
       end
     end
 
+    describe '.glob' do
+      before do
+        fs.clear!
+        3.times do |dirnum|
+          fs.mkdir "/test#{dirnum}"
+          fs.mkdir "/test#{dirnum}/subdir"
+          3.times do |filenum|
+            fs.touch "/test#{dirnum}/subdir/file#{filenum}"
+          end
+        end
+      end
+
+      shared_examples 'returning matching filenames' do |pattern, filenames|
+        it "with #{pattern}" do
+          expect(subject.glob(pattern)).to eq filenames
+        end
+      end
+
+      it_behaves_like 'returning matching filenames', '/', %w[/]
+      it_behaves_like 'returning matching filenames', '/test0', %w[/test0]
+      it_behaves_like 'returning matching filenames', '/*', %w[/tmp /test0 /test1 /test2]
+      it_behaves_like 'returning matching filenames', '/test*', %w[/test0 /test1 /test2]
+      it_behaves_like 'returning matching filenames', '/*0', %w[/test0]
+      it_behaves_like 'returning matching filenames', '/*es*', %w[/test0 /test1 /test2]
+      it_behaves_like 'returning matching filenames', '/**/file0', %w[/test0/subdir/file0 /test1/subdir/file0 /test2/subdir/file0]
+      it_behaves_like 'returning matching filenames', '/test?', %w[/test0 /test1 /test2]
+      it_behaves_like 'returning matching filenames', '/test[01]', %w[/test0 /test1]
+      it_behaves_like 'returning matching filenames', '/test[^2]', %w[/test0 /test1]
+      it_behaves_like 'returning matching filenames', '/test{1,2}', %w[/test1 /test2]
+
+      context 'when a flag is given' do
+        it 'uses it to compare filenames' do
+          expect(subject.glob('/TEST*', File::FNM_CASEFOLD)).to eq \
+            %w[/test0 /test1 /test2]
+        end
+      end
+
+      context 'when a block is given' do
+        it 'calls the block with every matching filenames' do
+          expect{ |blk| subject.glob('/test*', &blk) }.to \
+            yield_successive_args('/test0', '/test1', '/test2')
+        end
+
+        it 'returns nil' do
+          expect(subject.glob('/*') {}).to be nil
+        end
+      end
+
+      context 'when pattern is an array of patterns' do
+        it 'returns the list of files matching any pattern' do
+          expect(subject.glob(['/*0', '/*1'])).to eq %w[/test0 /test1]
+        end
+      end
+    end
+
     describe '.home' do
       it 'returns the home directory of the current user' do
         expect(subject.home).to eq ENV['HOME']
