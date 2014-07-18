@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.4.0
+
+* ADD: `Dir.chroot`
+* ADD: `Dir.glob` and `Dir[]`
+* ADD: `Dir.open`
+* ADD: `Dir.tmpdir`
+* ADD: `Dir#close`
+* ADD: `Dir#path`
+* ADD: `Dir#pos=`
+* ADD: `Dir#pos`
+* ADD: `Dir#read`
+* ADD: `Dir#rewind`
+* ADD: `Dir#seek`
+* ADD: `Dir#tell`
+* ADD: `Dir#to_path`
+* FIX: Internal implementation methods are now private
+
 ## 0.3.0
 
 * FIX: The gem is now Ruby 1.9 compatible
