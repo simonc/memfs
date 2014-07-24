@@ -147,7 +147,11 @@ module MemFs
 
     private
 
-    GLOB_FLAGS = File::FNM_EXTGLOB | File::FNM_PATHNAME
+    if defined?(File::FNM_EXTGLOB)
+      GLOB_FLAGS = File::FNM_EXTGLOB | File::FNM_PATHNAME
+    else
+      GLOB_FLAGS = File::FNM_PATHNAME
+    end
 
     attr_accessor :entry, :max_seek, :state
 
