@@ -215,7 +215,10 @@ module MemFs
       it_behaves_like 'returning matching filenames', '/test?', %w[/test0 /test1 /test2]
       it_behaves_like 'returning matching filenames', '/test[01]', %w[/test0 /test1]
       it_behaves_like 'returning matching filenames', '/test[^2]', %w[/test0 /test1]
-      it_behaves_like 'returning matching filenames', '/test{1,2}', %w[/test1 /test2]
+
+      if defined?(File::FNM_EXTGLOB)
+        it_behaves_like 'returning matching filenames', '/test{1,2}', %w[/test1 /test2]
+      end
 
       context 'when a flag is given' do
         it 'uses it to compare filenames' do
@@ -381,7 +384,7 @@ module MemFs
     end
 
     describe '#path' do
-      it "returns the path parameter passed to dir’s constructor" do
+      it "returns the path parameter passed to dir's constructor" do
         expect(instance.path).to eq '/test'
       end
     end
@@ -492,7 +495,7 @@ module MemFs
     end
 
     describe '#to_path' do
-      it "returns the path parameter passed to dir’s constructor" do
+      it "returns the path parameter passed to dir's constructor" do
         expect(instance.to_path).to eq '/test'
       end
     end
