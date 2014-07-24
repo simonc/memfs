@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1
+
+* FIX: Support for 1.9.3 broken by File::FNM_EXTGLOB
+
 ## 0.4.0
 
 * ADD: `Dir.chroot`
