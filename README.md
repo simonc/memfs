@@ -145,7 +145,7 @@ end
 
 ## Requirements
 
-* Ruby 2.0+
+* Ruby 1.9.3 or newer
 
 ## Known issues
 
