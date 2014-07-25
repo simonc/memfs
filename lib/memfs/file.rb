@@ -272,7 +272,7 @@ module MemFs
       closed
     end
 
-    def each(sep = $INPUT_RECORD_SEPARATOR, &block)
+    def each(sep = $/, &block)
       return to_enum(__callee__) unless block_given?
       fail IOError, 'not opened for reading' unless readable?
       content.each_line(sep) { |line| block.call(line) }
@@ -384,7 +384,7 @@ module MemFs
         fail ArgumentError, "invalid access mode #{mode}"
       end
 
-      mode_str = $LAST_MATCH_INFO[1]
+      mode_str = $~[1]
       MODE_MAP[mode_str]
     end
 

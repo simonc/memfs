@@ -20,8 +20,8 @@ module MemFs
         def puts(*strings)
           strings.each do |str|
             @string << str
-            next if str.end_with?($INPUT_RECORD_SEPARATOR)
-            @string << $INPUT_RECORD_SEPARATOR
+            next if str.end_with?($/)
+            @string << $/
           end
         end
 
