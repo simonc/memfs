@@ -75,13 +75,13 @@ module MemFs
           file = fs.find('/block-file')
           file.block_device = true
           block_stat = File::Stat.new('/block-file')
-          expect(block_stat.blockdev?).to be_true
+          expect(block_stat.blockdev?).to be true
         end
       end
 
       context "when the file is not a block device" do
         it "returns false" do
-          expect(file_stat.blockdev?).to be_false
+          expect(file_stat.blockdev?).to be false
         end
       end
     end
@@ -93,13 +93,13 @@ module MemFs
           file = fs.find('/character-file')
           file.character_device = true
           character_stat = File::Stat.new('/character-file')
-          expect(character_stat.chardev?).to be_true
+          expect(character_stat.chardev?).to be true
         end
       end
 
       context "when the file is not a character device" do
         it "returns false" do
-          expect(file_stat.chardev?).to be_false
+          expect(file_stat.chardev?).to be false
         end
       end
     end
@@ -139,26 +139,26 @@ module MemFs
       context 'when dereference is true' do
         context "when the entry is a directory" do
           it "returns true" do
-            expect(dereferenced_dir_stat.directory?).to be_true
+            expect(dereferenced_dir_stat.directory?).to be true
           end
         end
 
         context "when the entry is not a directory" do
           it "returns false" do
-            expect(dereferenced_file_stat.directory?).to be_false
+            expect(dereferenced_file_stat.directory?).to be false
           end
         end
 
         context "when the entry is a symlink" do
           context "and the last target of the link chain is a directory" do
             it "returns true" do
-              expect(dereferenced_dir_link_stat.directory?).to be_true
+              expect(dereferenced_dir_link_stat.directory?).to be true
             end
           end
 
           context "and the last target of the link chain is not a directory" do
             it "returns false" do
-              expect(dereferenced_link_stat.directory?).to be_false
+              expect(dereferenced_link_stat.directory?).to be false
             end
           end
         end
@@ -167,26 +167,26 @@ module MemFs
       context 'when dereference is false' do
         context "when the entry is a directory" do
           it "returns true" do
-            expect(dir_stat.directory?).to be_true
+            expect(dir_stat.directory?).to be true
           end
         end
 
         context "when the entry is not a directory" do
           it "returns false" do
-            expect(file_stat.directory?).to be_false
+            expect(file_stat.directory?).to be false
           end
         end
 
         context "when the entry is a symlink" do
           context "and the last target of the link chain is a directory" do
             it "returns false" do
-              expect(dir_link_stat.directory?).to be_false
+              expect(dir_link_stat.directory?).to be false
             end
           end
 
           context "and the last target of the link chain is not a directory" do
             it "returns false" do
-              expect(link_stat.directory?).to be_false
+              expect(link_stat.directory?).to be false
             end
           end
         end
@@ -212,7 +212,7 @@ module MemFs
 
       context "when the file is not executable by anyone" do
         it "return false" do
-          expect(file_stat.executable?).to be_false
+          expect(file_stat.executable?).to be false
         end
       end
 
@@ -223,7 +223,7 @@ module MemFs
           let(:uid) { Process.euid }
 
           it "returns true" do
-            expect(file_stat.executable?).to be_true
+            expect(file_stat.executable?).to be true
           end
         end
       end
@@ -235,7 +235,7 @@ module MemFs
           let(:gid) { Process.egid }
 
           it "returns true" do
-            expect(file_stat.executable?).to be_true
+            expect(file_stat.executable?).to be true
           end
         end
       end
@@ -245,14 +245,14 @@ module MemFs
 
         context "and the user has no specific right on it" do
           it "returns true" do
-            expect(file_stat.executable?).to be_true
+            expect(file_stat.executable?).to be true
           end
         end
       end
 
       context "when the file does not exist" do
         it "returns false" do
-          expect(file_stat.executable?).to be_false
+          expect(file_stat.executable?).to be false
         end
       end
     end
@@ -270,7 +270,7 @@ module MemFs
 
       context "when the file is not executable by anyone" do
         it "return false" do
-          expect(file_stat.executable_real?).to be_false
+          expect(file_stat.executable_real?).to be false
         end
       end
 
@@ -281,7 +281,7 @@ module MemFs
           let(:uid) { Process.uid }
 
           it "returns true" do
-            expect(file_stat.executable_real?).to be_true
+            expect(file_stat.executable_real?).to be true
           end
         end
       end
@@ -293,7 +293,7 @@ module MemFs
           let(:gid) { Process.gid }
 
           it "returns true" do
-            expect(file_stat.executable_real?).to be_true
+            expect(file_stat.executable_real?).to be true
           end
         end
       end
@@ -303,14 +303,14 @@ module MemFs
 
         context "and the user has no specific right on it" do
           it "returns true" do
-            expect(file_stat.executable_real?).to be_true
+            expect(file_stat.executable_real?).to be true
           end
         end
       end
 
       context "when the file does not exist" do
         it "returns false" do
-          expect(file_stat.executable_real?).to be_false
+          expect(file_stat.executable_real?).to be false
         end
       end
     end
@@ -319,26 +319,26 @@ module MemFs
       context 'when dereference is true' do
         context "when the entry is a regular file" do
           it "returns true" do
-            expect(dereferenced_file_stat.file?).to be_true
+            expect(dereferenced_file_stat.file?).to be true
           end
         end
 
         context "when the entry is not a regular file" do
           it "returns false" do
-            expect(dereferenced_dir_stat.file?).to be_false
+            expect(dereferenced_dir_stat.file?).to be false
           end
         end
 
         context "when the entry is a symlink" do
           context "and the last target of the link chain is a regular file" do
             it "returns true" do
-              expect(dereferenced_link_stat.file?).to be_true
+              expect(dereferenced_link_stat.file?).to be true
             end
           end
 
           context "and the last target of the link chain is not a regular file" do
             it "returns false" do
-              expect(dereferenced_dir_link_stat.file?).to be_false
+              expect(dereferenced_dir_link_stat.file?).to be false
             end
           end
         end
@@ -347,26 +347,26 @@ module MemFs
       context 'when dereference is false' do
         context "when the entry is a regular file" do
           it "returns true" do
-            expect(file_stat.file?).to be_true
+            expect(file_stat.file?).to be true
           end
         end
 
         context "when the entry is not a regular file" do
           it "returns false" do
-            expect(dir_stat.file?).to be_false
+            expect(dir_stat.file?).to be false
           end
         end
 
         context "when the entry is a symlink" do
           context "and the last target of the link chain is a regular file" do
             it "returns false" do
-              expect(link_stat.file?).to be_false
+              expect(link_stat.file?).to be false
             end
           end
 
           context "and the last target of the link chain is not a regular file" do
             it "returns false" do
-              expect(dir_link_stat.file?).to be_false
+              expect(dir_link_stat.file?).to be false
             end
           end
         end
@@ -435,14 +435,14 @@ module MemFs
       context "when the effective user group owns of the file" do
         it "returns true" do
           fs.chown(0, Process.egid, '/test-file')
-          expect(file_stat.grpowned?).to be_true
+          expect(file_stat.grpowned?).to be true
         end
       end
 
       context "when the effective user group does not own of the file" do
         it "returns false" do
           fs.chown(0, 0, '/test-file')
-          expect(file_stat.grpowned?).to be_false
+          expect(file_stat.grpowned?).to be false
         end
       end
     end
@@ -464,14 +464,14 @@ module MemFs
       context "when the effective user owns of the file" do
         it "returns true" do
           fs.chown(Process.euid, 0, '/test-file')
-          expect(file_stat.owned?).to be_true
+          expect(file_stat.owned?).to be true
         end
       end
 
       context "when the effective user does not own of the file" do
         it "returns false" do
           fs.chown(0, 0, '/test-file')
-          expect(file_stat.owned?).to be_false
+          expect(file_stat.owned?).to be false
         end
       end
     end
@@ -481,7 +481,7 @@ module MemFs
 
       context "when the file is not a pipe" do
         it "returns false" do
-          expect(file_stat.pipe?).to be_false
+          expect(file_stat.pipe?).to be false
         end
       end
     end
@@ -499,7 +499,7 @@ module MemFs
 
       context "when the file is not readable by anyone" do
         it "return false" do
-          expect(file_stat.readable?).to be_false
+          expect(file_stat.readable?).to be false
         end
       end
 
@@ -510,7 +510,7 @@ module MemFs
           let(:uid) { Process.euid }
 
           it "returns true" do
-            expect(file_stat.readable?).to be_true
+            expect(file_stat.readable?).to be true
           end
         end
       end
@@ -522,7 +522,7 @@ module MemFs
           let(:gid) { Process.egid }
 
           it "returns true" do
-            expect(file_stat.readable?).to be_true
+            expect(file_stat.readable?).to be true
           end
         end
       end
@@ -532,7 +532,7 @@ module MemFs
 
         context "and the user has no specific right on it" do
           it "returns true" do
-            expect(file_stat.readable?).to be_true
+            expect(file_stat.readable?).to be true
           end
         end
       end
@@ -551,7 +551,7 @@ module MemFs
 
       context "when the file is not readable by anyone" do
         it "return false" do
-          expect(file_stat.readable_real?).to be_false
+          expect(file_stat.readable_real?).to be false
         end
       end
 
@@ -562,7 +562,7 @@ module MemFs
           let(:uid) { Process.euid }
 
           it "returns true" do
-            expect(file_stat.readable_real?).to be_true
+            expect(file_stat.readable_real?).to be true
           end
         end
       end
@@ -574,7 +574,7 @@ module MemFs
           let(:gid) { Process.egid }
 
           it "returns true" do
-            expect(file_stat.readable_real?).to be_true
+            expect(file_stat.readable_real?).to be true
           end
         end
       end
@@ -584,14 +584,14 @@ module MemFs
 
         context "and the user has no specific right on it" do
           it "returns true" do
-            expect(file_stat.readable_real?).to be_true
+            expect(file_stat.readable_real?).to be true
           end
         end
       end
 
       context "when the file does not exist" do
         it "returns false" do
-          expect(file_stat.readable_real?).to be_false
+          expect(file_stat.readable_real?).to be false
         end
       end
     end
@@ -600,13 +600,13 @@ module MemFs
       context "when the file has the setgid bit set" do
         it "returns true" do
           fs.chmod(02000, '/test-file')
-          expect(file_stat.setgid?).to be_true
+          expect(file_stat.setgid?).to be true
         end
       end
 
       context "when the file does not have the setgid bit set" do
         it "returns false" do
-          expect(file_stat.setgid?).to be_false
+          expect(file_stat.setgid?).to be false
         end
       end
     end
@@ -615,13 +615,13 @@ module MemFs
       context "when the file has the setuid bit set" do
         it "returns true" do
           fs.chmod(04000, '/test-file')
-          expect(file_stat.setuid?).to be_true
+          expect(file_stat.setuid?).to be true
         end
       end
 
       context "when the file does not have the setuid bit set" do
         it "returns false" do
-          expect(file_stat.setuid?).to be_false
+          expect(file_stat.setuid?).to be false
         end
       end
     end
@@ -631,7 +631,7 @@ module MemFs
 
       context "when the file is not a socket" do
         it "returns false" do
-          expect(file_stat.socket?).to be_false
+          expect(file_stat.socket?).to be false
         end
       end
     end
@@ -639,11 +639,11 @@ module MemFs
     describe "#sticky?" do
       it "returns true if the named file has the sticky bit set" do
         fs.chmod(01777, '/test-file')
-        expect(file_stat.sticky?).to be_true
+        expect(file_stat.sticky?).to be true
       end
 
       it "returns false if the named file hasn't' the sticky bit set" do
-        expect(file_stat.sticky?).to be_false
+        expect(file_stat.sticky?).to be false
       end
     end
 
@@ -651,13 +651,13 @@ module MemFs
       context 'when dereference is true' do
         context "when the entry is a symlink" do
           it "returns false" do
-            expect(dereferenced_link_stat.symlink?).to be_false
+            expect(dereferenced_link_stat.symlink?).to be false
           end
         end
 
         context "when the entry is not a symlink" do
           it "returns false" do
-            expect(dereferenced_file_stat.symlink?).to be_false
+            expect(dereferenced_file_stat.symlink?).to be false
           end
         end
       end
@@ -665,13 +665,13 @@ module MemFs
       context 'when dereference is false' do
         context "when the entry is a symlink" do
           it "returns true" do
-            expect(link_stat.symlink?).to be_true
+            expect(link_stat.symlink?).to be true
           end
         end
 
         context "when the entry is not a symlink" do
           it "returns false" do
-            expect(file_stat.symlink?).to be_false
+            expect(file_stat.symlink?).to be false
           end
         end
       end
@@ -729,7 +729,7 @@ module MemFs
 
       context "when the file is not executable by anyone" do
         it "return false" do
-          expect(file_stat.writable?).to be_false
+          expect(file_stat.writable?).to be false
         end
       end
 
@@ -740,7 +740,7 @@ module MemFs
           let(:uid) { Process.euid }
 
           it "returns true" do
-            expect(file_stat.writable?).to be_true
+            expect(file_stat.writable?).to be true
           end
         end
       end
@@ -752,7 +752,7 @@ module MemFs
           let(:gid) { Process.egid }
 
           it "returns true" do
-            expect(file_stat.writable?).to be_true
+            expect(file_stat.writable?).to be true
           end
         end
       end
@@ -762,14 +762,14 @@ module MemFs
 
         context "and the user has no specific right on it" do
           it "returns true" do
-            expect(file_stat.writable?).to be_true
+            expect(file_stat.writable?).to be true
           end
         end
       end
 
       context "when the file does not exist" do
         it "returns false" do
-          expect(file_stat.writable?).to be_false
+          expect(file_stat.writable?).to be false
         end
       end
     end
@@ -787,7 +787,7 @@ module MemFs
 
       context "when the file is not executable by anyone" do
         it "return false" do
-          expect(file_stat.writable_real?).to be_false
+          expect(file_stat.writable_real?).to be false
         end
       end
 
@@ -798,7 +798,7 @@ module MemFs
           let(:uid) { Process.euid }
 
           it "returns true" do
-            expect(file_stat.writable_real?).to be_true
+            expect(file_stat.writable_real?).to be true
           end
         end
       end
@@ -810,7 +810,7 @@ module MemFs
           let(:gid) { Process.egid }
 
           it "returns true" do
-            expect(file_stat.writable_real?).to be_true
+            expect(file_stat.writable_real?).to be true
           end
         end
       end
@@ -820,14 +820,14 @@ module MemFs
 
         context "and the user has no specific right on it" do
           it "returns true" do
-            expect(file_stat.writable_real?).to be_true
+            expect(file_stat.writable_real?).to be true
           end
         end
       end
 
       context "when the file does not exist" do
         it "returns false" do
-          expect(file_stat.writable_real?).to be_false
+          expect(file_stat.writable_real?).to be false
         end
       end
     end
@@ -835,7 +835,7 @@ module MemFs
     describe "#zero?" do
       context "when the file has a zero size" do
         it "returns true" do
-          expect(file_stat.zero?).to be_true
+          expect(file_stat.zero?).to be true
         end
       end
 
@@ -845,7 +845,7 @@ module MemFs
         end
 
         it "returns false" do
-          expect(file_stat.zero?).to be_false
+          expect(file_stat.zero?).to be false
         end
       end
     end

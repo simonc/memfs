@@ -45,14 +45,21 @@ module MemFs
       :setuid?,
       :socket?,
       :sticky?,
-      :world_readable?,
-      :world_writable?,
       :writable?,
       :writable_real?,
       :zero?
     ].each do |query_method|
       define_singleton_method(query_method) do |path|    # def directory?(path)
         stat_query(path, query_method)                   #   stat_query(path, :directory?)
+      end                                                # end
+    end
+
+    [
+      :world_readable?,
+      :world_writable?,
+    ].each do |query_method|
+      define_singleton_method(query_method) do |path|    # def directory?(path)
+        stat_query(path, query_method, false)            #   stat_query(path, :directory?, false)
       end                                                # end
     end
 
@@ -179,7 +186,11 @@ module MemFs
 
     def self.size?(path)
       file = fs.find(path)
-      file && file.size > 0 && file.size
+      if file && file.size > 0
+        file.size
+      else
+        false
+      end
     end
 
     def self.stat(path)
@@ -233,6 +244,7 @@ module MemFs
 
       @path = filename
 
+      self.closed = false
       self.opening_mode = str_to_mode_int(mode)
 
       fs.touch(filename) if create_file?
@@ -349,13 +361,15 @@ module MemFs
     end
     private_class_method :original_file_class
 
-    def self.stat_query(path, query)
-      fs.find(path) && stat(path).public_send(query)
+    def self.stat_query(path, query, force_boolean = true)
+      response = fs.find(path) && stat(path).public_send(query)
+      force_boolean ? !!(response) : response
     end
     private_class_method :stat_query
 
     def self.lstat_query(path, query)
-      fs.find(path) && lstat(path).public_send(query)
+      response = fs.find(path) && lstat(path).public_send(query)
+      !!(response)
     end
     private_class_method :lstat_query
 

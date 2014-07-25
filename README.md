@@ -93,7 +93,7 @@ And then write your specs like this:
 ``` ruby
 it "creates a file", memfs: true do
   subject.create_file('test.rb')
-  expect(File.exists?('test.rb')).to be_true
+  expect(File.exists?('test.rb')).to be true
 end
 ```
 
@@ -107,7 +107,7 @@ describe FileCreator do
     it "creates a file" do
       MemFs.activate do
         subject.create_file('test.rb')
-        expect(File.exists?('test.rb')).to be_true
+        expect(File.exists?('test.rb')).to be true
       end
     end
   end
@@ -126,7 +126,7 @@ describe FileCreator do
   describe '.create_file' do
     it "creates a file" do
       subject.create_file('test.rb')
-      expect(File.exists?('test.rb')).to be_true
+      expect(File.exists?('test.rb')).to be true
     end
   end
 end

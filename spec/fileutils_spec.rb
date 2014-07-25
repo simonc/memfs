@@ -25,12 +25,12 @@ describe FileUtils do
     end
 
     it "raises an error when the given path doesn't exist" do
-      expect { FileUtils.cd('/nowhere') }.to raise_error(Errno::ENOENT)
+      expect { FileUtils.cd('/nowhere') }.to raise_specific_error(Errno::ENOENT)
     end
 
     it "raises an error when the given path is not a directory" do
       FileUtils.touch('/test-file')
-      expect { FileUtils.cd('/test-file') }.to raise_error(Errno::ENOTDIR)
+      expect { FileUtils.cd('/test-file') }.to raise_specific_error(Errno::ENOTDIR)
     end
 
     context "when called with a block" do
@@ -59,7 +59,7 @@ describe FileUtils do
       end
 
       it "raises an error if the last target of the link chain doesn't exist" do
-        expect { FileUtils.cd('/nowhere-link') }.to raise_error(Errno::ENOENT)
+        expect { FileUtils.cd('/nowhere-link') }.to raise_specific_error(Errno::ENOENT)
       end
     end
   end
@@ -84,7 +84,7 @@ describe FileUtils do
     end
 
     it "raises an error if an entry does not exist" do
-      expect { FileUtils.chmod(0777, '/test-file') }.to raise_error(Errno::ENOENT)
+      expect { FileUtils.chmod(0777, '/test-file') }.to raise_specific_error(Errno::ENOENT)
     end
 
     context "when the named file is a symlink" do
@@ -108,7 +108,8 @@ describe FileUtils do
 
       context "when File doesn't respond to lchmod" do
         it "does nothing" do
-          FileUtils::Entry_.any_instance.stub(:have_lchmod?).and_return(false)
+          allow_any_instance_of(FileUtils::Entry_).to \
+            receive_messages(have_lchmod?: false)
           mode = File.lstat('/test-link').mode
           FileUtils.chmod(0777, '/test-link')
           expect(File.lstat('/test-link').mode).to eq(mode)
@@ -244,14 +245,14 @@ describe FileUtils do
       File.open('/test-file', 'w')  { |f| f.puts "this is a test" }
       File.open('/test-file2', 'w') { |f| f.puts "this is a test" }
 
-      expect(FileUtils.compare_file('/test-file', '/test-file2')).to be_true
+      expect(FileUtils.compare_file('/test-file', '/test-file2')).to be true
     end
 
     it "returns false if the contents of a file A and a file B are not identical" do
       File.open('/test-file', 'w')  { |f| f.puts "this is a test" }
       File.open('/test-file2', 'w') { |f| f.puts "this is not a test" }
 
-      expect(FileUtils.compare_file('/test-file', '/test-file2')).to be_false
+      expect(FileUtils.compare_file('/test-file', '/test-file2')).to be false
     end
   end
 
@@ -263,7 +264,7 @@ describe FileUtils do
       file1 = File.open('/test-file')
       file2 = File.open('/test-file2')
 
-      expect(FileUtils.compare_stream(file1, file2)).to be_true
+      expect(FileUtils.compare_stream(file1, file2)).to be true
     end
 
     it "returns false if the contents of a stream A and stream B are not identical" do
@@ -273,7 +274,7 @@ describe FileUtils do
       file1 = File.open('/test-file')
       file2 = File.open('/test-file2')
 
-      expect(FileUtils.compare_stream(file1, file2)).to be_false
+      expect(FileUtils.compare_stream(file1, file2)).to be false
     end
   end
 
@@ -292,14 +293,14 @@ describe FileUtils do
       FileUtils.touch('/test-file')
       FileUtils.symlink('/test-file', '/test-link')
       FileUtils.copy_entry('/test-link', '/test-copy')
-      expect(File.symlink?('/test-copy')).to be_true
+      expect(File.symlink?('/test-copy')).to be true
     end
 
     context "when +src+ does not exist" do
       it "raises an exception" do
         expect {
           FileUtils.copy_entry('/test-file', '/test-copy')
-        }.to raise_error(RuntimeError)
+        }.to raise_specific_error(RuntimeError)
       end
     end
 
@@ -352,7 +353,7 @@ describe FileUtils do
       it "copies its contents recursively" do
         FileUtils.mkdir_p('/test-dir/test-sub-dir')
         FileUtils.copy_entry('/test-dir', '/test-copy')
-        expect(Dir.exists?('/test-copy/test-sub-dir')).to be_true
+        expect(Dir.exists?('/test-copy/test-sub-dir')).to be true
       end
     end
   end
@@ -381,7 +382,7 @@ describe FileUtils do
 
     context "when +src+ and +dest+ are the same file" do
       it "raises an error" do
-        expect { FileUtils.cp('/test-file', '/test-file') }.to raise_error(ArgumentError)
+        expect { FileUtils.cp('/test-file', '/test-file') }.to raise_specific_error(ArgumentError)
       end
     end
 
@@ -397,7 +398,7 @@ describe FileUtils do
       context "when +dest+ is not a directory" do
         it "raises an error" do
           FileUtils.touch(['/dest', '/test-file2'])
-          expect { FileUtils.cp(['/test-file', '/test-file2'], '/dest') }.to raise_error(Errno::ENOTDIR)
+          expect { FileUtils.cp(['/test-file', '/test-file2'], '/dest') }.to raise_specific_error(Errno::ENOTDIR)
         end
       end
     end
@@ -417,7 +418,7 @@ describe FileUtils do
         FileUtils.touch('/test/dir/file')
 
         FileUtils.cp_r('/test', '/dest')
-        expect(File.exists?('/dest/dir/file')).to be_true
+        expect(File.exists?('/dest/dir/file')).to be true
       end
     end
 
@@ -427,7 +428,7 @@ describe FileUtils do
         FileUtils.touch('/test/dir/file')
 
         FileUtils.cp_r('/test', '/dest')
-        expect(File.exists?('/dest/test/dir/file')).to be_true
+        expect(File.exists?('/dest/test/dir/file')).to be true
       end
     end
 
@@ -437,7 +438,7 @@ describe FileUtils do
         FileUtils.touch(['/test/dir/file', '/test/dir2/file'])
 
         FileUtils.cp_r(['/test/dir', '/test/dir2'], '/dest')
-        expect(File.exists?('/dest/dir2/file')).to be_true
+        expect(File.exists?('/dest/dir2/file')).to be true
       end
     end
   end
@@ -507,7 +508,7 @@ describe FileUtils do
 
     it "creates a hard link, not a symlink" do
       FileUtils.ln('/test-file', '/test-file2')
-      expect(File.symlink?('/test-file2')).to be_false
+      expect(File.symlink?('/test-file2')).to be false
     end
 
     context "when +dest+ already exists" do
@@ -522,7 +523,7 @@ describe FileUtils do
       context "and it is not a directory" do
         it "raises an exception" do
           FileUtils.touch('/test-file2')
-          expect { FileUtils.ln('/test-file', '/test-file2') }.to raise_error(SystemCallError)
+          expect { FileUtils.ln('/test-file', '/test-file2') }.to raise_specific_error(SystemCallError)
         end
 
         context "and +:force+ is set" do
@@ -547,7 +548,7 @@ describe FileUtils do
           FileUtils.touch(['/test-file2', '/not-a-dir'])
           expect {
             FileUtils.ln(['/test-file', '/test-file2'], '/not-a-dir')
-          }.to raise_error(Errno::ENOTDIR)
+          }.to raise_specific_error(Errno::ENOTDIR)
         end
       end
     end
@@ -562,7 +563,7 @@ describe FileUtils do
 
     it "creates a symbolic link +new+" do
       FileUtils.ln_s('/test-file', '/test-link')
-      expect(File.symlink?('/test-link')).to be_true
+      expect(File.symlink?('/test-link')).to be true
     end
 
     it "creates a symbolic link which points to +old+" do
@@ -574,7 +575,7 @@ describe FileUtils do
       context "and it is a directory" do
         it "creates a symbolic link +new/old+" do
           FileUtils.ln_s('/test-file', '/test-dir')
-          expect(File.symlink?('/test-dir/test-file')).to be_true
+          expect(File.symlink?('/test-dir/test-file')).to be true
         end
       end
 
@@ -582,13 +583,13 @@ describe FileUtils do
         it "raises an exeption" do
           expect {
             FileUtils.ln_s('/test-file', '/not-a-dir')
-          }.to raise_error(Errno::EEXIST)
+          }.to raise_specific_error(Errno::EEXIST)
         end
 
         context "and +:force+ is set" do
           it "overwrites +new+" do
             FileUtils.ln_s('/test-file', '/not-a-dir', force: true)
-            expect(File.symlink?('/not-a-dir')).to be_true
+            expect(File.symlink?('/not-a-dir')).to be true
           end
         end
       end
@@ -601,7 +602,7 @@ describe FileUtils do
 
       it "creates several symbolic links in +destdir+" do
         FileUtils.ln_s(['/test-file', '/test-file2'], '/test-dir')
-        expect(File.exists?('/test-dir/test-file2')).to be_true
+        expect(File.exists?('/test-dir/test-file2')).to be true
       end
 
       it "creates symbolic links pointing to each item in the list" do
@@ -613,7 +614,7 @@ describe FileUtils do
         it "raises an error" do
           expect {
             FileUtils.ln_s(['/test-file', '/test-file2'], '/not-a-dir')
-          }.to raise_error(Errno::ENOTDIR)
+          }.to raise_specific_error(Errno::ENOTDIR)
         end
       end
     end
@@ -635,13 +636,13 @@ describe FileUtils do
   describe '.mkdir' do
     it "creates one directory" do
       FileUtils.mkdir('/test-dir')
-      expect(File.directory?('/test-dir')).to be_true
+      expect(File.directory?('/test-dir')).to be true
     end
 
     context "when passing a list of paths" do
       it "creates several directories" do
         FileUtils.mkdir(['/test-dir', '/test-dir2'])
-        expect(File.directory?('/test-dir2')).to be_true
+        expect(File.directory?('/test-dir2')).to be true
       end
     end
   end
@@ -649,23 +650,23 @@ describe FileUtils do
   describe '.mkdir_p' do
     it "creates a directory" do
       FileUtils.mkdir_p('/test-dir')
-      expect(File.directory?('/test-dir')).to be_true
+      expect(File.directory?('/test-dir')).to be true
     end
 
     it "creates all the parent directories" do
       FileUtils.mkdir_p('/path/to/some/test-dir')
-      expect(File.directory?('/path/to/some')).to be_true
+      expect(File.directory?('/path/to/some')).to be true
     end
 
     context "when passing a list of paths" do
       it "creates each directory" do
         FileUtils.mkdir_p(['/test-dir', '/test-dir'])
-        expect(File.directory?('/test-dir')).to be_true
+        expect(File.directory?('/test-dir')).to be true
       end
 
       it "creates each directory's parents" do
         FileUtils.mkdir_p(['/test-dir', '/path/to/some/test-dir'])
-        expect(File.directory?('/path/to/some')).to be_true
+        expect(File.directory?('/path/to/some')).to be true
       end
     end
   end
@@ -682,13 +683,13 @@ describe FileUtils do
     it "moves +src+ to +dest+" do
       FileUtils.touch('/test-file')
       FileUtils.mv('/test-file', '/test-file2')
-      expect(File.exists?('/test-file2')).to be_true
+      expect(File.exists?('/test-file2')).to be true
     end
 
     it "removes +src+" do
       FileUtils.touch('/test-file')
       FileUtils.mv('/test-file', '/test-file2')
-      expect(File.exists?('/test-file')).to be_false
+      expect(File.exists?('/test-file')).to be false
     end
 
     context "when +dest+ already exists" do
@@ -697,7 +698,7 @@ describe FileUtils do
           FileUtils.touch('/test-file')
           FileUtils.mkdir('/test-dir')
           FileUtils.mv('/test-file', '/test-dir')
-          expect(File.exists?('/test-dir/test-file')).to be_true
+          expect(File.exists?('/test-dir/test-file')).to be true
         end
       end
 
@@ -727,13 +728,13 @@ describe FileUtils do
     it "removes the given directory +dir+" do
       FileUtils.mkdir('/test-dir')
       FileUtils.remove_dir('/test-dir')
-      expect(File.exists?('/test-dir')).to be_false
+      expect(File.exists?('/test-dir')).to be false
     end
 
     it "removes the contents of the given directory +dir+" do
       FileUtils.mkdir_p('/test-dir/test-sub-dir')
       FileUtils.remove_dir('/test-dir')
-      expect(File.exists?('/test-dir/test-sub-dir')).to be_false
+      expect(File.exists?('/test-dir/test-sub-dir')).to be false
     end
 
     context "when +force+ is set" do
@@ -747,14 +748,14 @@ describe FileUtils do
     it "removes a file system entry +path+" do
       FileUtils.touch('/test-file')
       FileUtils.remove_entry('/test-file')
-      expect(File.exists?('/test-file')).to be_false
+      expect(File.exists?('/test-file')).to be false
     end
 
     context "when +path+ is a directory" do
       it "removes it recursively" do
         FileUtils.mkdir_p('/test-dir/test-sub-dir')
         FileUtils.remove_entry('/test-dir')
-        expect(Dir.exists?('/test-dir')).to be_false
+        expect(Dir.exists?('/test-dir')).to be false
       end
     end
   end
@@ -767,14 +768,14 @@ describe FileUtils do
     it "removes a file system entry +path+" do
       FileUtils.chmod(0755, '/')
       FileUtils.remove_entry_secure('/test-dir')
-      expect(Dir.exists?('/test-dir')).to be_false
+      expect(Dir.exists?('/test-dir')).to be false
     end
 
     context "when +path+ is a directory" do
       it "removes it recursively" do
         FileUtils.chmod(0755, '/')
         FileUtils.remove_entry_secure('/test-dir')
-        expect(Dir.exists?('/test-dir/test-sub-dir')).to be_false
+        expect(Dir.exists?('/test-dir/test-sub-dir')).to be false
       end
 
       context "and is word writable" do
@@ -799,7 +800,7 @@ describe FileUtils do
     it "removes a file path" do
       FileUtils.touch('/test-file')
       FileUtils.remove_file('/test-file')
-      expect(File.exists?('/test-file')).to be_false
+      expect(File.exists?('/test-file')).to be false
     end
 
     context "when +force+ is set" do
@@ -813,18 +814,18 @@ describe FileUtils do
     it "removes the specified file" do
       FileUtils.touch('/test-file')
       FileUtils.rm('/test-file')
-      expect(File.exists?('/test-file')).to be_false
+      expect(File.exists?('/test-file')).to be false
     end
 
     it "removes files specified in list" do
       FileUtils.touch(['/test-file', '/test-file2'])
       FileUtils.rm(['/test-file', '/test-file2'])
-      expect(File.exists?('/test-file2')).to be_false
+      expect(File.exists?('/test-file2')).to be false
     end
 
     it "cannot remove a directory" do
       FileUtils.mkdir('/test-dir')
-      expect { FileUtils.rm('/test-dir') }.to raise_error(Errno::EPERM)
+      expect { FileUtils.rm('/test-dir') }.to raise_specific_error(Errno::EPERM)
     end
 
     context "when +:force+ is set" do
@@ -832,7 +833,7 @@ describe FileUtils do
         FileUtils.mkdir('/test-dir')
         expect {
           FileUtils.rm('/test-dir', force: true)
-        }.not_to raise_error(Errno::EPERM)
+        }.not_to raise_error
       end
     end
   end
@@ -851,7 +852,7 @@ describe FileUtils do
 
     it "removes a list of files" do
       FileUtils.rm_r(['/test-file', '/test-file2'])
-      expect(File.exists?('/test-file2')).to be_false
+      expect(File.exists?('/test-file2')).to be false
     end
 
     context "when an item of the list is a directory" do
@@ -859,7 +860,7 @@ describe FileUtils do
         FileUtils.mkdir('/test-dir')
         FileUtils.touch('/test-dir/test-file')
         FileUtils.rm_r(['/test-file', '/test-file2', '/test-dir'])
-        expect(File.exists?('/test-dir/test-file')).to be_false
+        expect(File.exists?('/test-dir/test-file')).to be false
       end
     end
 
@@ -867,7 +868,7 @@ describe FileUtils do
       it "ignores StandardError" do
         expect {
           FileUtils.rm_r(['/no-file'], force: true)
-        }.not_to raise_error(Errno::ENOENT)
+        }.not_to raise_error
       end
     end
   end
@@ -883,14 +884,14 @@ describe FileUtils do
     it "Removes a directory" do
       FileUtils.mkdir('/test-dir')
       FileUtils.rmdir('/test-dir')
-      expect(Dir.exists?('/test-dir')).to be_false
+      expect(Dir.exists?('/test-dir')).to be false
     end
 
     it "Removes a list of directories" do
       FileUtils.mkdir('/test-dir')
       FileUtils.mkdir('/test-dir2')
       FileUtils.rmdir(['/test-dir', '/test-dir2'])
-      expect(Dir.exists?('/test-dir2')).to be_false
+      expect(Dir.exists?('/test-dir2')).to be false
     end
 
     context "when a directory is not empty" do
@@ -905,7 +906,7 @@ describe FileUtils do
 
       it "doesn't remove the directory" do
         FileUtils.rmdir('/test-dir')
-        expect(Dir.exists?('/test-dir')).to be_true
+        expect(Dir.exists?('/test-dir')).to be true
       end
     end
   end
@@ -942,19 +943,19 @@ describe FileUtils do
     end
 
     it "returns true if +newer+ is newer than all +old_list+" do
-      expect(FileUtils.uptodate?('/test-file', ['/old-file'])).to be_true
+      expect(FileUtils.uptodate?('/test-file', ['/old-file'])).to be true
     end
 
     context "when +newer+ does not exist" do
       it "consideres it as older" do
-        expect(FileUtils.uptodate?('/no-file', ['/old-file'])).to be_false
+        expect(FileUtils.uptodate?('/no-file', ['/old-file'])).to be false
       end
     end
 
     context "when a item of +old_list+ does not exist" do
       it "consideres it as older than +newer+" do
         uptodate = FileUtils.uptodate?('/test-file', ['/old-file', '/no-file'])
-        expect(uptodate).to be_true
+        expect(uptodate).to be true
       end
     end
   end

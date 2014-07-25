@@ -71,14 +71,14 @@ module MemFs
             file = fs.find('/block-file')
             file.block_device = true
             blockdev = subject.blockdev?('/block-file')
-            expect(blockdev).to be_true
+            expect(blockdev).to be true
           end
         end
 
         context "and it is not a block device" do
           it "returns false" do
             blockdev = subject.blockdev?('/test-file')
-            expect(blockdev).to be_false
+            expect(blockdev).to be false
           end
         end
       end
@@ -86,7 +86,7 @@ module MemFs
       context "when the name file does not exist" do
         it "returns false" do
           blockdev = subject.blockdev?('/no-file')
-          expect(blockdev).to be_false
+          expect(blockdev).to be false
         end
       end
     end
@@ -113,14 +113,14 @@ module MemFs
             file = fs.find('/character-file')
             file.character_device = true
             chardev = subject.chardev?('/character-file')
-            expect(chardev).to be_true
+            expect(chardev).to be true
           end
         end
 
         context "and it is not a character device" do
           it "returns false" do
             chardev = subject.chardev?('/test-file')
-            expect(chardev).to be_false
+            expect(chardev).to be false
           end
         end
       end
@@ -128,7 +128,7 @@ module MemFs
       context "when the name file does not exist" do
         it "returns false" do
           chardev = subject.chardev?('/no-file')
-          expect(chardev).to be_false
+          expect(chardev).to be false
         end
       end
     end
@@ -239,13 +239,13 @@ module MemFs
     describe '.directory?' do
       context "when the named entry is a directory" do
         it "returns true" do
-          expect(subject.directory?('/test-dir')).to be_true
+          expect(subject.directory?('/test-dir')).to be true
         end
       end
 
       context "when the named entry is not a directory" do
         it "returns false" do
-          expect(subject.directory?('/test-file')).to be_false
+          expect(subject.directory?('/test-file')).to be false
         end
       end
     end
@@ -273,7 +273,7 @@ module MemFs
       context "when the file is not executable by anyone" do
         it "return false" do
           executable = subject.executable?('/test-file')
-          expect(executable).to be_false
+          expect(executable).to be false
         end
       end
 
@@ -286,7 +286,7 @@ module MemFs
 
           it "returns true" do
             executable = subject.executable?('/test-file')
-            expect(executable).to be_true
+            expect(executable).to be true
           end
         end
       end
@@ -299,7 +299,7 @@ module MemFs
 
           it "returns true" do
             executable = subject.executable?('/test-file')
-            expect(executable).to be_true
+            expect(executable).to be true
           end
         end
       end
@@ -310,7 +310,7 @@ module MemFs
         context "and the user has no specific right on it" do
           it "returns true" do
             executable = subject.executable?('/test-file')
-            expect(executable).to be_true
+            expect(executable).to be true
           end
         end
       end
@@ -318,7 +318,7 @@ module MemFs
       context "when the file does not exist" do
         it "returns false" do
           executable = subject.executable?('/no-file')
-          expect(executable).to be_false
+          expect(executable).to be false
         end
       end
     end
@@ -336,7 +336,7 @@ module MemFs
       context "when the file is not executable by anyone" do
         it "return false" do
           executable = subject.executable_real?('/test-file')
-          expect(executable).to be_false
+          expect(executable).to be false
         end
       end
 
@@ -349,7 +349,7 @@ module MemFs
 
           it "returns true" do
             executable = subject.executable_real?('/test-file')
-            expect(executable).to be_true
+            expect(executable).to be true
           end
         end
       end
@@ -362,7 +362,7 @@ module MemFs
 
           it "returns true" do
             executable = subject.executable_real?('/test-file')
-            expect(executable).to be_true
+            expect(executable).to be true
           end
         end
       end
@@ -373,7 +373,7 @@ module MemFs
         context "and the user has no specific right on it" do
           it "returns true" do
             executable = subject.executable_real?('/test-file')
-            expect(executable).to be_true
+            expect(executable).to be true
           end
         end
       end
@@ -381,18 +381,18 @@ module MemFs
       context "when the file does not exist" do
         it "returns false" do
           executable = subject.executable_real?('/no-file')
-          expect(executable).to be_false
+          expect(executable).to be false
         end
       end
     end
 
     describe ".exists?" do
       it "returns true if the file exists" do
-        expect(subject.exists?('/test-file')).to be_true
+        expect(subject.exists?('/test-file')).to be true
       end
 
       it "returns false if the file does not exist" do
-        expect(subject.exists?('/no-file')).to be_false
+        expect(subject.exists?('/no-file')).to be false
       end
     end
 
@@ -448,20 +448,20 @@ module MemFs
       context "when the named file exists" do
         context "and it is a regular file" do
           it "returns true" do
-            expect(subject.file?('/test-file')).to be_true
+            expect(subject.file?('/test-file')).to be true
           end
         end
 
         context "and it is not a regular file" do
           it "returns false" do
-            expect(subject.file?('/test-dir')).to be_false
+            expect(subject.file?('/test-dir')).to be false
           end
         end
       end
 
       context "when the named file does not exist" do
         it "returns false" do
-          expect(subject.file?('/no-file')).to be_false
+          expect(subject.file?('/no-file')).to be false
         end
       end
     end
@@ -469,13 +469,13 @@ module MemFs
     describe ".fnmatch" do
       context "when the given path matches against the given pattern" do
         it "returns true" do
-          expect(File.fnmatch('c?t', 'cat')).to be_true
+          expect(File.fnmatch('c?t', 'cat')).to be true
         end
       end
 
       context "when the given path does not match against the given pattern" do
         it "returns false" do
-          expect(File.fnmatch('c?t', 'tac')).to be_false
+          expect(File.fnmatch('c?t', 'tac')).to be false
         end
       end
     end
@@ -537,21 +537,21 @@ module MemFs
         context "and the effective user group owns of the file" do
           it "returns true" do
             subject.chown(0, Process.egid, '/test-file')
-            expect(File.grpowned?('/test-file')).to be_true
+            expect(File.grpowned?('/test-file')).to be true
           end
         end
 
         context "and the effective user group does not own of the file" do
           it "returns false" do
             subject.chown(0, 0, '/test-file')
-            expect(File.grpowned?('/test-file')).to be_false
+            expect(File.grpowned?('/test-file')).to be false
           end
         end
       end
 
       context "when the named file does not exist" do
         it "returns false" do
-          expect(File.grpowned?('/no-file')).to be_false
+          expect(File.grpowned?('/no-file')).to be false
         end
       end
     end
@@ -567,32 +567,32 @@ module MemFs
 
       context "when two paths represent the same path" do
         it "returns true" do
-          expect(subject.identical?('/test-file', '/test-file')).to be_true
+          expect(subject.identical?('/test-file', '/test-file')).to be true
         end
       end
 
       context "when two paths do not represent the same file" do
         it "returns false" do
-          expect(subject.identical?('/test-file', '/test-file2')).to be_false
+          expect(subject.identical?('/test-file', '/test-file2')).to be false
         end
       end
 
       context "when one of the paths does not exist" do
         it "returns false" do
-          expect(subject.identical?('/test-file', '/no-file')).to be_false
+          expect(subject.identical?('/test-file', '/no-file')).to be false
         end
       end
 
       context "when a path is a symlink" do
         context "and the linked file is the same as the other path" do
           it "returns true" do
-            expect(subject.identical?('/test-file', '/test-file-link')).to be_true
+            expect(subject.identical?('/test-file', '/test-file-link')).to be true
           end
         end
 
         context "and the linked file is different from the other path" do
           it "returns false" do
-            expect(subject.identical?('/test-file2', '/test-file-link')).to be_false
+            expect(subject.identical?('/test-file2', '/test-file-link')).to be false
           end
         end
       end
@@ -600,13 +600,13 @@ module MemFs
       context "when the two paths are symlinks" do
         context "and both links point to the same file" do
           it "returns true" do
-            expect(subject.identical?('/test-file-link', '/test-file-link2')).to be_true
+            expect(subject.identical?('/test-file-link', '/test-file-link2')).to be true
           end
         end
 
         context "and both links do not point to the same file" do
           it "returns false" do
-            expect(subject.identical?('/test-file-link', '/test-file2-link')).to be_false
+            expect(subject.identical?('/test-file-link', '/test-file2-link')).to be false
           end
         end
       end
@@ -685,14 +685,14 @@ module MemFs
 
       context "when the named file is a symlink" do
         it "does not follow the last symbolic link" do
-          expect(subject.lstat('/test-link').symlink?).to be_true
+          expect(subject.lstat('/test-link').symlink?).to be true
         end
 
         context "and its target does not exist" do
           it "ignores errors" do
             expect {
               subject.lstat('/no-link')
-            }.not_to raise_error(Errno::ENOENT)
+            }.not_to raise_error
           end
         end
       end
@@ -753,21 +753,21 @@ module MemFs
         context "and the effective user owns of the file" do
           it "returns true" do
             subject.chown(Process.euid, 0, '/test-file')
-            expect(File.owned?('/test-file')).to be_true
+            expect(File.owned?('/test-file')).to be true
           end
         end
 
         context "and the effective user does not own of the file" do
           it "returns false" do
             subject.chown(0, 0, '/test-file')
-            expect(File.owned?('/test-file')).to be_false
+            expect(File.owned?('/test-file')).to be false
           end
         end
       end
 
       context "when the named file does not exist" do
         it "returns false" do
-          expect(File.owned?('/no-file')).to be_false
+          expect(File.owned?('/no-file')).to be false
         end
       end
     end
@@ -796,7 +796,7 @@ module MemFs
       context "when the named file is not a pipe" do
         it "returns false" do
           pipe = File.pipe?('/test-file')
-          expect(pipe).to be_false
+          expect(pipe).to be false
         end
       end
     end
@@ -866,7 +866,7 @@ module MemFs
       context "when the file is not readable by anyone" do
         it "return false" do
           readable = subject.readable?('/test-file')
-          expect(readable).to be_false
+          expect(readable).to be false
         end
       end
 
@@ -879,7 +879,7 @@ module MemFs
 
           it "returns true" do
             readable = subject.readable?('/test-file')
-            expect(readable).to be_true
+            expect(readable).to be true
           end
         end
       end
@@ -892,7 +892,7 @@ module MemFs
 
           it "returns true" do
             readable = subject.readable?('/test-file')
-            expect(readable).to be_true
+            expect(readable).to be true
           end
         end
       end
@@ -903,7 +903,7 @@ module MemFs
         context "and the user has no specific right on it" do
           it "returns true" do
             readable = subject.readable?('/test-file')
-            expect(readable).to be_true
+            expect(readable).to be true
           end
         end
       end
@@ -911,7 +911,7 @@ module MemFs
       context "when the file does not exist" do
         it "returns false" do
           readable = subject.readable?('/no-file')
-          expect(readable).to be_false
+          expect(readable).to be false
         end
       end
     end
@@ -929,7 +929,7 @@ module MemFs
       context "when the file is not readable by anyone" do
         it "return false" do
           readable = subject.readable_real?('/test-file')
-          expect(readable).to be_false
+          expect(readable).to be false
         end
       end
 
@@ -942,7 +942,7 @@ module MemFs
 
           it "returns true" do
             readable = subject.readable_real?('/test-file')
-            expect(readable).to be_true
+            expect(readable).to be true
           end
         end
       end
@@ -955,7 +955,7 @@ module MemFs
 
           it "returns true" do
             readable = subject.readable_real?('/test-file')
-            expect(readable).to be_true
+            expect(readable).to be true
           end
         end
       end
@@ -966,7 +966,7 @@ module MemFs
         context "and the user has no specific right on it" do
           it "returns true" do
             readable = subject.readable_real?('/test-file')
-            expect(readable).to be_true
+            expect(readable).to be true
           end
         end
       end
@@ -974,7 +974,7 @@ module MemFs
       context "when the file does not exist" do
         it "returns false" do
           readable = subject.readable_real?('/no-file')
-          expect(readable).to be_false
+          expect(readable).to be false
         end
       end
     end
@@ -1134,7 +1134,7 @@ module MemFs
     describe ".rename" do
       it "renames the given file to the new name" do
         subject.rename('/test-file', '/test-file2')
-        expect(subject.exists?('/test-file2')).to be_true
+        expect(subject.exists?('/test-file2')).to be true
       end
 
       it "returns zero" do
@@ -1147,20 +1147,20 @@ module MemFs
         context "and the named file has the setgid bit set" do
           it "returns true" do
             fs.chmod(02000, '/test-file')
-            expect(File.setgid?('/test-file')).to be_true
+            expect(File.setgid?('/test-file')).to be true
           end
         end
 
         context "and the named file does not have the setgid bit set" do
           it "returns false" do
-            expect(File.setgid?('/test-file')).not_to be_true
+            expect(File.setgid?('/test-file')).not_to be true
           end
         end
       end
 
       context "when the named file does not exist" do
         it "returns false" do
-          expect(File.setgid?('/no-file')).to be_false
+          expect(File.setgid?('/no-file')).to be false
         end
       end
     end
@@ -1170,20 +1170,20 @@ module MemFs
         context "and the named file has the setuid bit set" do
           it "returns true" do
             fs.chmod(04000, '/test-file')
-            expect(File.setuid?('/test-file')).to be_true
+            expect(File.setuid?('/test-file')).to be true
           end
         end
 
         context "and the named file does not have the setuid bit set" do
           it "returns false" do
-            expect(File.setuid?('/test-file')).not_to be_true
+            expect(File.setuid?('/test-file')).not_to be true
           end
         end
       end
 
       context "when the named file does not exist" do
         it "returns false" do
-          expect(File.setuid?('/no-file')).to be_false
+          expect(File.setuid?('/no-file')).to be false
         end
       end
     end
@@ -1199,7 +1199,7 @@ module MemFs
       context "when the named file exists" do
         context "and it is empty" do
           it "returns false" do
-            expect(File.size?('/empty-file')).to be_false
+            expect(File.size?('/empty-file')).to be false
           end
         end
 
@@ -1213,7 +1213,7 @@ module MemFs
 
       context "when the named file does not exist" do
         it "returns false" do
-          expect(File.size?('/no-file')).to be_false
+          expect(File.size?('/no-file')).to be false
         end
       end
     end
@@ -1224,7 +1224,7 @@ module MemFs
       context "when the named file is not a socket" do
         it "returns false" do
           socket = File.socket?('/test-file')
-          expect(socket).to be_false
+          expect(socket).to be false
         end
       end
     end
@@ -1242,7 +1242,7 @@ module MemFs
       end
 
       it "follows the last symbolic link" do
-        expect(subject.stat('/test-link').symlink?).to be_false
+        expect(subject.stat('/test-link').symlink?).to be false
       end
 
       context "when the named file does not exist" do
@@ -1270,25 +1270,25 @@ module MemFs
         it "returns true if the named file has the sticky bit set" do
           fs.touch('/test-file')
           fs.chmod(01777, '/test-file')
-          expect(File.sticky?('/test-file')).to be_true
+          expect(File.sticky?('/test-file')).to be true
         end
 
         it "returns false if the named file hasn't' the sticky bit set" do
           fs.touch('/test-file')
-          expect(File.sticky?('/test-file')).not_to be_true
+          expect(File.sticky?('/test-file')).not_to be true
         end
       end
 
       context "when the named file does not exist" do
         it "returns false" do
-          expect(File.sticky?('/no-file')).to be_false
+          expect(File.sticky?('/no-file')).to be false
         end
       end
     end
 
     describe '.symlink' do
       it "creates a symbolic link named new_name" do
-        expect(subject.symlink?('/test-link')).to be_true
+        expect(subject.symlink?('/test-link')).to be true
       end
 
       it "creates a symbolic link that points to an entry named old_name" do
@@ -1297,7 +1297,7 @@ module MemFs
 
       context "when the target does not exist" do
         it "creates a symbolic link" do
-          expect(subject.symlink?('/no-link')).to be_true
+          expect(subject.symlink?('/no-link')).to be true
         end
       end
 
@@ -1309,19 +1309,19 @@ module MemFs
     describe '.symlink?' do
       context "when the named entry is a symlink" do
         it "returns true" do
-          expect(subject.symlink?('/test-link')).to be_true
+          expect(subject.symlink?('/test-link')).to be true
         end
       end
 
       context "when the named entry is not a symlink" do
         it "returns false" do
-          expect(subject.symlink?('/test-file')).to be_false
+          expect(subject.symlink?('/test-file')).to be false
         end
       end
 
       context "when the named entry does not exist" do
         it "returns false" do
-          expect(subject.symlink?('/no-file')).to be_false
+          expect(subject.symlink?('/no-file')).to be false
         end
       end
     end
@@ -1378,7 +1378,7 @@ module MemFs
     describe ".unlink" do
       it "deletes the named file" do
         subject.unlink('/test-file')
-        expect(subject.exists?('/test-file')).to be_false
+        expect(subject.exists?('/test-file')).to be false
       end
 
       it "returns the number of names passed as arguments" do
@@ -1388,7 +1388,7 @@ module MemFs
       context "when multiple file names are given" do
         it "deletes the named files" do
           subject.unlink('/test-file', '/test-file2')
-          expect(subject.exists?('/test-file2')).to be_false
+          expect(subject.exists?('/test-file2')).to be false
         end
       end
 
@@ -1484,7 +1484,7 @@ module MemFs
       context "when the file is not writable by anyone" do
         it "return false" do
           writable = subject.writable?('/test-file')
-          expect(writable).to be_false
+          expect(writable).to be false
         end
       end
 
@@ -1497,7 +1497,7 @@ module MemFs
 
           it "returns true" do
             writable = subject.writable?('/test-file')
-            expect(writable).to be_true
+            expect(writable).to be true
           end
         end
       end
@@ -1510,7 +1510,7 @@ module MemFs
 
           it "returns true" do
             writable = subject.writable?('/test-file')
-            expect(writable).to be_true
+            expect(writable).to be true
           end
         end
       end
@@ -1521,7 +1521,7 @@ module MemFs
         context "and the user has no specific right on it" do
           it "returns true" do
             writable = subject.writable?('/test-file')
-            expect(writable).to be_true
+            expect(writable).to be true
           end
         end
       end
@@ -1529,7 +1529,7 @@ module MemFs
       context "when the file does not exist" do
         it "returns false" do
           writable = subject.writable?('/no-file')
-          expect(writable).to be_false
+          expect(writable).to be false
         end
       end
     end
@@ -1547,7 +1547,7 @@ module MemFs
       context "when the file is not writable by anyone" do
         it "return false" do
           writable = subject.writable_real?('/test-file')
-          expect(writable).to be_false
+          expect(writable).to be false
         end
       end
 
@@ -1560,7 +1560,7 @@ module MemFs
 
           it "returns true" do
             writable = subject.writable_real?('/test-file')
-            expect(writable).to be_true
+            expect(writable).to be true
           end
         end
       end
@@ -1573,7 +1573,7 @@ module MemFs
 
           it "returns true" do
             writable = subject.writable_real?('/test-file')
-            expect(writable).to be_true
+            expect(writable).to be true
           end
         end
       end
@@ -1584,7 +1584,7 @@ module MemFs
         context "and the user has no specific right on it" do
           it "returns true" do
             writable = subject.writable_real?('/test-file')
-            expect(writable).to be_true
+            expect(writable).to be true
           end
         end
       end
@@ -1592,7 +1592,7 @@ module MemFs
       context "when the file does not exist" do
         it "returns false" do
           writable = subject.writable_real?('/no-file')
-          expect(writable).to be_false
+          expect(writable).to be false
         end
       end
     end
@@ -1602,7 +1602,7 @@ module MemFs
         context "and has a zero size" do
           it "returns true" do
             zero = subject.zero?('/test-file')
-            expect(zero).to be_true
+            expect(zero).to be true
           end
         end
 
@@ -1613,7 +1613,7 @@ module MemFs
 
           it "returns false" do
             zero = subject.zero?('/test-file')
-            expect(zero).to be_false
+            expect(zero).to be false
           end
         end
       end
@@ -1621,7 +1621,7 @@ module MemFs
       context "when the named file does not exist" do
         it "returns false" do
           zero = subject.zero?('/no-file')
-          expect(zero).to be_false
+          expect(zero).to be false
         end
       end
     end
@@ -1718,12 +1718,12 @@ module MemFs
       it "returns true when the file is closed" do
         file = subject.open('/test-file')
         file.close
-        expect(file.closed?).to be_true
+        expect(file.closed?).to be true
       end
 
       it "returns false when the file is open" do
         file = subject.open('/test-file')
-        expect(file.closed?).to be_false
+        expect(file.closed?).to be false
         file.close
       end
     end
@@ -1789,14 +1789,14 @@ module MemFs
 
       it "does not follow the last symbolic link" do
         file = subject.new('/test-link')
-        expect(file.lstat.symlink?).to be_true
+        expect(file.lstat.symlink?).to be true
       end
 
       context "when the named file is a symlink" do
         context "and its target does not exist" do
           it "ignores errors" do
             file = subject.new('/no-link')
-            expect { file.lstat }.not_to raise_error(Errno::ENOENT)
+            expect { file.lstat }.not_to raise_error
           end
         end
       end

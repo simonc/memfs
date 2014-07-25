@@ -57,7 +57,7 @@ module MemFs
     end
 
     describe '.chroot' do
-      before { Process.stub(uid: 0) }
+      before { allow(Process).to receive_messages(uid: 0) }
 
       it "changes the process's idea of the file system root" do
 
@@ -86,7 +86,7 @@ module MemFs
       end
 
       context 'when the user is not root' do
-        before { Process.stub(uid: 42) }
+        before { allow(Process).to receive_messages(uid: 42) }
 
         it 'raises an exception' do
           expect{ subject.chroot('/no-dir') }.to raise_error(Errno::EPERM)
@@ -113,16 +113,16 @@ module MemFs
     describe ".exists?" do
       it "returns true if the given +path+ exists and is a directory" do
         subject.mkdir('/test-dir')
-        expect(subject.exists?('/test-dir')).to be_true
+        expect(subject.exists?('/test-dir')).to be true
       end
 
       it "returns false if the given +path+ does not exist" do
-        expect(subject.exists?('/test-dir')).to be_false
+        expect(subject.exists?('/test-dir')).to be false
       end
 
       it "returns false if the given +path+ is not a directory" do
         fs.touch('/test-file')
-        expect(subject.exists?('/test-file')).to be_false
+        expect(subject.exists?('/test-file')).to be false
       end
     end
 
@@ -261,7 +261,7 @@ module MemFs
     describe '.mkdir' do
       it "creates a directory" do
         subject.mkdir '/new-folder'
-        expect(File.directory?('/new-folder')).to be_true
+        expect(File.directory?('/new-folder')).to be true
       end
 
       context "when the directory already exist" do
@@ -333,7 +333,7 @@ module MemFs
       it "deletes the named directory" do
         subject.mkdir('/test-dir')
         subject.rmdir('/test-dir')
-        expect(subject.exists?('/test-dir')).to be_false
+        expect(subject.exists?('/test-dir')).to be false
       end
 
       context "when the directory is not empty" do

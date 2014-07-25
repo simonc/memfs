@@ -110,7 +110,7 @@ module MemFs
       end
 
       def zero?
-        entry.content && entry.content.empty?
+        !!(entry.content && entry.content.empty?)
       end
 
       private

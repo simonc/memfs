@@ -60,21 +60,21 @@ describe MemFs do
       fs.mkdir('/path/to')
       fs.mkdir('/path/to/some')
       subject.touch('/path/to/some/file.rb')
-      expect(File.exist?('/path/to/some/file.rb')).to be_true
+      expect(File.exist?('/path/to/some/file.rb')).to be true
     end
 
     context 'when the parent folder do not exist' do
       it 'creates them all' do
         subject.touch('/path/to/some/file.rb')
-        expect(File.exist?('/path/to/some/file.rb')).to be_true
+        expect(File.exist?('/path/to/some/file.rb')).to be true
       end
     end
 
     context 'when several files are specified' do
       it 'creates every file' do
         subject.touch('/some/path', '/other/path')
-        expect(File.exist?('/some/path')).to be_true
-        expect(File.exist?('/other/path')).to be_true
+        expect(File.exist?('/some/path')).to be true
+        expect(File.exist?('/other/path')).to be true
       end
     end
   end
