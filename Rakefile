@@ -4,7 +4,7 @@ require 'memfs'
 
 RSpec::Core::RakeTask.new(:spec)
 
-task :default => :spec
+task default: :spec
 
 desc 'Compares a MemFs class to the original Ruby one ' \
      '(set CLASS to the compared class)'

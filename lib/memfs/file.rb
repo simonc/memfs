@@ -12,10 +12,10 @@ module MemFs
     MODE_MAP = {
       'r'  => RDONLY,
       'r+' => RDWR,
-      'w'  => CREAT|TRUNC|WRONLY,
-      'w+' => CREAT|TRUNC|RDWR,
-      'a'  => CREAT|APPEND|WRONLY,
-      'a+' => CREAT|APPEND|RDWR
+      'w'  => CREAT | TRUNC | WRONLY,
+      'w+' => CREAT | TRUNC | RDWR,
+      'a'  => CREAT | APPEND | WRONLY,
+      'a+' => CREAT | APPEND | RDWR
     }
 
     SUCCESS = 0
@@ -56,7 +56,7 @@ module MemFs
 
     [
       :world_readable?,
-      :world_writable?,
+      :world_writable?
     ].each do |query_method|
       define_singleton_method(query_method) do |path|    # def directory?(path)
         stat_query(path, query_method, false)            #   stat_query(path, :directory?, false)
@@ -91,7 +91,7 @@ module MemFs
     def self.exists?(path)
       !!fs.find(path)
     end
-    class << self; alias :exist? :exists?; end
+    class << self; alias_method :exist?, :exists?; end
 
     def self.expand_path(file_name, dir_string = fs.pwd)
       original_file_class.expand_path(file_name, dir_string)
@@ -101,7 +101,7 @@ module MemFs
       fs.find!(path) && lstat(path).ftype
     end
 
-    class << self; alias :fnmatch? :fnmatch; end
+    class << self; alias_method :fnmatch?, :fnmatch; end
 
     def self.identical?(path1, path2)
       fs.find!(path1).dereferenced === fs.find!(path2).dereferenced
@@ -133,7 +133,7 @@ module MemFs
     end
 
     def self.open(filename, mode = RDONLY, *perm_and_opt)
-      file = self.new(filename, mode, *perm_and_opt)
+      file = new(filename, mode, *perm_and_opt)
 
       if block_given?
         yield file
@@ -225,7 +225,7 @@ module MemFs
       end
       paths.size
     end
-    class << self; alias :delete :unlink; end
+    class << self; alias_method :delete, :unlink; end
 
     def self.utime(atime, mtime, *file_names)
       file_names.each do |file_name|
@@ -237,9 +237,9 @@ module MemFs
 
     attr_reader :path
 
-    def initialize(filename, mode = RDONLY, perm = nil, opt = nil)
+    def initialize(filename, mode = RDONLY, _perm = nil, opt = nil)
       unless opt.nil? || opt.is_a?(Hash)
-        raise ArgumentError, "wrong number of arguments (4 for 1..3)"
+        fail ArgumentError, 'wrong number of arguments (4 for 1..3)'
       end
 
       @path = filename
@@ -272,7 +272,7 @@ module MemFs
       closed
     end
 
-    def each(sep = $/, &block)
+    def each(sep = $INPUT_RECORD_SEPARATOR, &block)
       return to_enum(__callee__) unless block_given?
       fail IOError, 'not opened for reading' unless readable?
       content.each_line(sep) { |line| block.call(line) }
@@ -288,7 +288,7 @@ module MemFs
     end
 
     def puts(text)
-      raise IOError, 'not opened for writing' unless writable?
+      fail IOError, 'not opened for writing' unless writable?
 
       content.puts text
     end
@@ -300,16 +300,15 @@ module MemFs
 
     def seek(amount, whence = IO::SEEK_SET)
       new_pos = case whence
-      when IO::SEEK_CUR then entry.pos + amount
-      when IO::SEEK_END then content.to_s.length + amount
-      when IO::SEEK_SET then amount
-      end
+                when IO::SEEK_CUR then entry.pos + amount
+                when IO::SEEK_END then content.to_s.length + amount
+                when IO::SEEK_SET then amount
+                end
 
-      if new_pos.nil? || new_pos < 0
-        raise Errno::EINVAL, path
-      end
+      fail Errno::EINVAL, path if new_pos.nil? || new_pos < 0
 
-      entry.pos = new_pos and 0
+      entry.pos = new_pos
+      0
     end
 
     def size
@@ -321,7 +320,7 @@ module MemFs
     end
 
     def write(string)
-      raise IOError, 'not opened for writing' unless writable?
+      fail IOError, 'not opened for writing' unless writable?
 
       content.write(string.to_s)
     end
@@ -333,7 +332,8 @@ module MemFs
                   :opening_mode
 
     def self.dereference_name(path)
-      if entry = fs.find(path)
+      entry = fs.find(path)
+      if entry
         entry.dereferenced_name
       else
         basename(path)
@@ -381,10 +381,10 @@ module MemFs
       return mode unless mode.is_a?(String)
 
       unless mode =~ /\A([rwa]\+?)([bt])?\z/
-        raise ArgumentError, "invalid access mode #{mode}"
+        fail ArgumentError, "invalid access mode #{mode}"
       end
 
-      mode_str = $~[1]
+      mode_str = $LAST_MATCH_INFO[1]
       MODE_MAP[mode_str]
     end
 

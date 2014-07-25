@@ -16,8 +16,6 @@ require 'fileutils'
 #   MemFs.deactivate!
 #   # Everything back to normal
 module MemFs
-  extend self
-
   # Keeps track of the original Ruby Dir class.
   OriginalDir  = ::Dir
 
@@ -56,6 +54,7 @@ module MemFs
   ensure
     deactivate!
   end
+  module_function :activate
 
   # Activates the fake file system.
   #
@@ -82,6 +81,7 @@ module MemFs
 
     MemFs::FileSystem.instance.clear!
   end
+  module_function :activate!
 
   # Deactivates the fake file system.
   #
@@ -98,6 +98,7 @@ module MemFs
       const_set :File, MemFs::OriginalFile
     end
   end
+  module_function :deactivate!
 
   # Creates a file and all its parent directories.
   #
@@ -114,4 +115,5 @@ module MemFs
       FileUtils.touch path
     end
   end
+  module_function :touch
 end

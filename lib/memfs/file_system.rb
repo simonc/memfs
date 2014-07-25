@@ -23,15 +23,13 @@ module MemFs
 
       block.call if block
     ensure
-      if block
-        self.working_directory = previous_directory
-      end
+      self.working_directory = previous_directory if block
     end
 
     def clear!
       self.root = Fake::Directory.new('/')
-      self.mkdir('/tmp')
-      self.chdir('/')
+      mkdir '/tmp'
+      chdir '/'
     end
 
     def chmod(mode_int, file_name)
@@ -63,13 +61,13 @@ module MemFs
     end
 
     def find!(path)
-      find(path) || raise(Errno::ENOENT, path)
+      find(path) || fail(Errno::ENOENT, path)
     end
 
     def find_directory!(path)
       entry = find!(path).dereferenced
 
-      raise Errno::ENOTDIR, path unless entry.is_a?(Fake::Directory)
+      fail Errno::ENOTDIR, path unless entry.is_a?(Fake::Directory)
 
       entry
     end
@@ -82,7 +80,7 @@ module MemFs
     def getwd
       working_directory.path
     end
-    alias :pwd :getwd
+    alias_method :pwd, :getwd
 
     def initialize
       clear!
@@ -91,7 +89,7 @@ module MemFs
     def link(old_name, new_name)
       file = find!(old_name)
 
-      raise Errno::EEXIST, "(#{old_name}, #{new_name})" if find(new_name)
+      fail Errno::EEXIST, "(#{old_name}, #{new_name})" if find(new_name)
 
       link = file.dup
       link.name = basename(new_name)
@@ -99,7 +97,7 @@ module MemFs
     end
 
     def mkdir(path)
-      raise Errno::EEXIST, path if find(path)
+      fail Errno::EEXIST, path if find(path)
       find_parent!(path).add_entry Fake::Directory.new(path)
     end
 
@@ -118,13 +116,13 @@ module MemFs
     def rmdir(path)
       directory = find!(path)
 
-      raise Errno::ENOTEMPTY, path unless directory.empty?
+      fail Errno::ENOTEMPTY, path unless directory.empty?
 
       directory.delete
     end
 
     def symlink(old_name, new_name)
-      raise Errno::EEXIST, new_name if find(new_name)
+      fail Errno::EEXIST, new_name if find(new_name)
 
       find_parent!(new_name).add_entry Fake::Symlink.new(new_name, old_name)
     end
@@ -146,7 +144,7 @@ module MemFs
     def unlink(path)
       entry = find!(path)
 
-      raise Errno::EPERM, path if entry.is_a?(Fake::Directory)
+      fail Errno::EPERM, path if entry.is_a?(Fake::Directory)
 
       entry.delete
     end

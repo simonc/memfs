@@ -27,31 +27,31 @@ module MemFs
     end
 
     describe '.chdir' do
-      it "changes the current working directory" do
+      it 'changes the current working directory' do
         subject.chdir '/test'
         expect(subject.getwd).to eq('/test')
       end
 
-      it "returns zero" do
+      it 'returns zero' do
         expect(subject.chdir('/test')).to be_zero
       end
 
-      it "raises an error when the folder does not exist" do
+      it 'raises an error when the folder does not exist' do
         expect { subject.chdir('/nowhere') }.to raise_error(Errno::ENOENT)
       end
 
-      context "when a block is given" do
-        it "changes current working directory for the block" do
+      context 'when a block is given' do
+        it 'changes current working directory for the block' do
           subject.chdir '/test' do
             expect(subject.pwd).to eq('/test')
           end
         end
 
-        it "gets back to previous directory once the block is finished" do
+        it 'gets back to previous directory once the block is finished' do
           subject.chdir '/'
           expect {
             subject.chdir('/test') {}
-          }.to_not change{subject.pwd}
+          }.to_not change { subject.pwd }
         end
       end
     end
@@ -71,17 +71,17 @@ module MemFs
         expect(subject.chroot('/test')).to eq 0
       end
 
-      context "when the given path is a file" do
+      context 'when the given path is a file' do
         before { fs.touch('/test/test-file') }
 
         it 'raises an exception' do
-          expect{ subject.chroot('/test/test-file') }.to raise_error(Errno::ENOTDIR)
+          expect { subject.chroot('/test/test-file') }.to raise_error(Errno::ENOTDIR)
         end
       end
 
       context "when the given path doesn't exist" do
         it 'raises an exception' do
-          expect{ subject.chroot('/no-dir') }.to raise_error(Errno::ENOENT)
+          expect { subject.chroot('/no-dir') }.to raise_error(Errno::ENOENT)
         end
       end
 
@@ -89,91 +89,91 @@ module MemFs
         before { allow(Process).to receive_messages(uid: 42) }
 
         it 'raises an exception' do
-          expect{ subject.chroot('/no-dir') }.to raise_error(Errno::EPERM)
+          expect { subject.chroot('/no-dir') }.to raise_error(Errno::EPERM)
         end
       end
     end
 
-    describe ".delete" do
+    describe '.delete' do
       it_behaves_like 'aliased method', :delete, :rmdir
     end
 
     describe '.entries' do
-      it "returns an array containing all of the filenames in the given directory" do
+      it 'returns an array containing all of the filenames in the given directory' do
         %w[/test/dir1 /test/dir2].each { |dir| subject.mkdir dir }
         fs.touch '/test/file1', '/test/file2'
         expect(subject.entries('/test')).to eq(%w[. .. dir1 dir2 file1 file2])
       end
     end
 
-    describe ".exist?" do
+    describe '.exist?' do
       it_behaves_like 'aliased method', :exist?, :exists?
     end
 
-    describe ".exists?" do
-      it "returns true if the given +path+ exists and is a directory" do
+    describe '.exists?' do
+      it 'returns true if the given +path+ exists and is a directory' do
         subject.mkdir('/test-dir')
         expect(subject.exists?('/test-dir')).to be true
       end
 
-      it "returns false if the given +path+ does not exist" do
+      it 'returns false if the given +path+ does not exist' do
         expect(subject.exists?('/test-dir')).to be false
       end
 
-      it "returns false if the given +path+ is not a directory" do
+      it 'returns false if the given +path+ is not a directory' do
         fs.touch('/test-file')
         expect(subject.exists?('/test-file')).to be false
       end
     end
 
-    describe ".foreach" do
+    describe '.foreach' do
       before :each do
         fs.touch('/test/test-file', '/test/test-file2')
       end
 
-      context "when a block is given" do
-        it "calls the block once for each entry in the named directory" do
-          expect{ |blk|
+      context 'when a block is given' do
+        it 'calls the block once for each entry in the named directory' do
+          expect { |blk|
             subject.foreach('/test', &blk)
           }.to yield_control.exactly(4).times
         end
 
-        it "passes each entry as a parameter to the block" do
-          expect{ |blk|
+        it 'passes each entry as a parameter to the block' do
+          expect { |blk|
             subject.foreach('/test', &blk)
           }.to yield_successive_args('.', '..', 'test-file', 'test-file2')
         end
 
         context "and the directory doesn't exist" do
-          it "raises an exception" do
-            expect{ subject.foreach('/no-dir') {} }.to raise_error
+          it 'raises an exception' do
+            expect { subject.foreach('/no-dir') {} }.to raise_error
           end
         end
 
-        context "and the given path is not a directory" do
-          it "raises an exception" do
-            expect{
+        context 'and the given path is not a directory' do
+          it 'raises an exception' do
+            expect {
               subject.foreach('/test/test-file') {}
             }.to raise_error
           end
         end
       end
 
-      context "when no block is given" do
-        it "returns an enumerator" do
+      context 'when no block is given' do
+        it 'returns an enumerator' do
           list = subject.foreach('/test-dir')
           expect(list).to be_an(Enumerator)
         end
 
         context "and the directory doesn't exist" do
-          it "returns an enumerator" do
+          it 'returns an enumerator' do
             list = subject.foreach('/no-dir')
             expect(list).to be_an(Enumerator)
           end
         end
 
-        context "and the given path is not a directory" do
-          it "returns an enumerator" do
+        context 'and the given path is not a directory' do
+          it 'returns an enumerator' do
             list = subject.foreach('/test-dir/test-file')
             expect(list).to be_an(Enumerator)
           end
@@ -182,7 +182,7 @@ module MemFs
     end
 
     describe '.getwd' do
-      it "returns the path to the current working directory" do
+      it 'returns the path to the current working directory' do
         expect(subject.getwd).to eq(FileSystem.instance.getwd)
       end
     end
@@ -229,7 +229,7 @@ module MemFs
 
       context 'when a block is given' do
         it 'calls the block with every matching filenames' do
-          expect{ |blk| subject.glob('/test*', &blk) }.to \
+          expect { |blk| subject.glob('/test*', &blk) }.to \
             yield_successive_args('/test0', '/test1', '/test2')
         end
 
@@ -259,13 +259,13 @@ module MemFs
     end
 
     describe '.mkdir' do
-      it "creates a directory" do
+      it 'creates a directory' do
         subject.mkdir '/new-folder'
         expect(File.directory?('/new-folder')).to be true
       end
 
-      context "when the directory already exist" do
-        it "raises an exception" do
+      context 'when the directory already exist' do
+        it 'raises an exception' do
           expect { subject.mkdir('/') }.to raise_error(Errno::EEXIST)
         end
       end
@@ -280,7 +280,7 @@ module MemFs
 
       context 'when a block is given' do
         it 'calls the block with the opened directory as argument' do
-          expect{ |blk| subject.open('/test', &blk) }.to yield_with_args(Dir)
+          expect { |blk| subject.open('/test', &blk) }.to yield_with_args(Dir)
         end
 
         it 'returns nil' do
@@ -290,13 +290,13 @@ module MemFs
         it 'ensures the directory is closed' do
           dir = nil
           subject.open('/test') { |d| dir = d }
-          expect{ dir.close }.to raise_error(IOError)
+          expect { dir.close }.to raise_error(IOError)
         end
       end
 
       context "when the given directory doesn't exist" do
         it 'raises an exception' do
-          expect{ subject.open('/no-dir') }.to raise_error
+          expect { subject.open('/no-dir') }.to raise_error
         end
       end
 
@@ -304,7 +304,7 @@ module MemFs
         before { fs.touch('/test/test-file') }
 
         it 'raises an exception' do
-          expect{ subject.open('/test/test-file') }.to raise_error
+          expect { subject.open('/test/test-file') }.to raise_error
         end
       end
     end
@@ -312,7 +312,7 @@ module MemFs
     describe '.new' do
       context "when the given directory doesn't exist" do
         it 'raises an exception' do
-          expect{ subject.new('/no-dir') }.to raise_error
+          expect { subject.new('/no-dir') }.to raise_error
         end
       end
 
@@ -320,24 +320,24 @@ module MemFs
         before { fs.touch('/test/test-file') }
 
         it 'raises an exception' do
-          expect{ subject.new('/test/test-file') }.to raise_error
+          expect { subject.new('/test/test-file') }.to raise_error
         end
       end
     end
 
-    describe ".pwd" do
+    describe '.pwd' do
       it_behaves_like 'aliased method', :pwd, :getwd
     end
 
-    describe ".rmdir" do
-      it "deletes the named directory" do
+    describe '.rmdir' do
+      it 'deletes the named directory' do
         subject.mkdir('/test-dir')
         subject.rmdir('/test-dir')
         expect(subject.exists?('/test-dir')).to be false
       end
 
-      context "when the directory is not empty" do
-        it "raises an exception" do
+      context 'when the directory is not empty' do
+        it 'raises an exception' do
           subject.mkdir('/test-dir')
           subject.mkdir('/test-dir/test-sub-dir')
           expect { subject.rmdir('/test-dir') }.to raise_error(Errno::ENOTEMPTY)
@@ -351,7 +351,7 @@ module MemFs
       end
     end
 
-    describe ".unlink" do
+    describe '.unlink' do
       it_behaves_like 'aliased method', :unlink, :rmdir
     end
 
@@ -359,7 +359,7 @@ module MemFs
       it 'closes the directory' do
         dir = subject.open('/test')
         dir.close
-        expect{ dir.close }.to raise_error(IOError)
+        expect { dir.close }.to raise_error(IOError)
       end
     end
 
@@ -367,11 +367,11 @@ module MemFs
       before { fs.touch('/test/test-file', '/test/test-file2') }
 
       it 'calls the block once for each entry in this directory' do
-        expect{ |blk| instance.each(&blk) }.to yield_control.exactly(4).times
+        expect { |blk| instance.each(&blk) }.to yield_control.exactly(4).times
       end
 
       it 'passes the filename of each entry as a parameter to the block' do
-        expect{ |blk|
+        expect { |blk|
           instance.each(&blk)
         }.to yield_successive_args('.', '..', 'test-file', 'test-file2')
       end
@@ -390,7 +390,7 @@ module MemFs
     end
 
     describe '#pos' do
-      it "returns the current position in dir" do
+      it 'returns the current position in dir' do
         3.times { instance.read }
         expect(instance.pos).to eq 3
       end
@@ -433,7 +433,7 @@ module MemFs
         expect(instance.read).to eq '.'
       end
 
-      context "when calling several times" do
+      context 'when calling several times' do
         it 'returns the next entry each time' do
           2.times { instance.read }
           expect(instance.read).to eq 'a'

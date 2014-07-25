@@ -4,28 +4,28 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'memfs/version'
 
 Gem::Specification.new do |gem|
-  gem.name          = "memfs"
+  gem.name          = 'memfs'
   gem.version       = MemFs::VERSION
-  gem.authors       = ["Simon COURTOIS"]
-  gem.email         = ["scourtois@cubyx.fr"]
-  gem.description   = "MemFs provides a fake file system that can be used " \
-                      "for tests. Strongly inspired by FakeFS."
+  gem.authors       = ['Simon COURTOIS']
+  gem.email         = ['scourtois@cubyx.fr']
+  gem.description   = 'MemFs provides a fake file system that can be used ' \
+                      'for tests. Strongly inspired by FakeFS.'
   gem.summary       = "memfs-#{MemFs::VERSION}"
-  gem.homepage      = "http://github.com/simonc/memfs"
+  gem.homepage      = 'http://github.com/simonc/memfs'
 
   gem.license       = 'MIT'
 
-  gem.files         = `git ls-files`.split($/)
-  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
-  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
-  gem.require_paths = ["lib"]
+  gem.files         = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
+  gem.executables   = gem.files.grep(/^bin\//).map { |f| File.basename(f) }
+  gem.test_files    = gem.files.grep(/^(test|spec|features)\//)
+  gem.require_paths = ['lib']
 
-  gem.add_development_dependency "coveralls", "~> 0.6"
-  gem.add_development_dependency "rake", "~> 10.0"
-  gem.add_development_dependency "rspec", "~> 3.0"
-  gem.add_development_dependency "guard", "~> 2.6"
-  gem.add_development_dependency "guard-rspec", "~> 4.3"
-  gem.add_development_dependency "rb-inotify", "~> 0.8"
-  gem.add_development_dependency "rb-fsevent", "~> 0.9"
-  gem.add_development_dependency "rb-fchange", "~> 0.0"
+  gem.add_development_dependency 'coveralls', '~> 0.6'
+  gem.add_development_dependency 'rake', '~> 10.0'
+  gem.add_development_dependency 'rspec', '~> 3.0'
+  gem.add_development_dependency 'guard', '~> 2.6'
+  gem.add_development_dependency 'guard-rspec', '~> 4.3'
+  gem.add_development_dependency 'rb-inotify', '~> 0.8'
+  gem.add_development_dependency 'rb-fsevent', '~> 0.9'
+  gem.add_development_dependency 'rb-fchange', '~> 0.0'
 end

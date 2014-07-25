@@ -50,8 +50,8 @@ module MemFs
         @dev ||= rand(1000)
       end
 
-      def find(path)
-        raise Errno::ENOTDIR, self.path
+      def find(_path)
+        fail Errno::ENOTDIR, path
       end
 
       def initialize(path = nil)

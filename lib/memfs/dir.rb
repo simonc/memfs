@@ -13,13 +13,11 @@ module MemFs
 
     def self.chdir(path, &block)
       fs.chdir path, &block
-      return 0
+      0
     end
 
     def self.chroot(path)
-      unless Process.uid.zero?
-        raise Errno::EPERM, path
-      end
+      fail Errno::EPERM, path unless Process.uid.zero?
 
       dir = fs.find_directory!(path)
       dir.name = '/'
@@ -27,14 +25,14 @@ module MemFs
       0
     end
 
-    def self.entries(dirname, opts = {})
+    def self.entries(dirname, _opts = {})
       fs.entries(dirname)
     end
 
     def self.exists?(path)
       File.directory?(path)
     end
-    class << self; alias :exist? :exists?; end
+    class << self; alias_method :exist?, :exists?; end
 
     def self.foreach(dirname, &block)
       return to_enum(__callee__, dirname) unless block
@@ -45,19 +43,20 @@ module MemFs
     def self.getwd
       fs.getwd
     end
-    class << self; alias :pwd :getwd; end
+    class << self; alias_method :pwd, :getwd; end
 
     def self.glob(patterns, flags = 0)
       patterns = [*patterns]
       list = fs.paths.select do |path|
-               patterns.any? do |pattern|
-                 File.fnmatch?(pattern, path, flags | GLOB_FLAGS)
-               end
-             end
+        patterns.any? do |pattern|
+          File.fnmatch?(pattern, path, flags | GLOB_FLAGS)
+        end
+      end
       # FIXME: ugly special case for /* and /
       list.delete('/') if patterns.first == '/*'
       return list unless block_given?
-      list.each { |path| yield path } and nil
+      list.each { |path| yield path }
+      nil
     end
 
     def self.home(*args)
@@ -89,8 +88,8 @@ module MemFs
     end
 
     class << self
-      alias :delete :rmdir
-      alias :unlink :rmdir
+      alias_method :delete, :rmdir
+      alias_method :unlink, :rmdir
     end
 
     def initialize(path)
@@ -101,9 +100,7 @@ module MemFs
     end
 
     def close
-      if state == :closed
-        fail IOError, 'closed directory'
-      end
+      fail IOError, 'closed directory' if state == :closed
       self.state = :closed
     end
 
@@ -115,7 +112,7 @@ module MemFs
     def path
       entry.path
     end
-    alias :to_path :path
+    alias_method :to_path, :path
 
     def pos=(position)
       seek(position)
@@ -135,9 +132,7 @@ module MemFs
     end
 
     def seek(position)
-      if (0..max_seek).cover?(position)
-        @pos = position
-      end
+      @pos = position if (0..max_seek).cover?(position)
       self
     end
 

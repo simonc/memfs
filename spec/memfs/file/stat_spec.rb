@@ -25,9 +25,9 @@ module MemFs
     end
 
     describe '.new' do
-      context "when optional dereference argument is set to true" do
-        context "when the last target of the link chain does not exist" do
-          it "raises an exception" do
+      context 'when optional dereference argument is set to true' do
+        context 'when the last target of the link chain does not exist' do
+          it 'raises an exception' do
             expect {
               File::Stat.new('/test-no-file-link', true)
             }.to raise_error(Errno::ENOENT)
@@ -37,24 +37,24 @@ module MemFs
     end
 
     describe '#atime' do
-      let(:time) { Time.now - 500000 }
+      let(:time) { Time.now - 500_000 }
 
-      it "returns the access time of the entry" do
+      it 'returns the access time of the entry' do
         entry = fs.find!('/test-file')
         entry.atime = time
         expect(file_stat.atime).to eq(time)
       end
 
-      context "when the entry is a symlink" do
-        context "and the optional dereference argument is true" do
-          it "returns the access time of the last target of the link chain" do
+      context 'when the entry is a symlink' do
+        context 'and the optional dereference argument is true' do
+          it 'returns the access time of the last target of the link chain' do
             entry.atime = time
             expect(dereferenced_link_stat.atime).to eq(time)
           end
         end
 
-        context "and the optional dereference argument is false" do
-          it "returns the access time of the symlink itself" do
+        context 'and the optional dereference argument is false' do
+          it 'returns the access time of the symlink itself' do
             entry.atime = time
             expect(link_stat.atime).not_to eq(time)
           end
@@ -62,15 +62,15 @@ module MemFs
       end
     end
 
-    describe "#blksize" do
-      it "returns the block size of the file" do
+    describe '#blksize' do
+      it 'returns the block size of the file' do
         expect(file_stat.blksize).to be(4096)
       end
     end
 
-    describe "#blockdev?" do
-      context "when the file is a block device" do
-        it "returns true" do
+    describe '#blockdev?' do
+      context 'when the file is a block device' do
+        it 'returns true' do
           fs.touch('/block-file')
           file = fs.find('/block-file')
           file.block_device = true
@@ -79,16 +79,16 @@ module MemFs
         end
       end
 
-      context "when the file is not a block device" do
-        it "returns false" do
+      context 'when the file is not a block device' do
+        it 'returns false' do
           expect(file_stat.blockdev?).to be false
         end
       end
     end
 
-    describe "#chardev?" do
-      context "when the file is a character device" do
-        it "returns true" do
+    describe '#chardev?' do
+      context 'when the file is a character device' do
+        it 'returns true' do
           fs.touch('/character-file')
           file = fs.find('/character-file')
           file.character_device = true
@@ -97,31 +97,31 @@ module MemFs
         end
       end
 
-      context "when the file is not a character device" do
-        it "returns false" do
+      context 'when the file is not a character device' do
+        it 'returns false' do
           expect(file_stat.chardev?).to be false
         end
       end
     end
 
     describe '#ctime' do
-      let(:time) { Time.now - 500000 }
+      let(:time) { Time.now - 500_000 }
 
-      it "returns the access time of the entry" do
+      it 'returns the access time of the entry' do
         entry.ctime = time
         expect(file_stat.ctime).to eq(time)
       end
 
-      context "when the entry is a symlink" do
-        context "and the optional dereference argument is true" do
-          it "returns the access time of the last target of the link chain" do
+      context 'when the entry is a symlink' do
+        context 'and the optional dereference argument is true' do
+          it 'returns the access time of the last target of the link chain' do
             entry.ctime = time
             expect(dereferenced_link_stat.ctime).to eq(time)
           end
         end
 
-        context "and the optional dereference argument is false" do
-          it "returns the access time of the symlink itself" do
+        context 'and the optional dereference argument is false' do
+          it 'returns the access time of the symlink itself' do
             entry.ctime = time
             expect(link_stat.ctime).not_to eq(time)
           end
@@ -129,35 +129,35 @@ module MemFs
       end
     end
 
-    describe "#dev" do
-      it "returns an integer representing the device on which stat resides" do
+    describe '#dev' do
+      it 'returns an integer representing the device on which stat resides' do
         expect(file_stat.dev).to be_a(Fixnum)
       end
     end
 
     describe '#directory?' do
       context 'when dereference is true' do
-        context "when the entry is a directory" do
-          it "returns true" do
+        context 'when the entry is a directory' do
+          it 'returns true' do
             expect(dereferenced_dir_stat.directory?).to be true
           end
         end
 
-        context "when the entry is not a directory" do
-          it "returns false" do
+        context 'when the entry is not a directory' do
+          it 'returns false' do
             expect(dereferenced_file_stat.directory?).to be false
           end
         end
 
-        context "when the entry is a symlink" do
-          context "and the last target of the link chain is a directory" do
-            it "returns true" do
+        context 'when the entry is a symlink' do
+          context 'and the last target of the link chain is a directory' do
+            it 'returns true' do
               expect(dereferenced_dir_link_stat.directory?).to be true
             end
           end
 
-          context "and the last target of the link chain is not a directory" do
-            it "returns false" do
+          context 'and the last target of the link chain is not a directory' do
+            it 'returns false' do
               expect(dereferenced_link_stat.directory?).to be false
             end
           end
@@ -165,27 +165,27 @@ module MemFs
       end
 
       context 'when dereference is false' do
-        context "when the entry is a directory" do
-          it "returns true" do
+        context 'when the entry is a directory' do
+          it 'returns true' do
             expect(dir_stat.directory?).to be true
           end
         end
 
-        context "when the entry is not a directory" do
-          it "returns false" do
+        context 'when the entry is not a directory' do
+          it 'returns false' do
             expect(file_stat.directory?).to be false
           end
         end
 
-        context "when the entry is a symlink" do
-          context "and the last target of the link chain is a directory" do
-            it "returns false" do
+        context 'when the entry is a symlink' do
+          context 'and the last target of the link chain is a directory' do
+            it 'returns false' do
               expect(dir_link_stat.directory?).to be false
             end
           end
 
-          context "and the last target of the link chain is not a directory" do
-            it "returns false" do
+          context 'and the last target of the link chain is not a directory' do
+            it 'returns false' do
               expect(link_stat.directory?).to be false
             end
           end
@@ -194,12 +194,12 @@ module MemFs
     end
 
     describe '#entry' do
-      it "returns the comcerned entry" do
+      it 'returns the comcerned entry' do
         expect(file_stat.entry).to be_a(Fake::File)
       end
     end
 
-    describe "#executable?" do
+    describe '#executable?' do
       let(:access) { 0 }
       let(:gid) { 0 }
       let(:uid) { 0 }
@@ -210,54 +210,54 @@ module MemFs
         entry.gid = gid
       end
 
-      context "when the file is not executable by anyone" do
-        it "return false" do
+      context 'when the file is not executable by anyone' do
+        it 'return false' do
           expect(file_stat.executable?).to be false
         end
       end
 
-      context "when the file is user executable" do
+      context 'when the file is user executable' do
         let(:access) { MemFs::Fake::Entry::UEXEC }
 
-        context "and the current user owns the file" do
+        context 'and the current user owns the file' do
           let(:uid) { Process.euid }
 
-          it "returns true" do
+          it 'returns true' do
             expect(file_stat.executable?).to be true
           end
         end
       end
 
-      context "when the file is group executable" do
+      context 'when the file is group executable' do
         let(:access) { MemFs::Fake::Entry::GEXEC }
 
-        context "and the current user is part of the owner group" do
+        context 'and the current user is part of the owner group' do
           let(:gid) { Process.egid }
 
-          it "returns true" do
+          it 'returns true' do
             expect(file_stat.executable?).to be true
           end
         end
       end
 
-      context "when the file is executable by anyone" do
+      context 'when the file is executable by anyone' do
         let(:access) { MemFs::Fake::Entry::OEXEC }
 
-        context "and the user has no specific right on it" do
-          it "returns true" do
+        context 'and the user has no specific right on it' do
+          it 'returns true' do
             expect(file_stat.executable?).to be true
           end
         end
       end
 
-      context "when the file does not exist" do
-        it "returns false" do
+      context 'when the file does not exist' do
+        it 'returns false' do
           expect(file_stat.executable?).to be false
         end
       end
     end
 
-    describe "#executable_real?" do
+    describe '#executable_real?' do
       let(:access) { 0 }
       let(:gid) { 0 }
       let(:uid) { 0 }
@@ -268,76 +268,76 @@ module MemFs
         entry.gid = gid
       end
 
-      context "when the file is not executable by anyone" do
-        it "return false" do
+      context 'when the file is not executable by anyone' do
+        it 'return false' do
           expect(file_stat.executable_real?).to be false
         end
       end
 
-      context "when the file is user executable" do
+      context 'when the file is user executable' do
         let(:access) { MemFs::Fake::Entry::UEXEC }
 
-        context "and the current user owns the file" do
+        context 'and the current user owns the file' do
           let(:uid) { Process.uid }
 
-          it "returns true" do
+          it 'returns true' do
             expect(file_stat.executable_real?).to be true
           end
         end
       end
 
-      context "when the file is group executable" do
+      context 'when the file is group executable' do
         let(:access) { MemFs::Fake::Entry::GEXEC }
 
-        context "and the current user is part of the owner group" do
+        context 'and the current user is part of the owner group' do
           let(:gid) { Process.gid }
 
-          it "returns true" do
+          it 'returns true' do
             expect(file_stat.executable_real?).to be true
           end
         end
       end
 
-      context "when the file is executable by anyone" do
+      context 'when the file is executable by anyone' do
         let(:access) { MemFs::Fake::Entry::OEXEC }
 
-        context "and the user has no specific right on it" do
-          it "returns true" do
+        context 'and the user has no specific right on it' do
+          it 'returns true' do
             expect(file_stat.executable_real?).to be true
           end
         end
       end
 
-      context "when the file does not exist" do
-        it "returns false" do
+      context 'when the file does not exist' do
+        it 'returns false' do
           expect(file_stat.executable_real?).to be false
         end
       end
     end
 
-    describe "#file?" do
+    describe '#file?' do
       context 'when dereference is true' do
-        context "when the entry is a regular file" do
-          it "returns true" do
+        context 'when the entry is a regular file' do
+          it 'returns true' do
             expect(dereferenced_file_stat.file?).to be true
           end
         end
 
-        context "when the entry is not a regular file" do
-          it "returns false" do
+        context 'when the entry is not a regular file' do
+          it 'returns false' do
             expect(dereferenced_dir_stat.file?).to be false
           end
         end
 
-        context "when the entry is a symlink" do
-          context "and the last target of the link chain is a regular file" do
-            it "returns true" do
+        context 'when the entry is a symlink' do
+          context 'and the last target of the link chain is a regular file' do
+            it 'returns true' do
               expect(dereferenced_link_stat.file?).to be true
             end
           end
 
-          context "and the last target of the link chain is not a regular file" do
-            it "returns false" do
+          context 'and the last target of the link chain is not a regular file' do
+            it 'returns false' do
               expect(dereferenced_dir_link_stat.file?).to be false
             end
           end
@@ -345,27 +345,27 @@ module MemFs
       end
 
       context 'when dereference is false' do
-        context "when the entry is a regular file" do
-          it "returns true" do
+        context 'when the entry is a regular file' do
+          it 'returns true' do
             expect(file_stat.file?).to be true
           end
         end
 
-        context "when the entry is not a regular file" do
-          it "returns false" do
+        context 'when the entry is not a regular file' do
+          it 'returns false' do
             expect(dir_stat.file?).to be false
           end
         end
 
-        context "when the entry is a symlink" do
-          context "and the last target of the link chain is a regular file" do
-            it "returns false" do
+        context 'when the entry is a symlink' do
+          context 'and the last target of the link chain is a regular file' do
+            it 'returns false' do
               expect(link_stat.file?).to be false
             end
           end
 
-          context "and the last target of the link chain is not a regular file" do
-            it "returns false" do
+          context 'and the last target of the link chain is not a regular file' do
+            it 'returns false' do
               expect(dir_link_stat.file?).to be false
             end
           end
@@ -373,20 +373,20 @@ module MemFs
       end
     end
 
-    describe "#ftype" do
-      context "when the entry is a regular file" do
+    describe '#ftype' do
+      context 'when the entry is a regular file' do
         it "returns 'file'" do
           expect(file_stat.ftype).to eq('file')
         end
       end
 
-      context "when the entry is a directory" do
+      context 'when the entry is a directory' do
         it "returns 'directory'" do
           expect(dir_stat.ftype).to eq('directory')
         end
       end
 
-      context "when the entry is a block device" do
+      context 'when the entry is a block device' do
         it "returns 'blockSpecial'" do
           fs.touch('/block-file')
           file = fs.find('/block-file')
@@ -396,7 +396,7 @@ module MemFs
         end
       end
 
-      context "when the entry is a character device" do
+      context 'when the entry is a character device' do
         it "returns 'characterSpecial'" do
           fs.touch('/character-file')
           file = fs.find('/character-file')
@@ -406,7 +406,7 @@ module MemFs
         end
       end
 
-      context "when the entry is a symlink" do
+      context 'when the entry is a symlink' do
         it "returns 'link'" do
           expect(link_stat.ftype).to eq('link')
         end
@@ -414,7 +414,7 @@ module MemFs
 
       # fifo and socket not handled for now
 
-      context "when the entry has no specific type" do
+      context 'when the entry has no specific type' do
         it "returns 'unknown'" do
           root = fs.find('/')
           root.add_entry Fake::Entry.new('test-entry')
@@ -424,69 +424,69 @@ module MemFs
       end
     end
 
-    describe "#gid" do
-      it "returns the group id of the named entry" do
+    describe '#gid' do
+      it 'returns the group id of the named entry' do
         fs.chown(nil, 42, '/test-file')
         expect(file_stat.gid).to be(42)
       end
     end
 
-    describe "#grpowned?" do
-      context "when the effective user group owns of the file" do
-        it "returns true" do
+    describe '#grpowned?' do
+      context 'when the effective user group owns of the file' do
+        it 'returns true' do
           fs.chown(0, Process.egid, '/test-file')
           expect(file_stat.grpowned?).to be true
         end
       end
 
-      context "when the effective user group does not own of the file" do
-        it "returns false" do
+      context 'when the effective user group does not own of the file' do
+        it 'returns false' do
           fs.chown(0, 0, '/test-file')
           expect(file_stat.grpowned?).to be false
         end
       end
     end
 
-    describe "#ino" do
-      it "returns the inode number for stat." do
+    describe '#ino' do
+      it 'returns the inode number for stat.' do
         expect(file_stat.ino).to be_a(Fixnum)
       end
     end
 
     describe '#mode' do
-      it "returns an integer representing the permission bits of stat" do
+      it 'returns an integer representing the permission bits of stat' do
         fs.chmod(0777, '/test-file')
         expect(file_stat.mode).to be(0100777)
       end
     end
 
-    describe "#owned?" do
-      context "when the effective user owns of the file" do
-        it "returns true" do
+    describe '#owned?' do
+      context 'when the effective user owns of the file' do
+        it 'returns true' do
           fs.chown(Process.euid, 0, '/test-file')
           expect(file_stat.owned?).to be true
         end
       end
 
-      context "when the effective user does not own of the file" do
-        it "returns false" do
+      context 'when the effective user does not own of the file' do
+        it 'returns false' do
           fs.chown(0, 0, '/test-file')
           expect(file_stat.owned?).to be false
         end
       end
     end
 
-    describe "#pipe?" do
+    describe '#pipe?' do
       # Pipes are not handled for now
 
-      context "when the file is not a pipe" do
-        it "returns false" do
+      context 'when the file is not a pipe' do
+        it 'returns false' do
           expect(file_stat.pipe?).to be false
         end
       end
     end
 
-    describe "#readable?" do
+    describe '#readable?' do
       let(:access) { 0 }
       let(:gid) { 0 }
       let(:uid) { 0 }
@@ -497,48 +497,48 @@ module MemFs
         entry.gid = gid
       end
 
-      context "when the file is not readable by anyone" do
-        it "return false" do
+      context 'when the file is not readable by anyone' do
+        it 'return false' do
           expect(file_stat.readable?).to be false
         end
       end
 
-      context "when the file is user readable" do
+      context 'when the file is user readable' do
         let(:access) { MemFs::Fake::Entry::UREAD }
 
-        context "and the current user owns the file" do
+        context 'and the current user owns the file' do
           let(:uid) { Process.euid }
 
-          it "returns true" do
+          it 'returns true' do
             expect(file_stat.readable?).to be true
           end
         end
       end
 
-      context "when the file is group readable" do
+      context 'when the file is group readable' do
         let(:access) { MemFs::Fake::Entry::GREAD }
 
-        context "and the current user is part of the owner group" do
+        context 'and the current user is part of the owner group' do
           let(:gid) { Process.egid }
 
-          it "returns true" do
+          it 'returns true' do
             expect(file_stat.readable?).to be true
           end
         end
       end
 
-      context "when the file is readable by anyone" do
+      context 'when the file is readable by anyone' do
         let(:access) { MemFs::Fake::Entry::OREAD }
 
-        context "and the user has no specific right on it" do
-          it "returns true" do
+        context 'and the user has no specific right on it' do
+          it 'returns true' do
             expect(file_stat.readable?).to be true
           end
         end
       end
     end
 
-    describe "#readable_real?" do
+    describe '#readable_real?' do
       let(:access) { 0 }
       let(:gid) { 0 }
       let(:uid) { 0 }
@@ -549,95 +549,95 @@ module MemFs
         entry.gid = gid
       end
 
-      context "when the file is not readable by anyone" do
-        it "return false" do
+      context 'when the file is not readable by anyone' do
+        it 'return false' do
           expect(file_stat.readable_real?).to be false
         end
       end
 
-      context "when the file is user readable" do
+      context 'when the file is user readable' do
         let(:access) { MemFs::Fake::Entry::UREAD }
 
-        context "and the current user owns the file" do
+        context 'and the current user owns the file' do
           let(:uid) { Process.euid }
 
-          it "returns true" do
+          it 'returns true' do
             expect(file_stat.readable_real?).to be true
           end
         end
       end
 
-      context "when the file is group readable" do
+      context 'when the file is group readable' do
         let(:access) { MemFs::Fake::Entry::GREAD }
 
-        context "and the current user is part of the owner group" do
+        context 'and the current user is part of the owner group' do
           let(:gid) { Process.egid }
 
-          it "returns true" do
+          it 'returns true' do
             expect(file_stat.readable_real?).to be true
           end
         end
       end
 
-      context "when the file is readable by anyone" do
+      context 'when the file is readable by anyone' do
         let(:access) { MemFs::Fake::Entry::OREAD }
 
-        context "and the user has no specific right on it" do
-          it "returns true" do
+        context 'and the user has no specific right on it' do
+          it 'returns true' do
             expect(file_stat.readable_real?).to be true
           end
         end
       end
 
-      context "when the file does not exist" do
-        it "returns false" do
+      context 'when the file does not exist' do
+        it 'returns false' do
           expect(file_stat.readable_real?).to be false
         end
       end
     end
 
-    describe "#setgid?" do
-      context "when the file has the setgid bit set" do
-        it "returns true" do
+    describe '#setgid?' do
+      context 'when the file has the setgid bit set' do
+        it 'returns true' do
           fs.chmod(02000, '/test-file')
           expect(file_stat.setgid?).to be true
         end
       end
 
-      context "when the file does not have the setgid bit set" do
-        it "returns false" do
+      context 'when the file does not have the setgid bit set' do
+        it 'returns false' do
           expect(file_stat.setgid?).to be false
         end
       end
     end
 
-    describe "#setuid?" do
-      context "when the file has the setuid bit set" do
-        it "returns true" do
+    describe '#setuid?' do
+      context 'when the file has the setuid bit set' do
+        it 'returns true' do
           fs.chmod(04000, '/test-file')
           expect(file_stat.setuid?).to be true
         end
       end
 
-      context "when the file does not have the setuid bit set" do
-        it "returns false" do
+      context 'when the file does not have the setuid bit set' do
+        it 'returns false' do
           expect(file_stat.setuid?).to be false
         end
       end
     end
 
-    describe "#socket?" do
+    describe '#socket?' do
       # Sockets are not handled for now
 
-      context "when the file is not a socket" do
-        it "returns false" do
+      context 'when the file is not a socket' do
+        it 'returns false' do
           expect(file_stat.socket?).to be false
         end
       end
     end
 
-    describe "#sticky?" do
-      it "returns true if the named file has the sticky bit set" do
+    describe '#sticky?' do
+      it 'returns true if the named file has the sticky bit set' do
         fs.chmod(01777, '/test-file')
         expect(file_stat.sticky?).to be true
       end
@@ -649,74 +649,74 @@ module MemFs
 
     describe '#symlink?' do
       context 'when dereference is true' do
-        context "when the entry is a symlink" do
-          it "returns false" do
+        context 'when the entry is a symlink' do
+          it 'returns false' do
             expect(dereferenced_link_stat.symlink?).to be false
           end
         end
 
-        context "when the entry is not a symlink" do
-          it "returns false" do
+        context 'when the entry is not a symlink' do
+          it 'returns false' do
             expect(dereferenced_file_stat.symlink?).to be false
           end
         end
       end
 
       context 'when dereference is false' do
-        context "when the entry is a symlink" do
-          it "returns true" do
+        context 'when the entry is a symlink' do
+          it 'returns true' do
             expect(link_stat.symlink?).to be true
           end
         end
 
-        context "when the entry is not a symlink" do
-          it "returns false" do
+        context 'when the entry is not a symlink' do
+          it 'returns false' do
             expect(file_stat.symlink?).to be false
           end
         end
       end
     end
 
-    describe "#uid" do
-      it "returns the user id of the named entry" do
+    describe '#uid' do
+      it 'returns the user id of the named entry' do
         fs.chown(42, nil, '/test-file')
         expect(file_stat.uid).to be(42)
       end
     end
 
-    describe "#world_reable?" do
-      context "when +file_name+ is readable by others" do
-        it "returns an integer representing the file permission bits of +file_name+" do
+    describe '#world_reable?' do
+      context 'when +file_name+ is readable by others' do
+        it 'returns an integer representing the file permission bits of +file_name+' do
           fs.chmod(MemFs::Fake::Entry::OREAD, '/test-file')
           expect(file_stat.world_readable?).to eq(MemFs::Fake::Entry::OREAD)
         end
       end
 
-      context "when +file_name+ is not readable by others" do
-        it "returns nil" do
+      context 'when +file_name+ is not readable by others' do
+        it 'returns nil' do
           fs.chmod(MemFs::Fake::Entry::UREAD, '/test-file')
           expect(file_stat.world_readable?).to be_nil
         end
       end
     end
 
-    describe "#world_writable?" do
-      context "when +file_name+ is writable by others" do
-        it "returns an integer representing the file permission bits of +file_name+" do
+    describe '#world_writable?' do
+      context 'when +file_name+ is writable by others' do
+        it 'returns an integer representing the file permission bits of +file_name+' do
           fs.chmod(MemFs::Fake::Entry::OWRITE, '/test-file')
           expect(file_stat.world_writable?).to eq(MemFs::Fake::Entry::OWRITE)
         end
       end
 
-      context "when +file_name+ is not writable by others" do
-        it "returns nil" do
+      context 'when +file_name+ is not writable by others' do
+        it 'returns nil' do
           fs.chmod(MemFs::Fake::Entry::UWRITE, '/test-file')
           expect(file_stat.world_writable?).to be_nil
         end
       end
     end
 
-    describe "#writable?" do
+    describe '#writable?' do
       let(:access) { 0 }
       let(:gid) { 0 }
       let(:uid) { 0 }
@@ -727,54 +727,54 @@ module MemFs
         entry.gid = gid
       end
 
-      context "when the file is not executable by anyone" do
-        it "return false" do
+      context 'when the file is not executable by anyone' do
+        it 'return false' do
           expect(file_stat.writable?).to be false
         end
       end
 
-      context "when the file is user executable" do
+      context 'when the file is user executable' do
         let(:access) { MemFs::Fake::Entry::UWRITE }
 
-        context "and the current user owns the file" do
+        context 'and the current user owns the file' do
           let(:uid) { Process.euid }
 
-          it "returns true" do
+          it 'returns true' do
             expect(file_stat.writable?).to be true
           end
         end
       end
 
-      context "when the file is group executable" do
+      context 'when the file is group executable' do
         let(:access) { MemFs::Fake::Entry::GWRITE }
 
-        context "and the current user is part of the owner group" do
+        context 'and the current user is part of the owner group' do
           let(:gid) { Process.egid }
 
-          it "returns true" do
+          it 'returns true' do
             expect(file_stat.writable?).to be true
           end
         end
       end
 
-      context "when the file is executable by anyone" do
+      context 'when the file is executable by anyone' do
         let(:access) { MemFs::Fake::Entry::OWRITE }
 
-        context "and the user has no specific right on it" do
-          it "returns true" do
+        context 'and the user has no specific right on it' do
+          it 'returns true' do
             expect(file_stat.writable?).to be true
           end
         end
       end
 
-      context "when the file does not exist" do
-        it "returns false" do
+      context 'when the file does not exist' do
+        it 'returns false' do
           expect(file_stat.writable?).to be false
         end
       end
     end
 
-    describe "#writable_real?" do
+    describe '#writable_real?' do
       let(:access) { 0 }
       let(:gid) { 0 }
       let(:uid) { 0 }
@@ -785,66 +785,66 @@ module MemFs
         entry.gid = gid
       end
 
-      context "when the file is not executable by anyone" do
-        it "return false" do
+      context 'when the file is not executable by anyone' do
+        it 'return false' do
           expect(file_stat.writable_real?).to be false
         end
       end
 
-      context "when the file is user executable" do
+      context 'when the file is user executable' do
         let(:access) { MemFs::Fake::Entry::UWRITE }
 
-        context "and the current user owns the file" do
+        context 'and the current user owns the file' do
           let(:uid) { Process.euid }
 
-          it "returns true" do
+          it 'returns true' do
             expect(file_stat.writable_real?).to be true
           end
         end
       end
 
-      context "when the file is group executable" do
+      context 'when the file is group executable' do
         let(:access) { MemFs::Fake::Entry::GWRITE }
 
-        context "and the current user is part of the owner group" do
+        context 'and the current user is part of the owner group' do
           let(:gid) { Process.egid }
 
-          it "returns true" do
+          it 'returns true' do
             expect(file_stat.writable_real?).to be true
           end
         end
       end
 
-      context "when the file is executable by anyone" do
+      context 'when the file is executable by anyone' do
         let(:access) { MemFs::Fake::Entry::OWRITE }
 
-        context "and the user has no specific right on it" do
-          it "returns true" do
+        context 'and the user has no specific right on it' do
+          it 'returns true' do
             expect(file_stat.writable_real?).to be true
           end
         end
       end
 
-      context "when the file does not exist" do
-        it "returns false" do
+      context 'when the file does not exist' do
+        it 'returns false' do
           expect(file_stat.writable_real?).to be false
         end
       end
     end
 
-    describe "#zero?" do
-      context "when the file has a zero size" do
-        it "returns true" do
+    describe '#zero?' do
+      context 'when the file has a zero size' do
+        it 'returns true' do
           expect(file_stat.zero?).to be true
         end
       end
 
-      context "when the file does not have a zero size" do
+      context 'when the file does not have a zero size' do
         before :each do
           fs.find!('/test-file').content << 'test'
         end
 
-        it "returns false" do
+        it 'returns false' do
           expect(file_stat.zero?).to be false
         end
       end

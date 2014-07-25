@@ -6,11 +6,11 @@ module MemFs
       let(:directory) { Directory.new('test') }
 
       describe '.new' do
-        it "sets . in the entries list" do
+        it 'sets . in the entries list' do
           expect(directory.entries).to include('.' => directory)
         end
 
-        it "sets .. in the entries list" do
+        it 'sets .. in the entries list' do
           expect(directory.entries).to have_key('..')
         end
       end
@@ -18,30 +18,30 @@ module MemFs
       describe '#add_entry' do
         let(:entry) { Directory.new('new_entry') }
 
-        it "adds the entry to the entries list" do
+        it 'adds the entry to the entries list' do
           directory.add_entry entry
           expect(directory.entries).to include('new_entry' => entry)
         end
 
-        it "sets the parent of the added entry" do
+        it 'sets the parent of the added entry' do
           directory.add_entry entry
           expect(entry.parent).to be(directory)
         end
       end
 
-      describe "empty?" do
-        it "returns true if the directory is empty" do
+      describe 'empty?' do
+        it 'returns true if the directory is empty' do
           expect(directory).to be_empty
         end
 
-        it "returns false if the directory is not empty" do
+        it 'returns false if the directory is not empty' do
           directory.add_entry Directory.new('test')
           expect(directory).not_to be_empty
         end
       end
 
       describe '#entry_names' do
-        it "returns the list of the names of the entries in the directory" do
+        it 'returns the list of the names of the entries in the directory' do
           3.times do |n|
             directory.add_entry Directory.new("dir#{n}")
           end
@@ -59,15 +59,15 @@ module MemFs
           directory.add_entry sub_directory
         end
 
-        it "returns the named entry if it is one of the entries" do
+        it 'returns the named entry if it is one of the entries' do
           expect(directory.find('sub_dir')).to be(sub_directory)
         end
 
-        it "calls find on the next directory in the search chain" do
+        it 'calls find on the next directory in the search chain' do
           expect(directory.find('sub_dir/file')).to be(file)
         end
 
-        it "should remove any leading / in the path" do
+        it 'should remove any leading / in the path' do
           expect(directory.find('/sub_dir/file')).to be(file)
         end
       end
@@ -75,27 +75,27 @@ module MemFs
       describe '#parent=' do
         let(:parent) { Directory.new('parent') }
 
-        it "sets the .. entry in entries list" do
+        it 'sets the .. entry in entries list' do
           directory.parent = parent
           expect(directory.entries).to include('..' => parent)
         end
 
-        it "sets the parent directory" do
+        it 'sets the parent directory' do
           directory.parent = parent
           expect(directory.parent).to be(parent)
         end
       end
 
-      describe "#path" do
+      describe '#path' do
         let(:root) { Directory.new('/') }
 
-        it "returns the directory path" do
+        it 'returns the directory path' do
           directory.parent = root
           expect(directory.path).to eq('/test')
         end
 
-        context "when the directory is /" do
-          it "returns /" do
+        context 'when the directory is /' do
+          it 'returns /' do
             expect(root.path).to eq('/')
           end
         end
@@ -115,17 +115,17 @@ module MemFs
         end
       end
 
-      describe "#remove_entry" do
+      describe '#remove_entry' do
         let(:file) { File.new('file') }
 
-        it "removes an entry from the entries list" do
+        it 'removes an entry from the entries list' do
           directory.add_entry file
           directory.remove_entry file
           expect(directory.entries).not_to have_value(file)
         end
       end
 
-      describe "#type" do
+      describe '#type' do
         it "returns 'directory'" do
           expect(directory.type).to eq('directory')
         end

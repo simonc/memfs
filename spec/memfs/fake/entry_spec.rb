@@ -62,7 +62,7 @@ module MemFs
         let(:value) { parent }
       end
 
-      describe ".new" do
+      describe '.new' do
         it "sets its default uid to the current user's uid" do
           expect(entry.uid).to eq(Process.euid)
         end
@@ -71,72 +71,72 @@ module MemFs
           expect(entry.gid).to eq(Process.egid)
         end
 
-        it "extract its name from the path passed as argument" do
+        it 'extract its name from the path passed as argument' do
           expect(entry.name).to eq('test')
         end
 
-        it "sets an empty string as name if none is given" do
+        it 'sets an empty string as name if none is given' do
           expect(Entry.new.name).to be_empty
         end
 
-        it "sets the access time" do
+        it 'sets the access time' do
           expect(Entry.new.atime).to be_a(Time)
         end
 
-        it "sets the modification time" do
+        it 'sets the modification time' do
           expect(entry.mtime).to be_a(Time)
         end
 
-        it "sets atime and mtime to the same value" do
+        it 'sets atime and mtime to the same value' do
           expect(entry.atime).to eq(entry.mtime)
         end
       end
 
-      describe "#delete" do
-        it "removes the entry from its parent" do
+      describe '#delete' do
+        it 'removes the entry from its parent' do
           entry.delete
           expect(parent.entries).not_to have_value(entry)
         end
       end
 
       describe '#dereferenced' do
-        it "returns the entry itself" do
+        it 'returns the entry itself' do
           expect(entry.dereferenced).to be(entry)
         end
       end
 
-      describe "#dereferenced_name" do
-        it "returns the entry name" do
+      describe '#dereferenced_name' do
+        it 'returns the entry name' do
           expect(entry.dereferenced_name).to eq('test')
         end
       end
 
-      describe "#dereferenced_path" do
-        it "returns the entry path" do
+      describe '#dereferenced_path' do
+        it 'returns the entry path' do
           expect(entry.dereferenced_path).to eq('/parent/test')
         end
       end
 
       describe '#find' do
-        it "raises an error" do
+        it 'raises an error' do
           expect { entry.find('test') }.to raise_error(Errno::ENOTDIR)
         end
       end
 
-      describe "#dev" do
-        it "returns an integer representing the device on which the entry resides" do
+      describe '#dev' do
+        it 'returns an integer representing the device on which the entry resides' do
           expect(entry.dev).to be_a(Fixnum)
         end
       end
 
-      describe "#ino" do
-        it "Returns the inode number for the entry" do
+      describe '#ino' do
+        it 'Returns the inode number for the entry' do
           expect(entry.ino).to be_a(Fixnum)
         end
       end
 
-      describe "#path" do
-        it "returns the complete path of the entry" do
+      describe '#path' do
+        it 'returns the complete path of the entry' do
           expect(entry.path).to eq('/parent/test')
         end
       end
@@ -147,7 +147,7 @@ module MemFs
         end
       end
 
-      describe "#touch" do
+      describe '#touch' do
         let(:time) { Time.now - 5000 }
 
         before :each do
@@ -155,18 +155,18 @@ module MemFs
           entry.mtime = time
         end
 
-        it "sets the access time to now" do
+        it 'sets the access time to now' do
           entry.touch
           expect(entry.atime).not_to eq(time)
         end
 
-        it "sets the modification time to now" do
+        it 'sets the modification time to now' do
           entry.touch
           expect(entry.mtime).not_to eq(time)
         end
       end
 
-      describe "#type" do
+      describe '#type' do
         it "returns 'unknown" do
           expect(entry.type).to eq('unknown')
         end

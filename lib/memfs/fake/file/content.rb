@@ -1,4 +1,4 @@
-require "delegate"
+require 'delegate'
 
 module MemFs
   module Fake
@@ -20,7 +20,8 @@ module MemFs
         def puts(*strings)
           strings.each do |str|
             @string << str
-            @string << $/ unless str.end_with?($/)
+            next if str.end_with?($INPUT_RECORD_SEPARATOR)
+            @string << $INPUT_RECORD_SEPARATOR
           end
         end
 
