@@ -1,4 +1,4 @@
-# MemFs
+![MemFs Logo](https://raw.github.com/simonc/memfs/master/memfs.png)
 
 [![Gem Version](https://badge.fury.io/rb/memfs.png)](http://badge.fury.io/rb/memfs)
 [![Build Status](https://secure.travis-ci.org/simonc/memfs.png?branch=master)](http://travis-ci.org/simonc/memfs)
@@ -83,7 +83,7 @@ you `spec_helper.rb` file:
 ``` ruby
 Rspec.configure do |c|
   c.around(:each, memfs: true) do |example|
-  MemFs.activate { example.run }
+    MemFs.activate { example.run }
   end
 end
 ```
