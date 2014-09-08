@@ -1782,6 +1782,32 @@ module MemFs
       end
     end
 
+    describe '#external_encoding' do
+      let(:file) { subject.open('/test-file') }
+
+      it 'returns the Encoding object representing the file encoding' do
+        expect(file.external_encoding).to be_an(Encoding)
+      end
+
+      context 'when the file is open in write mode' do
+        context 'and no encoding has been specified' do
+          let(:file) { subject.open('/test-file', 'w') }
+
+          it 'returns nil' do
+            expect(file.external_encoding).to be nil
+          end
+        end
+
+        context 'and an encoding has been specified' do
+          let(:file) { subject.open('/test-file', 'w', external_encoding: 'UTF-8') }
+
+          it 'returns the Encoding' do
+            expect(file.external_encoding).to be_an(Encoding)
+          end
+        end
+      end
+    end
+
     describe '#lstat' do
       it 'returns the File::Stat object of the file' do
         expect(file.lstat).to be_a(File::Stat)

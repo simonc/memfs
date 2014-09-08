@@ -237,12 +237,15 @@ module MemFs
 
     attr_reader :path
 
-    def initialize(filename, mode = RDONLY, _perm = nil, opt = nil)
-      unless opt.nil? || opt.is_a?(Hash)
+    def initialize(filename, mode = RDONLY, *perm_and_or_opt)
+      opt = perm_and_or_opt.last.is_a?(Hash) ? perm_and_or_opt.pop : {}
+      perm = perm_and_or_opt.shift
+      if perm_and_or_opt.size > 0
         fail ArgumentError, 'wrong number of arguments (4 for 1..3)'
       end
 
       @path = filename
+      @external_encoding = opt[:external_encoding] && Encoding.find(opt[:external_encoding])
 
       self.closed = false
       self.opening_mode = str_to_mode_int(mode)
@@ -277,6 +280,10 @@ module MemFs
       fail IOError, 'not opened for reading' unless readable?
       content.each_line(sep) { |line| block.call(line) }
       self
+    end
+
+    def external_encoding
+      writable? ? @external_encoding : Encoding.default_external
     end
 
     def lstat
