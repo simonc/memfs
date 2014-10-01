@@ -19,6 +19,8 @@ module MemFs
     }
 
     SUCCESS = 0
+    
+    @umask = nil
 
     def_delegators :original_file_class,
                    :basename,
