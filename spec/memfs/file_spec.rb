@@ -944,6 +944,12 @@ module MemFs
           expect(path).to eq '/some/path'
         end
       end
+
+      context 'when the path cannot be converted to a string' do
+        it 'raises an exception' do
+          expect { subject.path(42) }.to raise_error(ArgumentError)
+        end
+      end
     end
 
     describe '.pipe?' do

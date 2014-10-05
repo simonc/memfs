@@ -22,10 +22,16 @@ module MemFs
   # Keeps track of the original Ruby File class.
   OriginalFile = ::File
 
+  if defined?(::Pathname)
+    # Keeps track of the original Ruby Pathname class.
+    OriginalPathname = ::Pathname
+  end
+
   require 'memfs/file_system'
   require 'memfs/dir'
   require 'memfs/file'
   require 'memfs/file/stat'
+  require 'memfs/pathname'
 
   # Calls the given block with MemFs activated.
   #
@@ -77,6 +83,11 @@ module MemFs
 
       const_set :Dir, MemFs::Dir
       const_set :File, MemFs::File
+
+      if defined?(::Pathname)
+        remove_const :Pathname
+        const_set :Pathname, MemFs::Pathname
+      end
     end
 
     MemFs::FileSystem.instance.clear!
@@ -96,6 +107,11 @@ module MemFs
 
       const_set :Dir, MemFs::OriginalDir
       const_set :File, MemFs::OriginalFile
+
+      if defined?(::Pathname)
+        remove_const :Pathname
+        const_set :Pathname, MemFs::OriginalPathname
+      end
     end
   end
   module_function :deactivate!

@@ -23,30 +23,66 @@ describe MemFs do
   end
 
   describe '.activate!' do
-    before(:each) { described_class.activate! }
-    after(:each)  { described_class.deactivate! }
-
     it 'replaces Ruby Dir class with a fake one' do
+      subject.activate!
       expect(::Dir).to be(described_class::Dir)
+      subject.deactivate!
     end
 
     it 'replaces Ruby File class with a fake one' do
+      subject.activate!
       expect(::File).to be(described_class::File)
+      subject.deactivate!
+    end
+
+    context 'when Pathname is defined' do
+      it 'replaces Ruby Pathname class with a fake one' do
+        class ::Pathname; end
+        subject.activate!
+        expect(::Pathname).to be(described_class::Pathname)
+        subject.deactivate!
+        Object.send(:remove_const, :Pathname)
+      end
+    end
+
+    context 'when Pathname is not defined' do
+      it 'does not replace Ruby Pathname class with a fake one' do
+        subject.activate!
+        expect { Object.const_get(:Pathname) }.to raise_error(NameError)
+        subject.deactivate!
+      end
     end
   end
 
   describe '.deactivate!' do
-    before :each do
-      described_class.activate!
-      described_class.deactivate!
-    end
-
     it 'sets back the Ruby Dir class to the original one' do
+      subject.activate!
+      subject.deactivate!
       expect(::Dir).to be(described_class::OriginalDir)
     end
 
     it 'sets back the Ruby File class to the original one' do
+      subject.activate!
+      subject.deactivate!
       expect(::File).to be(described_class::OriginalFile)
+    end
+
+    context 'when Pathname is defined' do
+      it 'sets back the Ruby Pathname class to the original one' do
+        class ::Pathname; end
+        subject.activate!
+        subject.deactivate!
+        expect(::Pathname).to be(described_class::OriginalPathname)
+        Object.send(:remove_const, :Pathname)
+      end
+    end
+
+    context 'when Pathname is not defined' do
+      it 'does not set the Pathname constant' do
+        subject.activate!
+        subject.deactivate!
+        expect { Object.const_get(:Pathname) }.to raise_error(NameError)
+      end
     end
   end
 
