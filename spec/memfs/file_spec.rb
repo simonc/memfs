@@ -1610,6 +1610,12 @@ module MemFs
       end
     end
 
+    describe '#ctime' do
+      it 'returns a Time object' do
+        expect(file.ctime).to be_a(Time)
+      end
+    end
+
     describe '#lstat' do
       it 'returns the File::Stat object of the file' do
         expect(file.lstat).to be_a(File::Stat)

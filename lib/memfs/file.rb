@@ -215,6 +215,10 @@ module MemFs
       SUCCESS
     end
 
+    def ctime
+      File.ctime(path)
+    end
+
     def lstat
       File.lstat(path)
     end
