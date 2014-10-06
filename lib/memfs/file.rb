@@ -223,6 +223,10 @@ module MemFs
       0
     end
 
+    def mtime
+      File.mtime(path)
+    end
+
     def lstat
       File.lstat(path)
     end

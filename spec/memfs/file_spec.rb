@@ -1642,6 +1642,12 @@ module MemFs
       end
     end
 
+    describe '#mtime' do
+      it 'returns a Time object' do
+        expect(file.mtime).to be_a(Time)
+      end
+    end
+
     describe '#path' do
       it 'returns the path of the file' do
         file = subject.new('/test-file')
