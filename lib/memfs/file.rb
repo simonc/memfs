@@ -220,7 +220,7 @@ module MemFs
     end
 
     def flock(*)
-      0
+      SUCCESS
     end
 
     def mtime
