@@ -1524,6 +1524,12 @@ module MemFs
       end
     end
 
+    describe '#atime' do
+      it 'returns a Time object' do
+        expect(file.atime).to be_a(Time)
+      end
+    end
+
     describe '#chmod' do
       it 'changes permission bits on the file' do
         file.chmod(0777)

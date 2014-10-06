@@ -201,6 +201,10 @@ module MemFs
 
     attr_reader :path
 
+    def atime
+      File.atime(path)
+    end
+
     def chmod(mode_int)
       fs.chmod(mode_int, path)
       SUCCESS
