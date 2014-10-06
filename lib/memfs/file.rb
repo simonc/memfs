@@ -235,6 +235,10 @@ module MemFs
       entry.size
     end
 
+    def truncate(integer)
+      File.truncate(path, integer)
+    end
+
     private
 
     def self.dereference_name(path)

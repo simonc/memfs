@@ -1661,5 +1661,22 @@ module MemFs
         expect(subject.new('/test-file').size).to eq(random_string.size + 1)
       end
     end
+
+    describe '#truncate' do
+      it 'truncates the given file to be at most integer bytes long' do
+        subject.open('/test-file', 'w') do |f|
+          f.puts 'this is a 24-char string'
+          f.truncate(10)
+          f.close
+        end
+        expect(subject.size('/test-file')).to eq 10
+      end
+
+      it 'returns zero' do
+        subject.open('/test-file', 'w') do |f|
+          expect(f.truncate(42)).to eq 0
+        end
+      end
+    end
   end
 end
