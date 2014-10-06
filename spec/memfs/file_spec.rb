@@ -1616,6 +1616,12 @@ module MemFs
       end
     end
 
+    describe '#flock' do
+      it 'returns zero' do
+        expect(file.flock(File::LOCK_EX)).to eq 0
+      end
+    end
+
     describe '#lstat' do
       it 'returns the File::Stat object of the file' do
         expect(file.lstat).to be_a(File::Stat)

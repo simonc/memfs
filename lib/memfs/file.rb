@@ -219,6 +219,10 @@ module MemFs
       File.ctime(path)
     end
 
+    def flock(*)
+      0
+    end
+
     def lstat
       File.lstat(path)
     end
