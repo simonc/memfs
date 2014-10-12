@@ -3,9 +3,23 @@ require 'memfs/filesystem_access'
 require 'memfs/io'
 
 module MemFs
-  class File < IO
+  class File
+    extend FilesystemAccess
     extend SingleForwardable
-    include FilesystemAccess
+    extend IO::ClassMethods
+
+    include Enumerable
+    include OriginalFile::Constants
+    include IO::InstanceMethods
+
+    MODE_MAP = {
+      'r'  => RDONLY,
+      'r+' => RDWR,
+      'w'  => CREAT | TRUNC | WRONLY,
+      'w+' => CREAT | TRUNC | RDWR,
+      'a'  => CREAT | APPEND | WRONLY,
+      'a+' => CREAT | APPEND | RDWR
+    }
 
     SUCCESS = 0
 
@@ -121,6 +135,18 @@ module MemFs
 
     def self.mtime(path)
       stat(path).mtime
+    end
+
+    def self.open(filename, mode = RDONLY, *perm_and_opt)
+      file = new(filename, mode, *perm_and_opt)
+
+      if block_given?
+        yield file
+      else
+        file
+      end
+    ensure
+      file.close if file && block_given?
     end
 
     def self.readlink(path)

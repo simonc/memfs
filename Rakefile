@@ -18,14 +18,6 @@ task :compare do
   implemented_methods = MemFs.activate { (memfs_klass.methods - Object.methods).sort }
   implemented_i_methods = MemFs.activate { (memfs_klass.instance_methods - Object.methods).sort }
 
-  if class_name == 'File'
-    original_methods -= IO.methods
-    original_i_methods -= IO.instance_methods
-
-    implemented_methods -= MemFs::IO.methods
-    implemented_i_methods -= MemFs::IO.instance_methods
-  end
-
   puts "CLASS: #{class_name}"
   puts
   puts 'MISSING CLASS METHODS'
