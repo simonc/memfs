@@ -1842,6 +1842,36 @@ module MemFs
       end
     end
 
+    describe '#autoclose=' do
+      it 'sets the autoclose flag' do
+        subject.autoclose = false
+
+        expect(subject.autoclose?).to be false
+      end
+    end
+
+    describe '#autoclose?' do
+      it "returns true by default" do
+        expect(subject.autoclose?).to be true
+      end
+
+      context 'when the file will be automatically closed' do
+        before { subject.autoclose = true }
+
+        it 'returns true' do
+          expect(subject.autoclose?).to be true
+        end
+      end
+
+      context 'when the file will not be automatically closed' do
+        before { subject.autoclose = false }
+
+        it 'returns false' do
+          expect(subject.autoclose?).to be false
+        end
+      end
+    end
+
     describe '#close' do
       it 'closes the file stream' do
         subject.close

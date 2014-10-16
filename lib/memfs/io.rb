@@ -21,6 +21,8 @@ module MemFs
     end
 
     module InstanceMethods
+      attr_writer :autoclose
+
       def <<(object)
         fail IOError, 'not opened for writing' unless writable?
 
@@ -40,6 +42,10 @@ module MemFs
           fail NotImplementedError, "Unsupported advice: #{advice_type.inspect}"
         end
         nil
+      end
+
+      def autoclose?
+        @autoclose.nil? ? true : @autoclose
       end
 
       def close
