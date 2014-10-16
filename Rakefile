@@ -36,3 +36,11 @@ task :compare do
   puts
   puts implemented_i_methods - original_i_methods
 end
+
+task :console do
+  require 'irb'
+  require 'irb/completion'
+  require 'memfs'
+  ARGV.clear
+  IRB.start
+end
