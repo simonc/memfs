@@ -60,26 +60,6 @@ module MemFs
         writable? ? @external_encoding : Encoding.default_external
       end
 
-      def initialize(filename, mode = File::RDONLY, *perm_and_or_opt)
-        opt = perm_and_or_opt.last.is_a?(Hash) ? perm_and_or_opt.pop : {}
-        perm = perm_and_or_opt.shift
-        if perm_and_or_opt.size > 0
-          fail ArgumentError, 'wrong number of arguments (4 for 1..3)'
-        end
-
-        @path = filename
-        @external_encoding = opt[:external_encoding] && Encoding.find(opt[:external_encoding])
-
-        self.closed = false
-        self.opening_mode = str_to_mode_int(mode)
-
-        fs.touch(filename) if create_file?
-
-        self.entry = fs.find(filename)
-
-        entry.content.clear if truncate_file?
-      end
-
       def each(sep = $/, &block)
         return to_enum(__callee__) unless block_given?
         fail IOError, 'not opened for reading' unless readable?
