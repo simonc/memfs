@@ -48,6 +48,16 @@ module MemFs
         @autoclose.nil? ? true : @autoclose
       end
 
+      def binmode
+        @binmode = true
+        @external_encoding = Encoding::ASCII_8BIT
+        self
+      end
+
+      def binmode?
+        @binmode.nil? ? false : @binmode
+      end
+
       def close
         self.closed = true
       end
@@ -57,7 +67,11 @@ module MemFs
       end
 
       def external_encoding
-        writable? ? @external_encoding : Encoding.default_external
+        if writable?
+          @external_encoding
+        else
+          @external_encoding ||= Encoding.default_external
+        end
       end
 
       def each(sep = $/, &block)

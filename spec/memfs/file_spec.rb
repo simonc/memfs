@@ -1872,6 +1872,39 @@ module MemFs
       end
     end
 
+    describe '#binmode' do
+      it 'returns the file itself' do
+        returned_value = subject.binmode
+        expect(returned_value).to be subject
+      end
+
+      it 'sets the binmode flag for the file' do
+        subject.binmode
+        expect(subject.binmode?).to be true
+      end
+
+      it "sets the file encoding to ASCII-8BIT" do
+        subject.binmode
+
+        encoding = subject.external_encoding
+        expect(encoding).to be Encoding::ASCII_8BIT
+      end
+    end
+
+    describe '#binmode?' do
+      it "returns false by default" do
+        expect(subject.binmode?).to be false
+      end
+
+      context 'when the file is in binmode' do
+        before { subject.binmode }
+
+        it 'returns true' do
+          expect(subject.binmode?).to be true
+        end
+      end
+    end
+
     describe '#close' do
       it 'closes the file stream' do
         subject.close
