@@ -27,6 +27,21 @@ module MemFs
         content << object.to_s
       end
 
+      def advise(advice_type, offset = 0, len = 0)
+        advice_types = [
+          :dontneed,
+          :noreuse,
+          :normal,
+          :random,
+          :sequential,
+          :willneed
+        ]
+        unless advice_types.include?(advice_type)
+          fail NotImplementedError, "Unsupported advice: #{advice_type.inspect}"
+        end
+        nil
+      end
+
       def close
         self.closed = true
       end

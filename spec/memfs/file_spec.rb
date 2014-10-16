@@ -1814,6 +1814,34 @@ module MemFs
       end
     end
 
+    describe '#advise' do
+      it 'returns nil' do
+        returned_value = subject.advise(:normal)
+        expect(returned_value).to be_nil
+      end
+
+      shared_examples 'advise working' do |advise_type|
+        context "when the #{advise_type.inspect} advise type is given" do
+          it 'does not raise an error ' do
+            expect { subject.advise(advise_type) }.not_to raise_error
+          end
+        end
+      end
+
+      it_behaves_like 'advise working', :normal
+      it_behaves_like 'advise working', :sequential
+      it_behaves_like 'advise working', :random
+      it_behaves_like 'advise working', :willneed
+      it_behaves_like 'advise working', :dontneed
+      it_behaves_like 'advise working', :noreuse
+
+      context 'when a wrong advise type is given' do
+        it 'raises an exception' do
+          expect { subject.advise(:wrong) }.to raise_error NotImplementedError
+        end
+      end
+    end
+
     describe '#close' do
       it 'closes the file stream' do
         subject.close
