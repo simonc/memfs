@@ -1933,6 +1933,10 @@ module MemFs
       it_behaves_like 'aliased method', :bytes, :each_byte
     end
 
+    describe '#chars' do
+      it_behaves_like 'aliased method', :chars, :each_char
+    end
+
     describe '#chmod' do
       it 'changes permission bits on the file' do
         subject.chmod 0777
@@ -2125,6 +2129,43 @@ module MemFs
       context 'when no block is given' do
         it 'returns an enumerator' do
           expect(subject.each_byte.next).to eq 116
+        end
+      end
+    end
+
+    describe '#each_char' do
+      before do
+        subject_class.open('/test-file', 'w') { |f| f << 'test' }
+      end
+
+      it 'calls the given block once for each byte of the file' do
+        expect { |blk|
+          subject.each_char(&blk)
+        }.to yield_successive_args 't', 'e', 's', 't'
+      end
+
+      it 'returns the file itself' do
+        returned_value = subject.each_char {}
+        expect(returned_value).to be subject
+      end
+
+      context 'when the file is not open for reading' do
+        it 'raises an exception' do
+          expect {
+            write_subject.each_char { |b| }
+          }.to raise_error IOError
+        end
+
+        context 'when no block is given' do
+          it 'does not raise an exception' do
+            expect { write_subject.each_char }.not_to raise_error
+          end
+        end
+      end
+
+      context 'when no block is given' do
+        it 'returns an enumerator' do
+          expect(subject.each_char.next).to eq 't'
         end
       end
     end

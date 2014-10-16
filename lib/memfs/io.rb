@@ -89,6 +89,14 @@ module MemFs
       end
       alias_method :bytes, :each_byte
 
+      def each_char(&block)
+        return to_enum(__callee__) unless block_given?
+        fail IOError, 'not opened for reading' unless readable?
+        content.each_char { |char| block.call(char) }
+        self
+      end
+      alias_method :chars, :each_char
+
       def pos
         entry.pos
       end
