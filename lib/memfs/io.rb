@@ -21,6 +21,12 @@ module MemFs
     end
 
     module InstanceMethods
+      def <<(object)
+        fail IOError, 'not opened for writing' unless writable?
+
+        content << object.to_s
+      end
+
       def close
         self.closed = true
       end

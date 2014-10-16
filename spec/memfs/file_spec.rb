@@ -1783,6 +1783,37 @@ module MemFs
       end
     end
 
+    describe '#<<' do
+      it 'writes the given string in the file' do
+        write_subject << 'Hello'
+
+        content = write_subject.send(:content)
+        expect(content).to eq 'Hello'
+      end
+
+      it 'can be chained' do
+        write_subject << 'Hello ' << "World\n"
+
+        content = write_subject.send(:content)
+        expect(content).to eq "Hello World\n"
+      end
+
+      context 'when the given object is not a string' do
+        it 'converts the object to a string with to_s' do
+          write_subject << 42
+
+          content = write_subject.send(:content)
+          expect(content).to eq '42'
+        end
+      end
+
+      context 'when the file is not opened for writing' do
+        it 'raises an exception' do
+          expect { subject << 'Hello' }.to raise_error IOError
+        end
+      end
+    end
+
     describe '#close' do
       it 'closes the file stream' do
         subject.close
