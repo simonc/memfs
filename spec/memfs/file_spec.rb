@@ -2,14 +2,13 @@ require 'spec_helper'
 
 module MemFs
   describe File do
-    let(:subject_class) { MemFs::File }
-
     subject { subject_class.new('/test-file') }
+    let(:subject_class) { MemFs::File }
     let(:write_subject) { subject_class.new('/test-file', 'w') }
 
     let(:random_string) { ('a'..'z').to_a.sample(10).join }
 
-    before :each do
+    before do
       fs.mkdir '/test-dir'
       fs.touch '/test-file', '/test-file2'
       subject_class.symlink '/test-file', '/test-link'
@@ -72,6 +71,7 @@ module MemFs
             fs.touch('/block-file')
             file = fs.find('/block-file')
             file.block_device = true
+
             blockdev = subject_class.blockdev?('/block-file')
             expect(blockdev).to be true
           end
@@ -177,8 +177,8 @@ module MemFs
       end
 
       it 'returns the number of files' do
-        return_value = subject_class.chown(42, 42, '/test-file', '/test-file2')
-        expect(return_value).to be 2
+        returned_value = subject_class.chown(42, 42, '/test-file', '/test-file2')
+        expect(returned_value).to be 2
       end
 
       it 'ignores nil user id' do
@@ -268,15 +268,15 @@ module MemFs
     describe '.directory?' do
       context 'when the named entry is a directory' do
         it 'returns true' do
-          return_value = subject_class.directory?('/test-dir')
-          expect(return_value).to be true
+          is_directory = subject_class.directory?('/test-dir')
+          expect(is_directory).to be true
         end
       end
 
       context 'when the named entry is not a directory' do
         it 'returns false' do
-          return_value = subject_class.directory?('/test-file')
-          expect(return_value).to be false
+          is_directory = subject_class.directory?('/test-file')
+          expect(is_directory).to be false
         end
       end
     end
@@ -298,15 +298,15 @@ module MemFs
       let(:gid) { 0 }
       let(:uid) { 0 }
 
-      before :each do
+      before do
         subject_class.chmod access, '/test-file'
         subject_class.chown uid, gid, '/test-file'
       end
 
       context 'when the file is not executable by anyone' do
         it 'return false' do
-          return_value = subject_class.executable?('/test-file')
-          expect(return_value).to be false
+          executable = subject_class.executable?('/test-file')
+          expect(executable).to be false
         end
       end
 
@@ -319,8 +319,8 @@ module MemFs
           let(:uid) { Process.euid }
 
           it 'returns true' do
-            return_value = subject_class.executable?('/test-file')
-            expect(return_value).to be true
+            executable = subject_class.executable?('/test-file')
+            expect(executable).to be true
           end
         end
       end
@@ -332,8 +332,8 @@ module MemFs
           let(:gid) { Process.egid }
 
           it 'returns true' do
-            return_value = subject_class.executable?('/test-file')
-            expect(return_value).to be true
+            executable = subject_class.executable?('/test-file')
+            expect(executable).to be true
           end
         end
       end
@@ -343,16 +343,16 @@ module MemFs
 
         context 'and the user has no specific right on it' do
           it 'returns true' do
-            return_value = subject_class.executable?('/test-file')
-            expect(return_value).to be true
+            executable = subject_class.executable?('/test-file')
+            expect(executable).to be true
           end
         end
       end
 
       context 'when the file does not exist' do
         it 'returns false' do
-          return_value = subject_class.executable?('/no-file')
-          expect(return_value).to be false
+          executable = subject_class.executable?('/no-file')
+          expect(executable).to be false
         end
       end
     end
@@ -362,15 +362,15 @@ module MemFs
       let(:gid) { 0 }
       let(:uid) { 0 }
 
-      before :each do
+      before do
         subject_class.chmod access, '/test-file'
         subject_class.chown uid, gid, '/test-file'
       end
 
       context 'when the file is not executable by anyone' do
         it 'return false' do
-          return_value = subject_class.executable_real?('/test-file')
-          expect(return_value).to be false
+          executable_real = subject_class.executable_real?('/test-file')
+          expect(executable_real).to be false
         end
       end
 
@@ -378,13 +378,13 @@ module MemFs
         let(:access) { MemFs::Fake::Entry::UEXEC }
 
         context 'and the current user owns the file' do
-          before { subject_class.chown uid, 0, '/test-file' }
-
           let(:uid) { Process.uid }
 
+          before { subject_class.chown uid, 0, '/test-file' }
+
           it 'returns true' do
-            return_value = subject_class.executable_real?('/test-file')
-            expect(return_value).to be true
+            executable_real = subject_class.executable_real?('/test-file')
+            expect(executable_real).to be true
           end
         end
       end
@@ -396,8 +396,8 @@ module MemFs
           let(:gid) { Process.gid }
 
           it 'returns true' do
-            return_value = subject_class.executable_real?('/test-file')
-            expect(return_value).to be true
+            executable_real = subject_class.executable_real?('/test-file')
+            expect(executable_real).to be true
           end
         end
       end
@@ -407,16 +407,16 @@ module MemFs
 
         context 'and the user has no specific right on it' do
           it 'returns true' do
-            return_value = subject_class.executable_real?('/test-file')
-            expect(return_value).to be true
+            executable_real = subject_class.executable_real?('/test-file')
+            expect(executable_real).to be true
           end
         end
       end
 
       context 'when the file does not exist' do
         it 'returns false' do
-          return_value = subject_class.executable_real?('/no-file')
-          expect(return_value).to be false
+          executable_real = subject_class.executable_real?('/no-file')
+          expect(executable_real).to be false
         end
       end
     end
@@ -424,15 +424,15 @@ module MemFs
     describe '.exists?' do
       context 'when the file exists' do
         it 'returns true' do
-          return_value = subject_class.exists?('/test-file')
-          expect(return_value).to be true
+          exists = subject_class.exists?('/test-file')
+          expect(exists).to be true
         end
       end
 
       context 'when the file does not exist' do
         it 'returns false' do
-          return_value = subject_class.exists?('/no-file')
-          expect(return_value).to be false
+          exists = subject_class.exists?('/no-file')
+          expect(exists).to be false
         end
       end
     end
@@ -500,23 +500,23 @@ module MemFs
       context 'when the named file exists' do
         context 'and it is a regular file' do
           it 'returns true' do
-            return_value = subject_class.file?('/test-file')
-            expect(return_value).to be true
+            is_file = subject_class.file?('/test-file')
+            expect(is_file).to be true
           end
         end
 
         context 'and it is not a regular file' do
           it 'returns false' do
-            return_value = subject_class.file?('/test-dir')
-            expect(return_value).to be false
+            is_file = subject_class.file?('/test-dir')
+            expect(is_file).to be false
           end
         end
       end
 
       context 'when the named file does not exist' do
         it 'returns false' do
-          return_value = subject_class.file?('/no-file')
-          expect(return_value).to be false
+          is_file = subject_class.file?('/no-file')
+          expect(is_file).to be false
         end
       end
     end
@@ -524,15 +524,15 @@ module MemFs
     describe '.fnmatch' do
       context 'when the given path matches against the given pattern' do
         it 'returns true' do
-          return_value = subject_class.fnmatch('c?t', 'cat')
-          expect(return_value).to be true
+          matching = subject_class.fnmatch('c?t', 'cat')
+          expect(matching).to be true
         end
       end
 
       context 'when the given path does not match against the given pattern' do
         it 'returns false' do
-          return_value = File.fnmatch('c?t', 'tac')
-          expect(return_value).to be false
+          matching = File.fnmatch('c?t', 'tac')
+          expect(matching).to be false
         end
       end
     end
@@ -604,28 +604,33 @@ module MemFs
       context 'when the named file exists' do
         context 'and the effective user group owns of the file' do
           it 'returns true' do
-            subject_class.chown(0, Process.egid, '/test-file')
-            expect(File.grpowned?('/test-file')).to be true
+            subject_class.chown 0, Process.egid, '/test-file'
+
+            grpowned = File.grpowned?('/test-file')
+            expect(grpowned).to be true
           end
         end
 
         context 'and the effective user group does not own of the file' do
           it 'returns false' do
-            subject_class.chown(0, 0, '/test-file')
-            expect(File.grpowned?('/test-file')).to be false
+            subject_class.chown 0, 0, '/test-file'
+
+            grpowned = File.grpowned?('/test-file')
+            expect(grpowned).to be false
           end
         end
       end
 
       context 'when the named file does not exist' do
         it 'returns false' do
-          expect(File.grpowned?('/no-file')).to be false
+          grpowned = File.grpowned?('/no-file')
+          expect(grpowned).to be false
         end
       end
     end
 
     describe '.identical?' do
-      before :each do
+      before do
         subject_class.open('/test-file', 'w') { |f| f.puts 'test' }
         subject_class.open('/test-file2', 'w') { |f| f.puts 'test' }
         subject_class.symlink '/test-file', '/test-file-link'
@@ -635,32 +640,37 @@ module MemFs
 
       context 'when two paths represent the same path' do
         it 'returns true' do
-          expect(subject_class.identical?('/test-file', '/test-file')).to be true
+          identical = subject_class.identical?('/test-file', '/test-file')
+          expect(identical).to be true
         end
       end
 
       context 'when two paths do not represent the same file' do
         it 'returns false' do
-          expect(subject_class.identical?('/test-file', '/test-file2')).to be false
+          identical = subject_class.identical?('/test-file', '/test-file2')
+          expect(identical).to be false
         end
       end
 
       context 'when one of the paths does not exist' do
         it 'returns false' do
-          expect(subject_class.identical?('/test-file', '/no-file')).to be false
+          identical = subject_class.identical?('/test-file', '/no-file')
+          expect(identical).to be false
         end
       end
 
       context 'when a path is a symlink' do
         context 'and the linked file is the same as the other path' do
           it 'returns true' do
-            expect(subject_class.identical?('/test-file', '/test-file-link')).to be true
+            identical = subject_class.identical?('/test-file', '/test-file-link')
+            expect(identical).to be true
           end
         end
 
         context 'and the linked file is different from the other path' do
           it 'returns false' do
-            expect(subject_class.identical?('/test-file2', '/test-file-link')).to be false
+            identical = subject_class.identical?('/test-file2', '/test-file-link')
+            expect(identical).to be false
           end
         end
       end
@@ -668,92 +678,108 @@ module MemFs
       context 'when the two paths are symlinks' do
         context 'and both links point to the same file' do
           it 'returns true' do
-            expect(subject_class.identical?('/test-file-link', '/test-file-link2')).to be true
+            identical = subject_class.identical?('/test-file-link', '/test-file-link2')
+            expect(identical).to be true
           end
         end
 
         context 'and both links do not point to the same file' do
           it 'returns false' do
-            expect(subject_class.identical?('/test-file-link', '/test-file2-link')).to be false
+            identical = subject_class.identical?('/test-file-link', '/test-file2-link')
+            expect(identical).to be false
           end
         end
       end
     end
 
     describe '.join' do
-      it 'Returns a new string formed by joining the strings using File::SEPARATOR' do
-        expect(subject_class.join('a', 'b', 'c')).to eq('a/b/c')
+      it 'returns a new string formed by joining the strings using File::SEPARATOR' do
+        returned_value = subject_class.join('a', 'b', 'c')
+        expect(returned_value).to eq 'a/b/c'
       end
     end
 
     describe '.lchmod' do
       context 'when the named file is a regular file' do
         it 'acts like chmod' do
-          subject_class.lchmod(0777, '/test-file')
-          expect(subject_class.stat('/test-file').mode).to eq(0100777)
+          subject_class.lchmod 0777, '/test-file'
+
+          mode = subject_class.stat('/test-file').mode
+          expect(mode).to be 0100777
         end
       end
 
       context 'when the named file is a symlink' do
         it 'changes permission bits on the symlink' do
-          subject_class.lchmod(0777, '/test-link')
-          expect(subject_class.lstat('/test-link').mode).to eq(0100777)
+          subject_class.lchmod 0777, '/test-link'
+
+          mode = subject_class.lstat('/test-link').mode
+          expect(mode).to be 0100777
         end
 
         it "does not change permission bits on the link's target" do
+          old_mode = subject_class.stat('/test-file').mode
+          subject_class.lchmod 0777, '/test-link'
+
           mode = subject_class.stat('/test-file').mode
-          subject_class.lchmod(0777, '/test-link')
-          expect(subject_class.stat('/test-file').mode).to eq(mode)
+          expect(mode).to eq old_mode
         end
       end
     end
 
     describe '.link' do
-      before :each do
+      before do
         subject_class.open('/test-file', 'w') { |f| f.puts 'test' }
       end
 
       it 'creates a new name for an existing file using a hard link' do
-        subject_class.link('/test-file', '/new-file')
-        expect(subject_class.read('/new-file')).to eq(subject_class.read('/test-file'))
+        subject_class.link '/test-file', '/new-file'
+
+        original_content = subject_class.read('/test-file')
+        copy_content = subject_class.read('/new-file')
+        expect(copy_content).to eq original_content
       end
 
       it 'returns zero' do
-        expect(subject_class.link('/test-file', '/new-file')).to eq(0)
+        returned_value = subject_class.link('/test-file', '/new-file')
+        expect(returned_value).to be_zero
       end
 
       context 'when +old_name+ does not exist' do
         it 'raises an exception' do
           expect {
-            subject_class.link('/no-file', '/nowhere')
-          }.to raise_error(Errno::ENOENT)
+            subject_class.link '/no-file', '/nowhere'
+          }.to raise_error Errno::ENOENT
         end
       end
 
       context 'when +new_name+ already exists' do
         it 'raises an exception' do
           subject_class.open('/test-file2', 'w') { |f| f.puts 'test2' }
+
           expect {
-            subject_class.link('/test-file', '/test-file2')
-          }.to raise_error(SystemCallError)
+            subject_class.link '/test-file', '/test-file2'
+          }.to raise_error SystemCallError
         end
       end
     end
 
     describe '.lstat' do
       it 'returns a File::Stat object for the named file' do
-        expect(subject_class.lstat('/test-file')).to be_a(File::Stat)
+        stat = subject_class.lstat('/test-file')
+        expect(stat).to be_a File::Stat
       end
 
       context 'when the named file does not exist' do
         it 'raises an exception' do
-          expect { subject_class.lstat('/no-file') }.to raise_error(Errno::ENOENT)
+          expect { subject_class.lstat '/no-file' }.to raise_error Errno::ENOENT
         end
       end
 
       context 'when the named file is a symlink' do
         it 'does not follow the last symbolic link' do
-          expect(subject_class.lstat('/test-link').symlink?).to be true
+          is_symlink = subject_class.lstat('/test-link').symlink?
+          expect(is_symlink).to be true
         end
 
         context 'and its target does not exist' do
@@ -769,24 +795,26 @@ module MemFs
     describe '.new' do
       context 'when the mode is provided' do
         context 'and it is an integer' do
+          subject { subject_class.new('/test-file', File::RDWR) }
+
           it 'sets the mode to the integer value' do
-            file = subject_class.new('/test-file', File::RDWR)
-            expect(file.send(:opening_mode)).to eq(File::RDWR)
+            expect(subject.send(:opening_mode)).to eq File::RDWR
           end
         end
 
         context 'and it is a string' do
+          subject { subject_class.new('/test-file', 'r+') }
+
           it 'sets the mode to the integer value' do
-            file = subject_class.new('/test-file', 'r+')
-            expect(file.send(:opening_mode)).to eq(File::RDWR)
+            expect(subject.send(:opening_mode)).to eq File::RDWR
           end
         end
 
         context 'and it specifies that the file must be created' do
           context 'and the file already exists' do
             it 'changes the mtime of the file' do
-              expect(fs).to receive(:touch).with('/test-file')
-              subject_class.new('/test-file', 'w')
+              subject_class.new '/test-file', 'w'
+              subject_class.exist?('/test-file')
             end
           end
         end
@@ -806,7 +834,7 @@ module MemFs
 
       context 'when no argument is given' do
         it 'raises an exception' do
-          expect { subject_class.new }.to raise_error(ArgumentError)
+          expect { subject_class.new }.to raise_error ArgumentError
         end
       end
 
@@ -821,40 +849,43 @@ module MemFs
       context 'when the named file exists' do
         context 'and the effective user owns of the file' do
           it 'returns true' do
-            subject_class.chown(Process.euid, 0, '/test-file')
-            expect(File.owned?('/test-file')).to be true
+            subject_class.chown Process.euid, 0, '/test-file'
+
+            owned = File.owned?('/test-file')
+            expect(owned).to be true
           end
         end
 
         context 'and the effective user does not own of the file' do
           it 'returns false' do
-            subject_class.chown(0, 0, '/test-file')
-            expect(File.owned?('/test-file')).to be false
+            subject_class.chown 0, 0, '/test-file'
+
+            owned = File.owned?('/test-file')
+            expect(owned).to be false
           end
         end
       end
 
       context 'when the named file does not exist' do
         it 'returns false' do
-          expect(File.owned?('/no-file')).to be false
+          owned = File.owned?('/no-file')
+          expect(owned).to be false
         end
       end
     end
 
     describe '.path' do
       context 'when the path is a string' do
-        let(:path) { '/some/path' }
-
         it 'returns the string representation of the path' do
-          expect(subject_class.path(path)).to eq('/some/path')
+          path = subject_class.path('/some/path')
+          expect(path).to eq '/some/path'
         end
       end
 
       context 'when the path is a Pathname' do
-        let(:path) { Pathname.new('/some/path') }
-
         it 'returns the string representation of the path' do
-          expect(subject_class.path(path)).to eq('/some/path')
+          path = subject_class.path(Pathname.new('/some/path'))
+          expect(path).to eq '/some/path'
         end
       end
     end
@@ -864,42 +895,46 @@ module MemFs
 
       context 'when the named file is not a pipe' do
         it 'returns false' do
-          pipe = File.pipe?('/test-file')
-          expect(pipe).to be false
+          is_pipe = File.pipe?('/test-file')
+          expect(is_pipe).to be false
         end
       end
     end
 
     describe '.read' do
-      before :each do
+      before do
         subject_class.open('/test-file', 'w') { |f| f.puts 'test' }
       end
 
       it 'reads the content of the given file' do
-        expect(subject_class.read('/test-file')).to eq("test\n")
+        read_content = subject_class.read('/test-file')
+        expect(read_content).to eq "test\n"
       end
 
       context 'when +lenght+ is provided' do
         it 'reads only +length+ characters' do
-          expect(subject_class.read('/test-file', 2)).to eq('te')
+          read_content = subject_class.read('/test-file', 2)
+          expect(read_content).to eq 'te'
         end
 
         context 'when +length+ is bigger than the file size' do
           it 'reads until the end of the file' do
-            expect(subject_class.read('/test-file', 1000)).to eq("test\n")
+            read_content = subject_class.read('/test-file', 1000)
+            expect(read_content).to eq "test\n"
           end
         end
       end
 
       context 'when +offset+ is provided' do
         it 'starts reading from the offset' do
-          expect(subject_class.read('/test-file', 2, 1)).to eq('es')
+          read_content = subject_class.read('/test-file', 2, 1)
+          expect(read_content).to eq 'es'
         end
 
         it 'raises an error if offset is negative' do
           expect {
-            subject_class.read('/test-file', 2, -1)
-          }.to raise_error(Errno::EINVAL)
+            subject_class.read '/test-file', 2, -1
+          }.to raise_error Errno::EINVAL
         end
       end
 
@@ -929,9 +964,9 @@ module MemFs
       let(:gid) { 0 }
       let(:uid) { 0 }
 
-      before :each do
-        subject_class.chmod(access, '/test-file')
-        subject_class.chown(uid, gid, '/test-file')
+      before do
+        subject_class.chmod access, '/test-file'
+        subject_class.chown uid, gid, '/test-file'
       end
 
       context 'when the file is not readable by anyone' do
@@ -945,8 +980,9 @@ module MemFs
         let(:access) { MemFs::Fake::Entry::UREAD }
 
         context 'and the current user owns the file' do
-          before(:each) { subject_class.chown(uid, 0, '/test-file') }
           let(:uid) { Process.euid }
+
+          before { subject_class.chown uid, 0, '/test-file' }
 
           it 'returns true' do
             readable = subject_class.readable?('/test-file')
@@ -992,15 +1028,15 @@ module MemFs
       let(:gid) { 0 }
       let(:uid) { 0 }
 
-      before :each do
-        subject_class.chmod(access, '/test-file')
-        subject_class.chown(uid, gid, '/test-file')
+      before do
+        subject_class.chmod access, '/test-file'
+        subject_class.chown uid, gid, '/test-file'
       end
 
       context 'when the file is not readable by anyone' do
         it 'return false' do
-          readable = subject_class.readable_real?('/test-file')
-          expect(readable).to be false
+          readable_real = subject_class.readable_real?('/test-file')
+          expect(readable_real).to be false
         end
       end
 
@@ -1008,12 +1044,13 @@ module MemFs
         let(:access) { MemFs::Fake::Entry::UREAD }
 
         context 'and the current user owns the file' do
-          before(:each) { subject_class.chown(uid, 0, '/test-file') }
           let(:uid) { Process.uid }
 
+          before { subject_class.chown uid, 0, '/test-file' }
+
           it 'returns true' do
-            readable = subject_class.readable_real?('/test-file')
-            expect(readable).to be true
+            readable_real = subject_class.readable_real?('/test-file')
+            expect(readable_real).to be true
           end
         end
       end
@@ -1025,8 +1062,8 @@ module MemFs
           let(:gid) { Process.gid }
 
           it 'returns true' do
-            readable = subject_class.readable_real?('/test-file')
-            expect(readable).to be true
+            readable_real = subject_class.readable_real?('/test-file')
+            expect(readable_real).to be true
           end
         end
       end
@@ -1036,37 +1073,37 @@ module MemFs
 
         context 'and the user has no specific right on it' do
           it 'returns true' do
-            readable = subject_class.readable_real?('/test-file')
-            expect(readable).to be true
+            readable_real = subject_class.readable_real?('/test-file')
+            expect(readable_real).to be true
           end
         end
       end
 
       context 'when the file does not exist' do
         it 'returns false' do
-          readable = subject_class.readable_real?('/no-file')
-          expect(readable).to be false
+          readable_real = subject_class.readable_real?('/no-file')
+          expect(readable_real).to be false
         end
       end
     end
 
     describe '.readlink' do
       it 'returns the name of the file referenced by the given link' do
-        expect(subject_class.readlink('/test-link')).to eq('/test-file')
+        expect(subject_class.readlink('/test-link')).to eq '/test-file'
       end
     end
 
     describe '.realdirpath' do
-      before :each do
-        fs.mkdir('/test-dir/sub-dir')
-        fs.symlink('/test-dir/sub-dir', '/test-dir/sub-dir-link')
-        fs.touch('/test-dir/sub-dir/test-file')
+      before do
+        fs.mkdir '/test-dir/sub-dir'
+        fs.symlink '/test-dir/sub-dir', '/test-dir/sub-dir-link'
+        fs.touch '/test-dir/sub-dir/test-file'
       end
 
       context 'when the path does not contain any symlink or useless dots' do
         it 'returns the path itself' do
           path = subject_class.realdirpath('/test-file')
-          expect(path).to eq('/test-file')
+          expect(path).to eq '/test-file'
         end
       end
 
@@ -1074,14 +1111,14 @@ module MemFs
         context 'and the symlink is a middle part' do
           it 'returns the path with the symlink dereferrenced' do
             path = subject_class.realdirpath('/test-dir/sub-dir-link/test-file')
-            expect(path).to eq('/test-dir/sub-dir/test-file')
+            expect(path).to eq '/test-dir/sub-dir/test-file'
           end
         end
 
         context 'and the symlink is the last part' do
           it 'returns the path with the symlink dereferrenced' do
             path = subject_class.realdirpath('/test-dir/sub-dir-link')
-            expect(path).to eq('/test-dir/sub-dir')
+            expect(path).to eq '/test-dir/sub-dir'
           end
         end
       end
@@ -1089,36 +1126,36 @@ module MemFs
       context 'when the path contains useless dots' do
         it 'returns the path with the useless dots interpolated' do
           path = subject_class.realdirpath('/test-dir/../test-dir/./sub-dir/test-file')
-          expect(path).to eq('/test-dir/sub-dir/test-file')
+          expect(path).to eq '/test-dir/sub-dir/test-file'
         end
       end
 
       context 'when the given path is relative' do
         context 'and +dir_string+ is not provided' do
           it 'uses the current working directory has base directory' do
-            fs.chdir('/test-dir')
+            fs.chdir '/test-dir'
             path = subject_class.realdirpath('../test-dir/./sub-dir/test-file')
-            expect(path).to eq('/test-dir/sub-dir/test-file')
+            expect(path).to eq '/test-dir/sub-dir/test-file'
           end
         end
 
         context 'and +dir_string+ is provided' do
           it 'uses the given directory has base directory' do
             path = subject_class.realdirpath('../test-dir/./sub-dir/test-file', '/test-dir')
-            expect(path).to eq('/test-dir/sub-dir/test-file')
+            expect(path).to eq '/test-dir/sub-dir/test-file'
           end
         end
       end
 
       context 'when the last part of the given path is a symlink' do
         context 'and its target does not exist' do
-          before :each do
-            fs.symlink('/test-dir/sub-dir/test', '/test-dir/sub-dir/test-link')
+          before do
+            fs.symlink '/test-dir/sub-dir/test', '/test-dir/sub-dir/test-link'
           end
 
           it 'uses the name of the target in the resulting path' do
             path = subject_class.realdirpath('/test-dir/sub-dir/test-link')
-            expect(path).to eq('/test-dir/sub-dir/test')
+            expect(path).to eq '/test-dir/sub-dir/test'
           end
         end
       end
@@ -1126,30 +1163,30 @@ module MemFs
       context 'when the last part of the given path does not exist' do
         it 'uses its name in the resulting path' do
           path = subject_class.realdirpath('/test-dir/sub-dir/test')
-          expect(path).to eq('/test-dir/sub-dir/test')
+          expect(path).to eq '/test-dir/sub-dir/test'
         end
       end
 
       context 'when a middle part of the given path does not exist' do
         it 'raises an exception' do
           expect {
-            subject_class.realdirpath('/no-dir/test-file')
+            subject_class.realdirpath '/no-dir/test-file'
           }.to raise_error
         end
       end
     end
 
     describe '.realpath' do
-      before :each do
-        fs.mkdir('/test-dir/sub-dir')
-        fs.symlink('/test-dir/sub-dir', '/test-dir/sub-dir-link')
-        fs.touch('/test-dir/sub-dir/test-file')
+      before do
+        fs.mkdir '/test-dir/sub-dir'
+        fs.symlink '/test-dir/sub-dir', '/test-dir/sub-dir-link'
+        fs.touch '/test-dir/sub-dir/test-file'
       end
 
       context 'when the path does not contain any symlink or useless dots' do
         it 'returns the path itself' do
           path = subject_class.realpath('/test-file')
-          expect(path).to eq('/test-file')
+          expect(path).to eq '/test-file'
         end
       end
 
@@ -1157,14 +1194,14 @@ module MemFs
         context 'and the symlink is a middle part' do
           it 'returns the path with the symlink dereferrenced' do
             path = subject_class.realpath('/test-dir/sub-dir-link/test-file')
-            expect(path).to eq('/test-dir/sub-dir/test-file')
+            expect(path).to eq '/test-dir/sub-dir/test-file'
           end
         end
 
         context 'and the symlink is the last part' do
           it 'returns the path with the symlink dereferrenced' do
             path = subject_class.realpath('/test-dir/sub-dir-link')
-            expect(path).to eq('/test-dir/sub-dir')
+            expect(path).to eq '/test-dir/sub-dir'
           end
         end
       end
@@ -1172,23 +1209,24 @@ module MemFs
       context 'when the path contains useless dots' do
         it 'returns the path with the useless dots interpolated' do
           path = subject_class.realpath('/test-dir/../test-dir/./sub-dir/test-file')
-          expect(path).to eq('/test-dir/sub-dir/test-file')
+          expect(path).to eq '/test-dir/sub-dir/test-file'
         end
       end
 
       context 'when the given path is relative' do
         context 'and +dir_string+ is not provided' do
           it 'uses the current working directory has base directory' do
-            fs.chdir('/test-dir')
+            fs.chdir '/test-dir'
+
             path = subject_class.realpath('../test-dir/./sub-dir/test-file')
-            expect(path).to eq('/test-dir/sub-dir/test-file')
+            expect(path).to eq '/test-dir/sub-dir/test-file'
           end
         end
 
         context 'and +dir_string+ is provided' do
           it 'uses the given directory has base directory' do
             path = subject_class.realpath('../test-dir/./sub-dir/test-file', '/test-dir')
-            expect(path).to eq('/test-dir/sub-dir/test-file')
+            expect(path).to eq '/test-dir/sub-dir/test-file'
           end
         end
       end
@@ -1196,7 +1234,7 @@ module MemFs
       context 'when a part of the given path does not exist' do
         it 'raises an exception' do
           expect {
-            subject_class.realpath('/no-dir/test-file')
+            subject_class.realpath '/no-dir/test-file'
           }.to raise_error
         end
       end
@@ -1204,12 +1242,15 @@ module MemFs
 
     describe '.rename' do
       it 'renames the given file to the new name' do
-        subject_class.rename('/test-file', '/test-file2')
-        expect(subject_class.exists?('/test-file2')).to be true
+        subject_class.rename '/test-file', '/test-file2'
+
+        exists = subject_class.exists?('/test-file2')
+        expect(exists).to be true
       end
 
       it 'returns zero' do
-        expect(subject_class.rename('/test-file', '/test-file2')).to eq(0)
+        returned_value = subject_class.rename('/test-file', '/test-file2')
+        expect(returned_value).to be_zero
       end
     end
 
@@ -1217,21 +1258,25 @@ module MemFs
       context 'when the named file exists' do
         context 'and the named file has the setgid bit set' do
           it 'returns true' do
-            fs.chmod(02000, '/test-file')
-            expect(File.setgid?('/test-file')).to be true
+            fs.chmod 02000, '/test-file'
+
+            setgid = File.setgid?('/test-file')
+            expect(setgid).to be true
           end
         end
 
         context 'and the named file does not have the setgid bit set' do
           it 'returns false' do
-            expect(File.setgid?('/test-file')).not_to be true
+            setgid = File.setgid?('/test-file')
+            expect(setgid).not_to be true
           end
         end
       end
 
       context 'when the named file does not exist' do
         it 'returns false' do
-          expect(File.setgid?('/no-file')).to be false
+          setgid = File.setgid?('/no-file')
+          expect(setgid).to be false
         end
       end
     end
@@ -1240,21 +1285,25 @@ module MemFs
       context 'when the named file exists' do
         context 'and the named file has the setuid bit set' do
           it 'returns true' do
-            fs.chmod(04000, '/test-file')
-            expect(File.setuid?('/test-file')).to be true
+            fs.chmod 04000, '/test-file'
+
+            setuid = File.setuid?('/test-file')
+            expect(setuid).to be true
           end
         end
 
         context 'and the named file does not have the setuid bit set' do
           it 'returns false' do
-            expect(File.setuid?('/test-file')).not_to be true
+            setuid = File.setuid?('/test-file')
+            expect(setuid).not_to be true
           end
         end
       end
 
       context 'when the named file does not exist' do
         it 'returns false' do
-          expect(File.setuid?('/no-file')).to be false
+          setuid = File.setuid?('/no-file')
+          expect(setuid).to be false
         end
       end
     end
@@ -1262,7 +1311,9 @@ module MemFs
     describe '.size' do
       it 'returns the size of the file' do
         subject_class.open('/test-file', 'w') { |f| f.puts random_string }
-        expect(subject_class.size('/test-file')).to eq(random_string.size + 1)
+
+        size = subject_class.size('/test-file')
+        expect(size).to eq random_string.size + 1
       end
     end
 
@@ -1270,21 +1321,25 @@ module MemFs
       context 'when the named file exists' do
         context 'and it is empty' do
           it 'returns false' do
-            expect(File.size?('/empty-file')).to be false
+            size = File.size?('/empty-file')
+            expect(size).to be false
           end
         end
 
         context 'and it is not empty' do
           it 'returns the size of the file' do
             File.open('/content-file', 'w') { |f| f.write 'test' }
-            expect(File.size?('/content-file')).to eq(4)
+
+            size = File.size?('/content-file')
+            expect(size).to be 4
           end
         end
       end
 
       context 'when the named file does not exist' do
         it 'returns false' do
-          expect(File.size?('/no-file')).to be false
+          size = File.size?('/no-file')
+          expect(size).to be false
         end
       end
     end
@@ -1294,154 +1349,175 @@ module MemFs
 
       context 'when the named file is not a socket' do
         it 'returns false' do
-          socket = File.socket?('/test-file')
-          expect(socket).to be false
+          is_socket = File.socket?('/test-file')
+          expect(is_socket).to be false
         end
       end
     end
 
     describe '.split' do
       it 'splits the given string into a directory and a file component' do
-        result = subject_class.split('/path/to/some-file')
-        expect(result).to eq(['/path/to', 'some-file'])
+        returned_value = subject_class.split('/path/to/some-file')
+        expect(returned_value).to eq ['/path/to', 'some-file']
       end
     end
 
     describe '.stat' do
       it 'returns a File::Stat object for the named file' do
-        expect(subject_class.stat('/test-file')).to be_a(File::Stat)
+        stat = subject_class.stat('/test-file')
+        expect(stat).to be_a File::Stat
       end
 
       it 'follows the last symbolic link' do
-        expect(subject_class.stat('/test-link').symlink?).to be false
+        stat = subject_class.stat('/test-link').symlink?
+        expect(stat).to be false
       end
 
       context 'when the named file does not exist' do
         it 'raises an exception' do
-          expect { subject_class.stat('/no-file') }.to raise_error(Errno::ENOENT)
+          expect {
+            subject_class.stat('/no-file')
+          }.to raise_error Errno::ENOENT
         end
       end
 
       context 'when the named file is a symlink' do
         context 'and its target does not exist' do
           it 'raises an exception' do
-            expect { subject_class.stat('/no-link') }.to raise_error(Errno::ENOENT)
+            expect {
+              subject_class.stat('/no-link')
+            }.to raise_error Errno::ENOENT
           end
         end
       end
 
       it 'always returns a new object' do
-        stat = subject_class.stat('/test-file')
-        expect(subject_class.stat('/test-file')).not_to be(stat)
+        stat_1 = subject_class.stat('/test-file')
+        stat_2 = subject_class.stat('/test-file')
+
+        expect(stat_2).not_to be stat_1
       end
     end
 
     describe '.sticky?' do
       context 'when the named file exists' do
         it 'returns true if the named file has the sticky bit set' do
-          fs.touch('/test-file')
-          fs.chmod(01777, '/test-file')
-          expect(File.sticky?('/test-file')).to be true
+          fs.touch '/test-file'
+          fs.chmod 01777, '/test-file'
+
+          sticky = File.sticky?('/test-file')
+          expect(sticky).to be true
         end
 
         it "returns false if the named file hasn't' the sticky bit set" do
-          fs.touch('/test-file')
-          expect(File.sticky?('/test-file')).not_to be true
+          fs.touch '/test-file'
+
+          sticky = File.sticky?('/test-file')
+          expect(sticky).to be false
         end
       end
 
       context 'when the named file does not exist' do
         it 'returns false' do
-          expect(File.sticky?('/no-file')).to be false
+          sticky = File.sticky?('/no-file')
+          expect(sticky).to be false
         end
       end
     end
 
     describe '.symlink' do
       it 'creates a symbolic link named new_name' do
-        expect(subject_class.symlink?('/test-link')).to be true
+        is_symlink = subject_class.symlink?('/test-link')
+        expect(is_symlink).to be true
       end
 
       it 'creates a symbolic link that points to an entry named old_name' do
-        expect(fs.find!('/test-link').target).to eq('/test-file')
+        target = fs.find!('/test-link').target
+        expect(target).to eq '/test-file'
       end
 
       context 'when the target does not exist' do
         it 'creates a symbolic link' do
-          expect(subject_class.symlink?('/no-link')).to be true
+          is_symlink = subject_class.symlink?('/no-link')
+          expect(is_symlink).to be true
         end
       end
 
       it 'returns 0' do
-        expect(subject_class.symlink('/test-file', '/new-link')).to eq(0)
+        returned_value = subject_class.symlink('/test-file', '/new-link')
+        expect(returned_value).to be_zero
       end
     end
 
     describe '.symlink?' do
       context 'when the named entry is a symlink' do
         it 'returns true' do
-          expect(subject_class.symlink?('/test-link')).to be true
+          is_symlink = subject_class.symlink?('/test-link')
+          expect(is_symlink).to be true
         end
       end
 
       context 'when the named entry is not a symlink' do
         it 'returns false' do
-          expect(subject_class.symlink?('/test-file')).to be false
+          is_symlink = subject_class.symlink?('/test-file')
+          expect(is_symlink).to be false
         end
       end
 
       context 'when the named entry does not exist' do
         it 'returns false' do
-          expect(subject_class.symlink?('/no-file')).to be false
+          is_symlink = subject_class.symlink?('/no-file')
+          expect(is_symlink).to be false
         end
       end
     end
 
     describe '.truncate' do
-      before :each do
+      before do
         subject_class.open('/test-file', 'w') { |f| f.write 'x' * 50 }
       end
 
       it 'truncates the named file to the given size' do
         subject_class.truncate('/test-file', 5)
-        expect(subject_class.size('/test-file')).to eq(5)
+
+        size = subject_class.size('/test-file')
+        expect(size).to be 5
       end
 
       it 'returns zero' do
-        return_value = subject_class.truncate('/test-file', 5)
-        expect(return_value).to be_zero
+        returned_value = subject_class.truncate('/test-file', 5)
+        expect(returned_value).to be_zero
       end
 
       context 'when the named file does not exist' do
         it 'raises an exception' do
-          expect { subject_class.truncate('/no-file', 5) }.to raise_error
+          expect { subject_class.truncate '/no-file', 5 }.to raise_error
         end
       end
 
       context 'when the given size is negative' do
         it 'it raises an exception' do
-          expect { subject_class.truncate('/test-file', -1) }.to raise_error
+          expect { subject_class.truncate '/test-file', -1 }.to raise_error
         end
       end
     end
 
     describe '.umask' do
-      before :each do
-        subject_class.umask(0022)
-      end
+      before { subject_class.umask 0022 }
 
       it 'returns the current umask value for this process' do
-        expect(subject_class.umask).to eq(0022)
+        expect(subject_class.umask).to be 0022
       end
 
       context 'when the optional argument is given' do
         it 'sets the umask to that value' do
           subject_class.umask 0777
-          expect(subject_class.umask).to eq(0777)
+          expect(subject_class.umask).to be 0777
         end
 
         it 'return the previous value' do
-          expect(subject_class.umask(0777)).to eq(0022)
+          previous_umask = subject_class.umask(0777)
+          expect(previous_umask).to be 0022
         end
       end
     end
@@ -1449,23 +1525,30 @@ module MemFs
     describe '.unlink' do
       it 'deletes the named file' do
         subject_class.unlink('/test-file')
-        expect(subject_class.exists?('/test-file')).to be false
+
+        exists = subject_class.exists?('/test-file')
+        expect(exists).to be false
       end
 
       it 'returns the number of names passed as arguments' do
-        expect(subject_class.unlink('/test-file', '/test-file2')).to eq(2)
+        returned_value = subject_class.unlink('/test-file', '/test-file2')
+        expect(returned_value).to be 2
       end
 
       context 'when multiple file names are given' do
         it 'deletes the named files' do
-          subject_class.unlink('/test-file', '/test-file2')
-          expect(subject_class.exists?('/test-file2')).to be false
+          subject_class.unlink '/test-file', '/test-file2'
+
+          exists = subject_class.exists?('/test-file2')
+          expect(exists).to be false
         end
       end
 
       context 'when the entry is a directory' do
         it 'raises an exception' do
-          expect { subject_class.unlink('/test-dir') }.to raise_error(Errno::EPERM)
+          expect {
+            subject_class.unlink '/test-dir'
+          }.to raise_error Errno::EPERM
         end
       end
     end
@@ -1474,37 +1557,40 @@ module MemFs
       let(:time) { Time.now - 500_000 }
 
       it 'sets the access time of each named file to the first argument' do
-        subject_class.utime(time, time, '/test-file')
-        expect(subject_class.atime('/test-file')).to eq(time)
+        subject_class.utime time, time, '/test-file'
+
+        atime = subject_class.atime('/test-file')
+        expect(atime).to eq time
       end
 
       it 'sets the modification time of each named file to the second argument' do
-        subject_class.utime(time, time, '/test-file')
-        expect(subject_class.mtime('/test-file')).to eq(time)
+        subject_class.utime time, time, '/test-file'
+
+        mtime = subject_class.mtime('/test-file')
+        expect(mtime).to eq time
       end
 
       it 'returns the number of file names in the argument list' do
-        expect(subject_class.utime(time, time, '/test-file', '/test-file2')).to eq(2)
+        utime = subject_class.utime(time, time, '/test-file', '/test-file2')
+        expect(utime).to be 2
       end
 
       it 'raises en error if the entry does not exist' do
         expect {
-          subject_class.utime(time, time, '/no-file')
-        }.to raise_error(Errno::ENOENT)
+          subject_class.utime time, time, '/no-file'
+        }.to raise_error Errno::ENOENT
       end
     end
 
     describe '.world_readable?' do
-      before :each do
-        subject_class.chmod(access, '/test-file')
-      end
+      before { subject_class.chmod access, '/test-file' }
 
       context 'when file_name is readable by others' do
         let(:access) { MemFs::Fake::Entry::OREAD }
 
         it 'returns an integer representing the file permission bits' do
-          readable = subject_class.world_readable?('/test-file')
-          expect(readable).to eq(MemFs::Fake::Entry::OREAD)
+          world_readable = subject_class.world_readable?('/test-file')
+          expect(world_readable).to eq MemFs::Fake::Entry::OREAD
         end
       end
 
@@ -1512,23 +1598,21 @@ module MemFs
         let(:access) { MemFs::Fake::Entry::UREAD }
 
         it 'returns nil' do
-          readable = subject_class.world_readable?('/test-file')
-          expect(readable).to be_nil
+          world_readable = subject_class.world_readable?('/test-file')
+          expect(world_readable).to be_nil
         end
       end
     end
 
     describe '.world_writable?' do
-      before :each do
-        subject_class.chmod(access, '/test-file')
-      end
+      before { subject_class.chmod access, '/test-file' }
 
       context 'when file_name is writable by others' do
         let(:access) { MemFs::Fake::Entry::OWRITE }
 
         it 'returns an integer representing the file permission bits' do
-          writable = subject_class.world_writable?('/test-file')
-          expect(writable).to eq(MemFs::Fake::Entry::OWRITE)
+          world_writable = subject_class.world_writable?('/test-file')
+          expect(world_writable).to eq MemFs::Fake::Entry::OWRITE
         end
       end
 
@@ -1536,8 +1620,8 @@ module MemFs
         let(:access) { MemFs::Fake::Entry::UWRITE }
 
         it 'returns nil' do
-          writable = subject_class.world_writable?('/test-file')
-          expect(writable).to be_nil
+          world_writable = subject_class.world_writable?('/test-file')
+          expect(world_writable).to be_nil
         end
       end
     end
@@ -1547,9 +1631,9 @@ module MemFs
       let(:gid) { 0 }
       let(:uid) { 0 }
 
-      before :each do
-        subject_class.chmod(access, '/test-file')
-        subject_class.chown(uid, gid, '/test-file')
+      before do
+        subject_class.chmod access, '/test-file'
+        subject_class.chown uid, gid, '/test-file'
       end
 
       context 'when the file is not writable by anyone' do
@@ -1563,7 +1647,8 @@ module MemFs
         let(:access) { MemFs::Fake::Entry::UWRITE }
 
         context 'and the current user owns the file' do
-          before(:each) { subject_class.chown(uid, 0, '/test-file') }
+          before { subject_class.chown uid, 0, '/test-file' }
+
           let(:uid) { Process.euid }
 
           it 'returns true' do
@@ -1610,15 +1695,15 @@ module MemFs
       let(:gid) { 0 }
       let(:uid) { 0 }
 
-      before :each do
-        subject_class.chmod(access, '/test-file')
-        subject_class.chown(uid, gid, '/test-file')
+      before do
+        subject_class.chmod access, '/test-file'
+        subject_class.chown uid, gid, '/test-file'
       end
 
       context 'when the file is not writable by anyone' do
         it 'return false' do
-          writable = subject_class.writable_real?('/test-file')
-          expect(writable).to be false
+          writable_real = subject_class.writable_real?('/test-file')
+          expect(writable_real).to be false
         end
       end
 
@@ -1626,12 +1711,13 @@ module MemFs
         let(:access) { MemFs::Fake::Entry::UWRITE }
 
         context 'and the current user owns the file' do
-          before(:each) { subject_class.chown(uid, 0, '/test-file') }
           let(:uid) { Process.uid }
 
+          before { subject_class.chown uid, 0, '/test-file' }
+
           it 'returns true' do
-            writable = subject_class.writable_real?('/test-file')
-            expect(writable).to be true
+            writable_real = subject_class.writable_real?('/test-file')
+            expect(writable_real).to be true
           end
         end
       end
@@ -1643,8 +1729,8 @@ module MemFs
           let(:gid) { Process.gid }
 
           it 'returns true' do
-            writable = subject_class.writable_real?('/test-file')
-            expect(writable).to be true
+            writable_real = subject_class.writable_real?('/test-file')
+            expect(writable_real).to be true
           end
         end
       end
@@ -1654,16 +1740,16 @@ module MemFs
 
         context 'and the user has no specific right on it' do
           it 'returns true' do
-            writable = subject_class.writable_real?('/test-file')
-            expect(writable).to be true
+            writable_real = subject_class.writable_real?('/test-file')
+            expect(writable_real).to be true
           end
         end
       end
 
       context 'when the file does not exist' do
         it 'returns false' do
-          writable = subject_class.writable_real?('/no-file')
-          expect(writable).to be false
+          writable_real = subject_class.writable_real?('/no-file')
+          expect(writable_real).to be false
         end
       end
     end
@@ -1678,7 +1764,7 @@ module MemFs
         end
 
         context 'and does not have a zero size' do
-          before :each do
+          before do
             File.open('/test-file', 'w') { |f| f.puts 'test' }
           end
 
@@ -1717,62 +1803,72 @@ module MemFs
 
     describe '#atime' do
       it 'returns a Time object' do
-        expect(subject.atime).to be_a(Time)
+        expect(subject.atime).to be_a Time
       end
     end
 
     describe '#chmod' do
       it 'changes permission bits on the file' do
-        subject.chmod(0777)
-        expect(subject.stat.mode).to eq(0100777)
+        subject.chmod 0777
+
+        mode = subject.stat.mode
+        expect(mode).to be 0100777
       end
 
       it 'returns zero' do
-        expect(subject.chmod(0777)).to eq(0)
+        returned_value = subject.chmod(0777)
+        expect(returned_value).to be_zero
       end
     end
 
     describe '#chown' do
       it 'changes the owner of the named file to the given numeric owner id' do
-        subject.chown(42, nil)
-        expect(subject.stat.uid).to be(42)
+        subject.chown 42, nil
+
+        uid = subject.stat.uid
+        expect(uid).to be 42
       end
 
       it 'changes owner on the named files (in list)' do
-        subject.chown(42)
-        expect(subject.stat.uid).to be(42)
+        subject.chown 42
+
+        uid = subject.stat.uid
+        expect(uid).to be(42)
       end
 
       it 'changes the group of the named file to the given numeric group id' do
-        subject.chown(nil, 42)
-        expect(subject.stat.gid).to be(42)
+        subject.chown nil, 42
+
+        gid = subject.stat.gid
+        expect(gid).to be 42
       end
 
       it 'returns zero' do
-        expect(subject.chown(42, 42)).to eq(0)
+        returned_value = subject.chown(42, 42)
+        expect(returned_value).to be_zero
       end
 
       it 'ignores nil user id' do
         expect {
-          subject.chown(nil, 42)
+          subject.chown nil, 42
         }.to_not change { subject.stat.uid }
       end
 
       it 'ignores nil group id' do
         expect {
-          subject.chown(42, nil)
+          subject.chown 42, nil
         }.to_not change { subject.stat.gid }
       end
 
       it 'ignores -1 user id' do
         expect {
-          subject.chown(-1, 42)
+          subject.chown -1, 42
         }.to_not change { subject.stat.uid }
       end
 
       it 'ignores -1 group id' do
         expect {
-          subject.chown(42, -1)
+          subject.chown 42, -1
         }.to_not change { subject.stat.gid }
       end
 
@@ -1780,30 +1876,38 @@ module MemFs
         let(:symlink) { subject_class.new('/test-link') }
 
         it 'changes the owner on the last target of the link chain' do
-          symlink.chown(42, nil)
-          expect(subject.stat.uid).to be(42)
+          symlink.chown 42, nil
+
+          uid = subject.stat.uid
+          expect(uid).to be 42
         end
 
         it 'changes the group on the last target of the link chain' do
-          symlink.chown(nil, 42)
-          expect(subject.stat.gid).to be(42)
+          symlink.chown nil, 42
+
+          gid = subject.stat.gid
+          expect(gid).to be 42
         end
 
         it 'does not change the owner of the symlink' do
-          symlink.chown(42, nil)
-          expect(symlink.lstat.uid).not_to be(42)
+          symlink.chown 42, nil
+
+          uid = symlink.lstat.uid
+          expect(uid).not_to be 42
         end
 
         it 'does not change the group of the symlink' do
-          symlink.chown(nil, 42)
-          expect(symlink.lstat.gid).not_to be(42)
+          symlink.chown nil, 42
+
+          gid = symlink.lstat.gid
+          expect(gid).not_to be 42
         end
       end
     end
 
     describe '#ctime' do
       it 'returns a Time object' do
-        expect(subject.ctime).to be_a(Time)
+        expect(subject.ctime).to be_a Time
       end
     end
 
@@ -1821,12 +1925,12 @@ module MemFs
       end
 
       it 'executes the block for every line in the file' do
-        expect { |blk| subject.each(&blk) }.to \
-          yield_successive_args(*lines)
+        expect { |blk| subject.each(&blk) }.to yield_successive_args(*lines)
       end
 
       it 'returns the file itself' do
-        expect(subject.each {}).to be subject
+        returned_value = subject.each {}
+        expect(returned_value).to be subject
       end
 
       context 'when a separator is given' do
@@ -1843,7 +1947,9 @@ module MemFs
 
       context 'when the file is not open for reading' do
         it 'raises an exception' do
-          expect { write_subject.each { |l| puts l } }.to raise_error(IOError)
+          expect {
+            write_subject.each { |l| puts l }
+          }.to raise_error IOError
         end
 
         context 'when no block is given' do
@@ -1862,13 +1968,13 @@ module MemFs
 
     describe '#external_encoding' do
       it 'returns the Encoding object representing the file encoding' do
-        expect(subject.external_encoding).to be_an(Encoding)
+        expect(subject.external_encoding).to be_an Encoding
       end
 
       context 'when the file is open in write mode' do
         context 'and no encoding has been specified' do
           it 'returns nil' do
-            expect(write_subject.external_encoding).to be nil
+            expect(write_subject.external_encoding).to be_nil
           end
         end
 
@@ -1876,7 +1982,7 @@ module MemFs
           subject { File.open('/test-file', 'w', external_encoding: 'UTF-8') }
 
           it 'returns the Encoding' do
-            expect(subject.external_encoding).to be_an(Encoding)
+            expect(subject.external_encoding).to be_an Encoding
           end
         end
       end
@@ -1884,18 +1990,21 @@ module MemFs
 
     describe '#flock' do
       it 'returns zero' do
-        expect(subject.flock(File::LOCK_EX)).to eq 0
+        returned_value = subject.flock(File::LOCK_EX)
+        expect(returned_value).to be_zero
       end
     end
 
     describe '#lstat' do
       it 'returns the File::Stat object of the file' do
-        expect(subject.lstat).to be_a(File::Stat)
+        expect(subject.lstat).to be_a File::Stat
       end
 
       it 'does not follow the last symbolic link' do
         file = subject_class.new('/test-link')
-        expect(file.lstat.symlink?).to be true
+
+        is_symlink = file.lstat.symlink?
+        expect(is_symlink).to be true
       end
 
       context 'when the named file is a symlink' do
@@ -1915,7 +2024,7 @@ module MemFs
     end
 
     describe '#pos' do
-      before :each do
+      before do
         File.open('/test-file', 'w') { |f| f.puts 'test' }
       end
 
@@ -1924,8 +2033,8 @@ module MemFs
       end
 
       it 'returns the reading offset when some of the file has been read' do
-        subject.read(2)
-        expect(subject.pos).to eq(2)
+        subject.read 2
+        expect(subject.pos).to be 2
       end
     end
 
@@ -1933,19 +2042,23 @@ module MemFs
       it 'appends content to the file' do
         write_subject.puts 'test'
         write_subject.close
-        expect(write_subject.send(:content).to_s).to eq("test\n")
+
+        content = write_subject.send(:content)
+        expect(content).to eq "test\n"
       end
 
       it "does not override the file's content" do
         write_subject.puts 'test'
         write_subject.puts 'test'
         write_subject.close
-        expect(write_subject.send(:content).to_s).to eq("test\ntest\n")
+
+        content = write_subject.send(:content)
+        expect(content).to eq "test\ntest\n"
       end
 
       context 'when the file is not writable' do
         it 'raises an exception' do
-          expect { subject.puts 'test' }.to raise_error(IOError)
+          expect { subject.puts 'test' }.to raise_error IOError
         end
       end
     end
@@ -1953,7 +2066,7 @@ module MemFs
     describe '#path' do
       it 'returns the path of the file' do
         file = subject_class.new('/test-file')
-        expect(file.path).to eq('/test-file')
+        expect(file.path).to eq '/test-file'
       end
     end
 
@@ -1964,7 +2077,7 @@ module MemFs
 
       context 'when no length is given' do
         it 'returns the content of the named file' do
-          expect(subject.read).to eq(random_string + "\n")
+          expect(subject.read).to eq random_string + "\n"
         end
 
         it 'returns an empty string if called a second time' do
@@ -1975,71 +2088,80 @@ module MemFs
 
       context 'when a length is given' do
         it 'returns a string of the given length' do
-          expect(subject.read(2)).to eq(random_string[0, 2])
+          read = subject.read(2)
+          expect(read).to eq random_string[0, 2]
         end
 
         it 'returns nil when there is nothing more to read' do
-          subject.read(1000)
-          expect(subject.read(1000)).to be_nil
+          subject.read 1000
+
+          second_read = subject.read(1000)
+          expect(second_read).to be_nil
         end
       end
 
       context 'when a buffer is given' do
         it 'fills the buffer with the read content' do
           buffer = String.new
-          subject.read(2, buffer)
-          expect(buffer).to eq(random_string[0, 2])
+          subject.read 2, buffer
+
+          expect(buffer).to eq random_string[0, 2]
         end
       end
     end
 
     describe '#seek' do
-      before :each do
+      before do
         File.open('/test-file', 'w') { |f| f.puts 'test' }
       end
 
       it 'returns zero' do
-        expect(subject.seek(1)).to eq(0)
+        returned_value = subject.seek(1)
+        expect(returned_value).to be_zero
       end
 
       context 'when +whence+ is not provided' do
         it 'seeks to the absolute location given by +amount+' do
-          subject.seek(3)
-          expect(subject.pos).to eq(3)
+          subject.seek 3
+
+          expect(subject.pos).to be 3
         end
       end
 
       context 'when +whence+ is IO::SEEK_CUR' do
         it 'seeks to +amount+ plus current position' do
-          subject.read(1)
-          subject.seek(1, ::IO::SEEK_CUR)
-          expect(subject.pos).to eq(2)
+          subject.read 1
+          subject.seek 1, ::IO::SEEK_CUR
+
+          expect(subject.pos).to be 2
         end
       end
 
       context 'when +whence+ is IO::SEEK_END' do
         it 'seeks to +amount+ plus end of stream' do
-          subject.seek(-1, ::IO::SEEK_END)
-          expect(subject.pos).to eq(4)
+          subject.seek -1, ::IO::SEEK_END
+
+          expect(subject.pos).to be 4
         end
       end
 
       context 'when +whence+ is IO::SEEK_SET' do
         it 'seeks to the absolute location given by +amount+' do
-          subject.seek(3, ::IO::SEEK_SET)
-          expect(subject.pos).to eq(3)
+          subject.seek 3, ::IO::SEEK_SET
+
+          expect(subject.pos).to be 3
         end
       end
 
       context 'when +whence+ is invalid' do
         it 'raises an exception' do
-          expect { subject.seek(0, 42) }.to raise_error(Errno::EINVAL)
+          expect { subject.seek 0, 42 }.to raise_error Errno::EINVAL
         end
       end
 
       context 'if the position ends up to be less than zero' do
         it 'raises an exception' do
-          expect { subject.seek(-1) }.to raise_error(Errno::EINVAL)
+          expect { subject.seek -1 }.to raise_error Errno::EINVAL
         end
       end
     end
@@ -2063,15 +2185,18 @@ module MemFs
       it 'truncates the given file to be at most integer bytes long' do
         subject_class.open('/test-file', 'w') do |f|
           f.puts 'this is a 24-char string'
-          f.truncate(10)
+          f.truncate 10
           f.close
         end
-        expect(subject_class.size('/test-file')).to eq 10
+
+        size = subject_class.size('/test-file')
+        expect(size).to eq 10
       end
 
       it 'returns zero' do
         subject_class.open('/test-file', 'w') do |f|
-          expect(f.truncate(42)).to eq 0
+          returned_value = f.truncate(42)
+          expect(returned_value).to be_zero
         end
       end
     end
@@ -2079,23 +2204,28 @@ module MemFs
     describe '#write' do
       it 'writes the given string to file' do
         write_subject.write 'test'
-        expect(File.read('/test-file')).to eq('test')
+
+        content = File.read('/test-file')
+        expect(content).to eq 'test'
       end
 
       it 'returns the number of bytes written' do
-        expect(write_subject.write('test')).to eq(4)
+        returned_value = write_subject.write('test')
+        expect(returned_value).to be 4
       end
 
       context 'when the file is not opened for writing' do
         it 'raises an exception' do
-          expect { subject.write('test') }.to raise_error(IOError)
+          expect { subject.write 'test' }.to raise_error IOError
         end
       end
 
       context 'when the argument is not a string' do
         it 'will be converted to a string using to_s' do
           write_subject.write 42
-          expect(File.read('/test-file')).to eq('42')
+
+          content = File.read('/test-file')
+          expect(content).to eq '42'
         end
       end
     end
