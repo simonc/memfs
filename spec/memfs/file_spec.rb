@@ -1923,6 +1923,28 @@ module MemFs
       end
     end
 
+    describe '#close_on_exec=' do
+      it 'sets the close-on-exec flag on the file' do
+        subject.close_on_exec = false
+
+        expect(subject.close_on_exec?).to be false
+      end
+    end
+
+    describe '#close_on_exec?' do
+      it 'returns true by default' do
+        expect(subject.close_on_exec?).to be true
+      end
+
+      context "when the close-on-exec flag is set to false" do
+        before { subject.close_on_exec = false }
+
+        it 'returns false' do
+          expect(subject.close_on_exec?).to be false
+        end
+      end
+    end
+
     describe '#atime' do
       it 'returns a Time object' do
         expect(subject.atime).to be_a Time

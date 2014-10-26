@@ -21,7 +21,8 @@ module MemFs
     end
 
     module InstanceMethods
-      attr_writer :autoclose
+      attr_writer :autoclose,
+                  :close_on_exec
 
       def <<(object)
         fail IOError, 'not opened for writing' unless writable?
@@ -45,7 +46,7 @@ module MemFs
       end
 
       def autoclose?
-        @autoclose.nil? ? true : @autoclose
+        @autoclose.nil? ? true : !!@autoclose
       end
 
       def binmode
@@ -64,6 +65,10 @@ module MemFs
 
       def closed?
         closed
+      end
+
+      def close_on_exec?
+        @close_on_exec.nil? ? true : !!@close_on_exec
       end
 
       def external_encoding
