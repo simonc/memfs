@@ -71,6 +71,11 @@ module MemFs
         @close_on_exec.nil? ? true : !!@close_on_exec
       end
 
+      def eof?
+        pos >= content.size
+      end
+      alias_method :eof, :eof?
+
       def external_encoding
         if writable?
           @external_encoding

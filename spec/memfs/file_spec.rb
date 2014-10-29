@@ -2192,6 +2192,56 @@ module MemFs
       end
     end
 
+    describe '#eof' do
+      it_behaves_like 'aliased method', :eof, :eof?
+    end
+
+    describe '#eof?' do
+      context 'when the file is not empty' do
+        before do
+          File.open('/test-file', 'w') { |f| f.puts 'test' }
+        end
+
+        context 'and the file is not yet read' do
+          it 'returns false' do
+            expect(subject.eof?).to be false
+          end
+        end
+
+        context 'and the file is partly read' do
+          before { subject.read(2) }
+
+          it 'returns false' do
+            expect(subject.eof?).to be false
+          end
+        end
+
+        context 'and the file is read' do
+          before { subject.read }
+
+          it 'returns true' do
+            expect(subject.eof?).to be true
+          end
+        end
+      end
+
+      context 'when the file is not empty' do
+        context 'and the file is not yet read' do
+          it 'returns true' do
+            expect(subject.eof?).to be true
+          end
+        end
+
+        context 'and the file is read' do
+          before { subject.read }
+
+          it 'returns true' do
+            expect(subject.eof?).to be true
+          end
+        end
+      end
+    end
+
     describe '#external_encoding' do
       it 'returns the Encoding object representing the file encoding' do
         expect(subject.external_encoding).to be_an Encoding
