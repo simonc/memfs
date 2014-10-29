@@ -1842,6 +1842,12 @@ module MemFs
       end
     end
 
+    describe '#atime' do
+      it 'returns a Time object' do
+        expect(subject.atime).to be_a Time
+      end
+    end
+
     describe '#autoclose=' do
       it 'sets the autoclose flag' do
         subject.autoclose = false
@@ -1902,52 +1908,6 @@ module MemFs
         it 'returns true' do
           expect(subject.binmode?).to be true
         end
-      end
-    end
-
-    describe '#close' do
-      it 'closes the file stream' do
-        subject.close
-        expect(subject).to be_closed
-      end
-    end
-
-    describe '#closed?' do
-      it 'returns true when the file is closed' do
-        subject.close
-        expect(subject.closed?).to be true
-      end
-
-      it 'returns false when the file is open' do
-        expect(subject.closed?).to be false
-      end
-    end
-
-    describe '#close_on_exec=' do
-      it 'sets the close-on-exec flag on the file' do
-        subject.close_on_exec = false
-
-        expect(subject.close_on_exec?).to be false
-      end
-    end
-
-    describe '#close_on_exec?' do
-      it 'returns true by default' do
-        expect(subject.close_on_exec?).to be true
-      end
-
-      context "when the close-on-exec flag is set to false" do
-        before { subject.close_on_exec = false }
-
-        it 'returns false' do
-          expect(subject.close_on_exec?).to be false
-        end
-      end
-    end
-
-    describe '#atime' do
-      it 'returns a Time object' do
-        expect(subject.atime).to be_a Time
       end
     end
 
@@ -2053,6 +2013,46 @@ module MemFs
 
           gid = symlink.lstat.gid
           expect(gid).not_to be 42
+        end
+      end
+    end
+
+    describe '#close' do
+      it 'closes the file stream' do
+        subject.close
+        expect(subject).to be_closed
+      end
+    end
+
+    describe '#closed?' do
+      it 'returns true when the file is closed' do
+        subject.close
+        expect(subject.closed?).to be true
+      end
+
+      it 'returns false when the file is open' do
+        expect(subject.closed?).to be false
+      end
+    end
+
+    describe '#close_on_exec=' do
+      it 'sets the close-on-exec flag on the file' do
+        subject.close_on_exec = false
+
+        expect(subject.close_on_exec?).to be false
+      end
+    end
+
+    describe '#close_on_exec?' do
+      it 'returns true by default' do
+        expect(subject.close_on_exec?).to be true
+      end
+
+      context "when the close-on-exec flag is set to false" do
+        before { subject.close_on_exec = false }
+
+        it 'returns false' do
+          expect(subject.close_on_exec?).to be false
         end
       end
     end
