@@ -111,6 +111,13 @@ module MemFs
         entry.pos
       end
 
+      def print(*objs)
+        $stdout.puts $_.inspect
+        objs << $_ if objs.empty?
+        self << objs.join($,) << $\.to_s
+        nil
+      end
+
       def puts(text)
         fail IOError, 'not opened for writing' unless writable?
 

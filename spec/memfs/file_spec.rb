@@ -2314,6 +2314,119 @@ module MemFs
       end
     end
 
+    describe '#print' do
+      it 'appends the given object to the file' do
+        write_subject.print 'test '
+        write_subject.print 'object'
+
+        content = write_subject.send(:content)
+        expect(content).to eq 'test object'
+      end
+
+      it 'converts any given object to string with to_s' do
+        write_subject.print 42
+
+        content = write_subject.send(:content)
+        expect(content).to eq '42'
+      end
+
+      it 'returns nil' do
+        return_value = write_subject.print('test')
+        expect(return_value).to be nil
+      end
+
+      context 'when multiple objects are given' do
+        it 'appends the given objects to the file' do
+          write_subject.print 'this ', 'is a', ' test'
+
+          content = write_subject.send(:content)
+          expect(content).to eq 'this is a test'
+        end
+      end
+
+      context 'when the is not opened for writing' do
+        it 'raises an exception' do
+          expect { subject.print 'test' }.to raise_error IOError
+        end
+      end
+
+      context 'when the output field separator is nil' do
+        around do |example|
+          old_value = $,
+          $, = nil
+          example.run
+          $, = old_value
+        end
+
+        it 'inserts nothing between the objects' do
+          write_subject.print 'a', 'b', 'c'
+
+          content = write_subject.send(:content)
+          expect(content).to eq 'abc'
+        end
+      end
+
+      context 'when the output field separator is not nil' do
+        around do |example|
+          old_value = $,
+          $, = '-'
+          example.run
+          $, = old_value
+        end
+
+        it 'inserts it between the objects' do
+          write_subject.print 'a', 'b', 'c'
+
+          content = write_subject.send(:content)
+          expect(content).to eq 'a-b-c'
+        end
+      end
+
+      context 'when the output record separator is nil' do
+        around do |example|
+          old_value = $\
+          $\ = nil
+          example.run
+          $\ = old_value
+        end
+
+        it 'inserts nothing at the end of the output' do
+          write_subject.print 'a', 'b', 'c'
+
+          content = write_subject.send(:content)
+          expect(content).to eq 'abc'
+        end
+      end
+
+      context 'when the output record separator is not nil' do
+        around do |example|
+          old_value = $\
+          $\ = '-'
+          example.run
+          $\ = old_value
+        end
+
+        it 'inserts it at the end of the output' do
+          write_subject.print 'a', 'b', 'c'
+
+          content = write_subject.send(:content)
+          expect(content).to eq 'abc-'
+        end
+      end
+
+      context 'when no argument is given' do
+        it 'prints $_' do
+          skip "I don't know how to test with \$_"
+
+          $_ = 'test'
+          write_subject.print
+
+          content = write_subject.send(:content)
+          expect(content).to eq 'test'
+        end
+      end
+    end
+
     describe '#puts' do
       it 'appends content to the file' do
         write_subject.puts 'test'
