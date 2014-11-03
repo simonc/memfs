@@ -2427,6 +2427,28 @@ module MemFs
       end
     end
 
+    describe '#printf' do
+      it 'appends the string in the file' do
+        write_subject.print 'test '
+        write_subject.printf 'Hello'
+
+        content = write_subject.send(:content)
+        expect(content).to eq 'test Hello'
+      end
+
+      it 'converts parameters under control of the format string' do
+        write_subject.printf 'Hello %d %05d', 42, 43
+
+        content = write_subject.send(:content)
+        expect(content).to eq 'Hello 42 00043'
+      end
+
+      it 'returns nil' do
+        returned_value = write_subject.printf('Hello')
+        expect(returned_value).to be nil
+      end
+    end
+
     describe '#puts' do
       it 'appends content to the file' do
         write_subject.puts 'test'

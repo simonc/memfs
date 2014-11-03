@@ -118,6 +118,10 @@ module MemFs
         nil
       end
 
+      def printf(format_string, *objs)
+        print format_string % objs
+      end
+
       def puts(text)
         fail IOError, 'not opened for writing' unless writable?
 
