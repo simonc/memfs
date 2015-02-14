@@ -56,9 +56,9 @@ describe MemFs do
     around(:each) { |example| MemFs.activate { example.run } }
 
     it 'creates the specified file' do
-      fs.mkdir('/path')
-      fs.mkdir('/path/to')
-      fs.mkdir('/path/to/some')
+      _fs.mkdir('/path')
+      _fs.mkdir('/path/to')
+      _fs.mkdir('/path/to/some')
       subject.touch('/path/to/some/file.rb')
       expect(File.exist?('/path/to/some/file.rb')).to be true
     end

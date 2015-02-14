@@ -4,6 +4,7 @@ module MemFs
   class Dir
     extend FilesystemAccess
     include Enumerable
+    include FilesystemAccess
 
     attr_reader :pos
 

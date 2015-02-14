@@ -309,7 +309,7 @@ describe FileUtils do
         FileUtils.touch('/test-file')
         FileUtils.chown(1042, 1042, '/test-file')
         FileUtils.chmod(0777, '/test-file')
-        fs.find('/test-file').mtime = time
+        _fs.find('/test-file').mtime = time
         FileUtils.copy_entry('/test-file', '/test-copy', true)
       end
 
@@ -785,14 +785,14 @@ describe FileUtils do
       context 'and is word writable' do
         it 'calls chown(2) on it' do
           FileUtils.chmod(01777, '/')
-          directory = fs.find('/test-dir')
+          directory = _fs.find('/test-dir')
           expect(directory).to receive(:uid=).at_least(:once)
           FileUtils.remove_entry_secure('/test-dir')
         end
 
         it 'calls chmod(2) on all sub directories' do
           FileUtils.chmod(01777, '/')
-          directory = fs.find('/test-dir')
+          directory = _fs.find('/test-dir')
           expect(directory).to receive(:mode=).at_least(:once)
           FileUtils.remove_entry_secure('/test-dir')
         end
@@ -930,12 +930,12 @@ describe FileUtils do
   describe '.touch' do
     it "creates a file if it doesn't exist" do
       FileUtils.touch('/test-file')
-      expect(fs.find('/test-file')).not_to be_nil
+      expect(_fs.find('/test-file')).not_to be_nil
     end
 
     it "creates a list of files if they don't exist" do
       FileUtils.touch(['/test-file', '/test-file2'])
-      expect(fs.find('/test-file2')).not_to be_nil
+      expect(_fs.find('/test-file2')).not_to be_nil
     end
   end
 
@@ -943,7 +943,7 @@ describe FileUtils do
     before :each do
       FileUtils.touch('/test-file')
       FileUtils.touch('/old-file')
-      fs.find!('/old-file').mtime = Time.now - 3600
+      _fs.find!('/old-file').mtime = Time.now - 3600
     end
 
     it 'returns true if +newer+ is newer than all +old_list+' do

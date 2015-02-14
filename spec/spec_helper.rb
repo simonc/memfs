@@ -31,6 +31,6 @@ RSpec::Matchers.define :raise_specific_error do |expected_exception_class|
   end
 end
 
-def fs
+def _fs
   MemFs::FileSystem.instance
 end

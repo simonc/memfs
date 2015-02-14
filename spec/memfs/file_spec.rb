@@ -9,8 +9,8 @@ module MemFs
     let(:random_string) { ('a'..'z').to_a.sample(10).join }
 
     before do
-      fs.mkdir '/test-dir'
-      fs.touch '/test-file', '/test-file2'
+      _fs.mkdir '/test-dir'
+      _fs.touch '/test-file', '/test-file2'
       subject_class.symlink '/test-file', '/test-link'
       subject_class.symlink '/no-file', '/no-link'
     end
@@ -56,7 +56,7 @@ module MemFs
         let(:time) { Time.now - 500_000 }
 
         it 'returns the last access time of the last target of the link chain' do
-          fs.find!('/test-file').atime = time
+          _fs.find!('/test-file').atime = time
           subject_class.symlink '/test-link', '/test-link2'
 
           expect(subject_class.atime('/test-link2')).to eq time
@@ -68,8 +68,8 @@ module MemFs
       context 'when the name file exists' do
         context 'and it is a block device' do
           it 'returns true' do
-            fs.touch('/block-file')
-            file = fs.find('/block-file')
+            _fs.touch('/block-file')
+            file = _fs.find('/block-file')
             file.block_device = true
 
             blockdev = subject_class.blockdev?('/block-file')
@@ -113,8 +113,8 @@ module MemFs
       context 'when the name file exists' do
         context 'and it is a character device' do
           it 'returns true' do
-            fs.touch '/character-file'
-            file = fs.find('/character-file')
+            _fs.touch '/character-file'
+            file = _fs.find('/character-file')
             file.character_device = true
 
             chardev = subject_class.chardev?('/character-file')
@@ -250,7 +250,7 @@ module MemFs
         let(:time) { Time.now - 500_000 }
 
         it 'returns the last access time of the last target of the link chain' do
-          fs.find!('/test-file').ctime = time
+          _fs.find!('/test-file').ctime = time
           subject_class.symlink '/test-link', '/test-link2'
 
           ctime = subject_class.ctime('/test-link2')
@@ -445,14 +445,14 @@ module MemFs
 
     describe '.expand_path' do
       it 'converts a pathname to an absolute pathname' do
-        fs.chdir '/'
+        _fs.chdir '/'
 
         expanded_path = subject_class.expand_path('test-file')
         expect(expanded_path).to eq '/test-file'
       end
 
       it 'references path from the current working directory' do
-        fs.chdir '/test-dir'
+        _fs.chdir '/test-dir'
 
         expanded_path = subject_class.expand_path('test-file')
         expect(expanded_path).to eq '/test-dir/test-file'
@@ -560,8 +560,8 @@ module MemFs
 
       context 'when the named entry is a block device' do
         it "returns 'blockSpecial'" do
-          fs.touch '/block-file'
-          file = fs.find('/block-file')
+          _fs.touch '/block-file'
+          file = _fs.find('/block-file')
           file.block_device = true
 
           ftype = subject_class.ftype('/block-file')
@@ -571,8 +571,8 @@ module MemFs
 
       context 'when the named entry is a character device' do
         it "returns 'characterSpecial'" do
-          fs.touch '/character-file'
-          file = fs.find('/character-file')
+          _fs.touch '/character-file'
+          file = _fs.find('/character-file')
           file.character_device = true
 
           ftype = subject_class.ftype('/character-file')
@@ -591,7 +591,7 @@ module MemFs
 
       context 'when the named entry has no specific type' do
         it "returns 'unknown'" do
-          root = fs.find '/'
+          root = _fs.find '/'
           root.add_entry Fake::Entry.new('test-entry')
 
           ftype = subject_class.ftype('/test-entry')
@@ -1095,9 +1095,9 @@ module MemFs
 
     describe '.realdirpath' do
       before do
-        fs.mkdir '/test-dir/sub-dir'
-        fs.symlink '/test-dir/sub-dir', '/test-dir/sub-dir-link'
-        fs.touch '/test-dir/sub-dir/test-file'
+        _fs.mkdir '/test-dir/sub-dir'
+        _fs.symlink '/test-dir/sub-dir', '/test-dir/sub-dir-link'
+        _fs.touch '/test-dir/sub-dir/test-file'
       end
 
       context 'when the path does not contain any symlink or useless dots' do
@@ -1133,7 +1133,7 @@ module MemFs
       context 'when the given path is relative' do
         context 'and +dir_string+ is not provided' do
           it 'uses the current working directory has base directory' do
-            fs.chdir '/test-dir'
+            _fs.chdir '/test-dir'
             path = subject_class.realdirpath('../test-dir/./sub-dir/test-file')
             expect(path).to eq '/test-dir/sub-dir/test-file'
           end
@@ -1150,7 +1150,7 @@ module MemFs
       context 'when the last part of the given path is a symlink' do
         context 'and its target does not exist' do
           before do
-            fs.symlink '/test-dir/sub-dir/test', '/test-dir/sub-dir/test-link'
+            _fs.symlink '/test-dir/sub-dir/test', '/test-dir/sub-dir/test-link'
           end
 
           it 'uses the name of the target in the resulting path' do
@@ -1178,9 +1178,9 @@ module MemFs
 
     describe '.realpath' do
       before do
-        fs.mkdir '/test-dir/sub-dir'
-        fs.symlink '/test-dir/sub-dir', '/test-dir/sub-dir-link'
-        fs.touch '/test-dir/sub-dir/test-file'
+        _fs.mkdir '/test-dir/sub-dir'
+        _fs.symlink '/test-dir/sub-dir', '/test-dir/sub-dir-link'
+        _fs.touch '/test-dir/sub-dir/test-file'
       end
 
       context 'when the path does not contain any symlink or useless dots' do
@@ -1216,7 +1216,7 @@ module MemFs
       context 'when the given path is relative' do
         context 'and +dir_string+ is not provided' do
           it 'uses the current working directory has base directory' do
-            fs.chdir '/test-dir'
+            _fs.chdir '/test-dir'
 
             path = subject_class.realpath('../test-dir/./sub-dir/test-file')
             expect(path).to eq '/test-dir/sub-dir/test-file'
@@ -1258,7 +1258,7 @@ module MemFs
       context 'when the named file exists' do
         context 'and the named file has the setgid bit set' do
           it 'returns true' do
-            fs.chmod 02000, '/test-file'
+            _fs.chmod 02000, '/test-file'
 
             setgid = File.setgid?('/test-file')
             expect(setgid).to be true
@@ -1285,7 +1285,7 @@ module MemFs
       context 'when the named file exists' do
         context 'and the named file has the setuid bit set' do
           it 'returns true' do
-            fs.chmod 04000, '/test-file'
+            _fs.chmod 04000, '/test-file'
 
             setuid = File.setuid?('/test-file')
             expect(setuid).to be true
@@ -1402,15 +1402,15 @@ module MemFs
     describe '.sticky?' do
       context 'when the named file exists' do
         it 'returns true if the named file has the sticky bit set' do
-          fs.touch '/test-file'
-          fs.chmod 01777, '/test-file'
+          _fs.touch '/test-file'
+          _fs.chmod 01777, '/test-file'
 
           sticky = File.sticky?('/test-file')
           expect(sticky).to be true
         end
 
         it "returns false if the named file hasn't' the sticky bit set" do
-          fs.touch '/test-file'
+          _fs.touch '/test-file'
 
           sticky = File.sticky?('/test-file')
           expect(sticky).to be false
@@ -1432,7 +1432,7 @@ module MemFs
       end
 
       it 'creates a symbolic link that points to an entry named old_name' do
-        target = fs.find!('/test-link').target
+        target = _fs.find!('/test-link').target
         expect(target).to eq '/test-file'
       end
 

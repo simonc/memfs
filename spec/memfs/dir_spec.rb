@@ -72,7 +72,7 @@ module MemFs
       end
 
       context 'when the given path is a file' do
-        before { fs.touch('/test/test-file') }
+        before { _fs.touch('/test/test-file') }
 
         it 'raises an exception' do
           expect { subject.chroot('/test/test-file') }.to raise_error(Errno::ENOTDIR)
@@ -101,7 +101,7 @@ module MemFs
     describe '.entries' do
       it 'returns an array containing all of the filenames in the given directory' do
         %w[/test/dir1 /test/dir2].each { |dir| subject.mkdir dir }
-        fs.touch '/test/file1', '/test/file2'
+        _fs.touch '/test/file1', '/test/file2'
         expect(subject.entries('/test')).to eq(%w[. .. dir1 dir2 file1 file2])
       end
     end
@@ -121,14 +121,14 @@ module MemFs
       end
 
       it 'returns false if the given +path+ is not a directory' do
-        fs.touch('/test-file')
+        _fs.touch('/test-file')
         expect(subject.exists?('/test-file')).to be false
       end
     end
 
     describe '.foreach' do
       before :each do
-        fs.touch('/test/test-file', '/test/test-file2')
+        _fs.touch('/test/test-file', '/test/test-file2')
       end
 
       context 'when a block is given' do
@@ -189,12 +189,12 @@ module MemFs
 
     describe '.glob' do
       before do
-        fs.clear!
+        _fs.clear!
         3.times do |dirnum|
-          fs.mkdir "/test#{dirnum}"
-          fs.mkdir "/test#{dirnum}/subdir"
+          _fs.mkdir "/test#{dirnum}"
+          _fs.mkdir "/test#{dirnum}/subdir"
           3.times do |filenum|
-            fs.touch "/test#{dirnum}/subdir/file#{filenum}"
+            _fs.touch "/test#{dirnum}/subdir/file#{filenum}"
           end
         end
       end
@@ -301,7 +301,7 @@ module MemFs
       end
 
       context 'when the given path is not a directory' do
-        before { fs.touch('/test/test-file') }
+        before { _fs.touch('/test/test-file') }
 
         it 'raises an exception' do
           expect { subject.open('/test/test-file') }.to raise_error
@@ -317,7 +317,7 @@ module MemFs
       end
 
       context 'when the given path is not a directory' do
-        before { fs.touch('/test/test-file') }
+        before { _fs.touch('/test/test-file') }
 
         it 'raises an exception' do
           expect { subject.new('/test/test-file') }.to raise_error
@@ -364,7 +364,7 @@ module MemFs
     end
 
     describe '#each' do
-      before { fs.touch('/test/test-file', '/test/test-file2') }
+      before { _fs.touch('/test/test-file', '/test/test-file2') }
 
       it 'calls the block once for each entry in this directory' do
         expect { |blk| instance.each(&blk) }.to yield_control.exactly(4).times
@@ -425,8 +425,8 @@ module MemFs
 
     describe '#read' do
       before do
-        fs.touch('/test/a')
-        fs.touch('/test/b')
+        _fs.touch('/test/a')
+        _fs.touch('/test/b')
       end
 
       it 'reads the next entry from dir and returns it' do

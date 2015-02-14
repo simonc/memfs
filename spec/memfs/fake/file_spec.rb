@@ -3,15 +3,15 @@ require 'spec_helper'
 module MemFs
   module Fake
     describe File do
-      let(:file) { fs.find!('/test-file') }
+      let(:file) { _fs.find!('/test-file') }
 
       before do
-        fs.touch('/test-file')
+        _fs.touch('/test-file')
       end
 
       it 'stores the modification made on its content' do
         file.content << 'test'
-        expect(fs.find!('/test-file').content.to_s).to eq('test')
+        expect(_fs.find!('/test-file').content.to_s).to eq('test')
       end
 
       describe '#close' do

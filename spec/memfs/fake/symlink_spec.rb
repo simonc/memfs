@@ -13,8 +13,8 @@ module MemFs
 
       describe '#dereferenced' do
         it "returns the target if it's not a symlink" do
-          fs.touch '/test-file'
-          target = fs.find!('/test-file')
+          _fs.touch '/test-file'
+          target = _fs.find!('/test-file')
 
           s = Symlink.new('/test-link', '/test-file')
 
@@ -22,10 +22,10 @@ module MemFs
         end
 
         it 'returns the last target of the chain' do
-          fs.touch '/test-file'
-          target = fs.find!('/test-file')
+          _fs.touch '/test-file'
+          target = _fs.find!('/test-file')
 
-          fs.symlink '/test-file', '/test-link'
+          _fs.symlink '/test-file', '/test-link'
           s = Symlink.new('/test-link2', '/test-link')
 
           expect(s.dereferenced).to eq(target)
@@ -35,7 +35,7 @@ module MemFs
       describe '#dereferenced_name' do
         context "when the symlink's target exists" do
           it 'returns its target name' do
-            fs.touch('/test-file')
+            _fs.touch('/test-file')
             symlink = Symlink.new('/test-link', '/test-file')
             expect(symlink.dereferenced_name).to eq('test-file')
           end
@@ -52,7 +52,7 @@ module MemFs
       describe '#dereferenced_path' do
         context "when the symlink's target exists" do
           it 'returns its target path' do
-            fs.touch('/test-file')
+            _fs.touch('/test-file')
             symlink = Symlink.new('/test-link', '/test-file')
             expect(symlink.dereferenced_path).to eq('/test-file')
           end
@@ -69,11 +69,11 @@ module MemFs
       end
 
       describe '#find' do
-        let(:file) { fs.find!('/test-dir/test-file') }
+        let(:file) { _fs.find!('/test-dir/test-file') }
 
         before :each do
-          fs.mkdir '/test-dir'
-          fs.touch '/test-dir/test-file'
+          _fs.mkdir '/test-dir'
+          _fs.touch '/test-dir/test-file'
         end
 
         context "when the symlink's target exists" do

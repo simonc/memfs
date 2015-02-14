@@ -14,14 +14,14 @@ module MemFs
     let(:dir_stat) { File::Stat.new('/test-dir') }
     let(:dereferenced_dir_stat) { File::Stat.new('/test-dir', true) }
 
-    let(:entry) { fs.find!('/test-file') }
+    let(:entry) { _fs.find!('/test-file') }
 
     before :each do
-      fs.mkdir('/test-dir')
-      fs.touch('/test-file')
-      fs.symlink('/test-file', '/test-link')
-      fs.symlink('/test-dir', '/test-dir-link')
-      fs.symlink('/no-file', '/test-no-file-link')
+      _fs.mkdir('/test-dir')
+      _fs.touch('/test-file')
+      _fs.symlink('/test-file', '/test-link')
+      _fs.symlink('/test-dir', '/test-dir-link')
+      _fs.symlink('/no-file', '/test-no-file-link')
     end
 
     describe '.new' do
@@ -40,7 +40,7 @@ module MemFs
       let(:time) { Time.now - 500_000 }
 
       it 'returns the access time of the entry' do
-        entry = fs.find!('/test-file')
+        entry = _fs.find!('/test-file')
         entry.atime = time
         expect(file_stat.atime).to eq(time)
       end
@@ -71,8 +71,8 @@ module MemFs
     describe '#blockdev?' do
       context 'when the file is a block device' do
         it 'returns true' do
-          fs.touch('/block-file')
-          file = fs.find('/block-file')
+          _fs.touch('/block-file')
+          file = _fs.find('/block-file')
           file.block_device = true
           block_stat = File::Stat.new('/block-file')
           expect(block_stat.blockdev?).to be true
@@ -89,8 +89,8 @@ module MemFs
     describe '#chardev?' do
       context 'when the file is a character device' do
         it 'returns true' do
-          fs.touch('/character-file')
-          file = fs.find('/character-file')
+          _fs.touch('/character-file')
+          file = _fs.find('/character-file')
           file.character_device = true
           character_stat = File::Stat.new('/character-file')
           expect(character_stat.chardev?).to be true
@@ -388,8 +388,8 @@ module MemFs
 
       context 'when the entry is a block device' do
         it "returns 'blockSpecial'" do
-          fs.touch('/block-file')
-          file = fs.find('/block-file')
+          _fs.touch('/block-file')
+          file = _fs.find('/block-file')
           file.block_device = true
           block_stat = File::Stat.new('/block-file')
           expect(block_stat.ftype).to eq('blockSpecial')
@@ -398,8 +398,8 @@ module MemFs
 
       context 'when the entry is a character device' do
         it "returns 'characterSpecial'" do
-          fs.touch('/character-file')
-          file = fs.find('/character-file')
+          _fs.touch('/character-file')
+          file = _fs.find('/character-file')
           file.character_device = true
           character_stat = File::Stat.new('/character-file')
           expect(character_stat.ftype).to eq('characterSpecial')
@@ -416,7 +416,7 @@ module MemFs
 
       context 'when the entry has no specific type' do
         it "returns 'unknown'" do
-          root = fs.find('/')
+          root = _fs.find('/')
           root.add_entry Fake::Entry.new('test-entry')
           entry_stat = File::Stat.new('/test-entry')
           expect(entry_stat.ftype).to eq('unknown')
@@ -426,7 +426,7 @@ module MemFs
 
     describe '#gid' do
       it 'returns the group id of the named entry' do
-        fs.chown(nil, 42, '/test-file')
+        _fs.chown(nil, 42, '/test-file')
         expect(file_stat.gid).to be(42)
       end
     end
@@ -434,14 +434,14 @@ module MemFs
     describe '#grpowned?' do
       context 'when the effective user group owns of the file' do
         it 'returns true' do
-          fs.chown(0, Process.egid, '/test-file')
+          _fs.chown(0, Process.egid, '/test-file')
           expect(file_stat.grpowned?).to be true
         end
       end
 
       context 'when the effective user group does not own of the file' do
         it 'returns false' do
-          fs.chown(0, 0, '/test-file')
+          _fs.chown(0, 0, '/test-file')
           expect(file_stat.grpowned?).to be false
         end
       end
@@ -455,7 +455,7 @@ module MemFs
 
     describe '#mode' do
       it 'returns an integer representing the permission bits of stat' do
-        fs.chmod(0777, '/test-file')
+        _fs.chmod(0777, '/test-file')
         expect(file_stat.mode).to be(0100777)
       end
     end
@@ -463,14 +463,14 @@ module MemFs
     describe '#owned?' do
       context 'when the effective user owns of the file' do
         it 'returns true' do
-          fs.chown(Process.euid, 0, '/test-file')
+          _fs.chown(Process.euid, 0, '/test-file')
           expect(file_stat.owned?).to be true
         end
       end
 
       context 'when the effective user does not own of the file' do
         it 'returns false' do
-          fs.chown(0, 0, '/test-file')
+          _fs.chown(0, 0, '/test-file')
           expect(file_stat.owned?).to be false
         end
       end
@@ -599,7 +599,7 @@ module MemFs
     describe '#setgid?' do
       context 'when the file has the setgid bit set' do
         it 'returns true' do
-          fs.chmod(02000, '/test-file')
+          _fs.chmod(02000, '/test-file')
           expect(file_stat.setgid?).to be true
         end
       end
@@ -614,7 +614,7 @@ module MemFs
     describe '#setuid?' do
       context 'when the file has the setuid bit set' do
         it 'returns true' do
-          fs.chmod(04000, '/test-file')
+          _fs.chmod(04000, '/test-file')
           expect(file_stat.setuid?).to be true
         end
       end
@@ -638,7 +638,7 @@ module MemFs
 
     describe '#sticky?' do
       it 'returns true if the named file has the sticky bit set' do
-        fs.chmod(01777, '/test-file')
+        _fs.chmod(01777, '/test-file')
         expect(file_stat.sticky?).to be true
       end
 
@@ -679,7 +679,7 @@ module MemFs
 
     describe '#uid' do
       it 'returns the user id of the named entry' do
-        fs.chown(42, nil, '/test-file')
+        _fs.chown(42, nil, '/test-file')
         expect(file_stat.uid).to be(42)
       end
     end
@@ -687,14 +687,14 @@ module MemFs
     describe '#world_reable?' do
       context 'when +file_name+ is readable by others' do
         it 'returns an integer representing the file permission bits of +file_name+' do
-          fs.chmod(MemFs::Fake::Entry::OREAD, '/test-file')
+          _fs.chmod(MemFs::Fake::Entry::OREAD, '/test-file')
           expect(file_stat.world_readable?).to eq(MemFs::Fake::Entry::OREAD)
         end
       end
 
       context 'when +file_name+ is not readable by others' do
         it 'returns nil' do
-          fs.chmod(MemFs::Fake::Entry::UREAD, '/test-file')
+          _fs.chmod(MemFs::Fake::Entry::UREAD, '/test-file')
           expect(file_stat.world_readable?).to be_nil
         end
       end
@@ -703,14 +703,14 @@ module MemFs
     describe '#world_writable?' do
       context 'when +file_name+ is writable by others' do
         it 'returns an integer representing the file permission bits of +file_name+' do
-          fs.chmod(MemFs::Fake::Entry::OWRITE, '/test-file')
+          _fs.chmod(MemFs::Fake::Entry::OWRITE, '/test-file')
           expect(file_stat.world_writable?).to eq(MemFs::Fake::Entry::OWRITE)
         end
       end
 
       context 'when +file_name+ is not writable by others' do
         it 'returns nil' do
-          fs.chmod(MemFs::Fake::Entry::UWRITE, '/test-file')
+          _fs.chmod(MemFs::Fake::Entry::UWRITE, '/test-file')
           expect(file_stat.world_writable?).to be_nil
         end
       end
@@ -841,7 +841,7 @@ module MemFs
 
       context 'when the file does not have a zero size' do
         before :each do
-          fs.find!('/test-file').content << 'test'
+          _fs.find!('/test-file').content << 'test'
         end
 
         it 'returns false' do

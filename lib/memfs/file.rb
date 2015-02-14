@@ -9,6 +9,7 @@ module MemFs
     extend IO::ClassMethods
 
     include Enumerable
+    include FilesystemAccess
     include OriginalFile::Constants
     include IO::InstanceMethods
 

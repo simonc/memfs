@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module MemFs
   describe FileSystem do
-    subject { fs }
+    subject { _fs }
 
     before :each do
       subject.mkdir '/test-dir'
@@ -206,8 +206,8 @@ module MemFs
 
       context 'when a part of the given path is a symlink' do
         before :each do
-          fs.symlink('/test-dir', '/test-dir-link')
-          fs.touch('/test-dir/test-file')
+          _fs.symlink('/test-dir', '/test-dir-link')
+          _fs.touch('/test-dir/test-file')
         end
 
         context "and the symlink's target exists" do
