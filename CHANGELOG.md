@@ -2,7 +2,10 @@
 
 ## HEAD
 
+## 0.4.2
+
 * ADD: `File#external_encoding`
+* FIX: Undefined local variable or method `fs' for MemFs::File
 
 ## 0.4.1
 
