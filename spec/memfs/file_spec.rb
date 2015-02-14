@@ -20,6 +20,16 @@ module MemFs
       expect(subject_class.ancestors).to include Enumerable
     end
 
+    describe 'constants' do
+      it 'expose SEPARATOR' do
+        expect(MemFs::File::SEPARATOR).to eq '/'
+      end
+
+      it 'expose ALT_SEPARATOR' do
+        expect(MemFs::File::ALT_SEPARATOR).to be_nil
+      end
+    end
+
     describe '.absolute_path' do
       before { MemFs::Dir.chdir('/test-dir') }
 

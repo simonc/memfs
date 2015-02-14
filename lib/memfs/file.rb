@@ -13,6 +13,8 @@ module MemFs
     include OriginalFile::Constants
     include IO::InstanceMethods
 
+    ALT_SEPARATOR = nil
+
     MODE_MAP = {
       'r'  => RDONLY,
       'r+' => RDWR,
@@ -22,6 +24,7 @@ module MemFs
       'a+' => CREAT | APPEND | RDWR
     }
 
+    SEPARATOR = '/'
     SUCCESS = 0
 
     @umask = nil

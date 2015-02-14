@@ -2,6 +2,8 @@
 
 ## HEAD
 
+* ADD: `File::SEPARATOR` and `File::ALT_SEPARATOR`
+
 ## 0.4.2
 
 * ADD: `File#external_encoding`
