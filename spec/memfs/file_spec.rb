@@ -813,10 +813,49 @@ module MemFs
         end
 
         context 'and it is a string' do
-          subject { subject_class.new('/test-file', 'r+') }
+          it 'sets the read mode for "r"' do
+            subject = subject_class.new('/test-file', 'r')
+            expect(subject.send(:opening_mode)).to eq File::RDONLY
+          end
 
-          it 'sets the mode to the integer value' do
+          it 'sets the write+create+truncate mode for "w"' do
+            subject = subject_class.new('/test-file', 'w')
+            expect(subject.send(:opening_mode)).to eq File::CREAT|File::TRUNC|File::WRONLY
+          end
+
+          it 'sets the read+write mode for "r+"' do
+            subject = subject_class.new('/test-file', 'r+')
             expect(subject.send(:opening_mode)).to eq File::RDWR
+          end
+
+          it 'sets the read+write+create+truncate mode for "w+"' do
+            subject = subject_class.new('/test-file', 'w+')
+            expect(subject.send(:opening_mode)).to eq File::CREAT|File::TRUNC|File::RDWR
+          end
+
+          it 'sets the write+create+append mode for "a"' do
+            subject = subject_class.new('/test-file', 'a')
+            expect(subject.send(:opening_mode)).to eq File::CREAT|File::APPEND|File::WRONLY
+          end
+
+          it 'sets the read+write+create+append mode for "a+"' do
+            subject = subject_class.new('/test-file', 'a+')
+            expect(subject.send(:opening_mode)).to eq File::CREAT|File::APPEND|File::RDWR
+          end
+
+          it 'handles the :bom option' do
+            subject = subject_class.new('/test-file', 'r:bom')
+            expect(subject.send(:opening_mode)).to eq File::RDONLY
+          end
+
+          it 'handles the |utf-8 option' do
+            subject = subject_class.new('/test-file', 'r|utf-8')
+            expect(subject.send(:opening_mode)).to eq File::RDONLY
+          end
+
+          it 'handles the :bom|utf-8 option' do
+            subject = subject_class.new('/test-file', 'r:bom|utf-8')
+            expect(subject.send(:opening_mode)).to eq File::RDONLY
           end
         end
 

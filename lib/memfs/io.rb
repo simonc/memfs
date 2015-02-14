@@ -129,6 +129,9 @@ module MemFs
       end
 
       def read(length = nil, buffer = '')
+        unless entry
+          fail(Errno::ENOENT, path)
+        end
         default = length ? nil : ''
         content.read(length, buffer) || default
       end
@@ -180,7 +183,7 @@ module MemFs
       def str_to_mode_int(mode)
         return mode unless mode.is_a?(String)
 
-        unless mode =~ /\A([rwa]\+?)([bt])?\z/
+        unless mode =~ /\A([rwa]\+?)([bt])?(:bom)?(\|.+)?\z/
           fail ArgumentError, "invalid access mode #{mode}"
         end
 
