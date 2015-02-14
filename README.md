@@ -43,6 +43,22 @@ end
 File.exists?('/test-file') #=> false
 ```
 
+## Why you may prefer MemFs over FakeFS?
+
+While FakeFS is pretty cool it overrides classes like `FileUtils`. This kind of override is problematic when you rely on real behavior from this kind of tool.
+
+For instance, trying to test the following with FakeFS will not work, the `noop` option will be ignored:
+
+``` ruby
+FileUtils.touch('somefile.txt', noop: true)
+```
+
+MemFs tries to be **compliant with the Ruby API** by overriding only the low level classes (C classes) like File, Dir or File::Stat leaving the stdlib classes untouched and still working, being less intrusive that way.
+
+Some stdlib classes may be overriden at some point if they don't use `File` or `Dir`, like `Pathname`, etc.
+
+Another key point is that MemFs **aims to implement every single method provided by Ruby classes** (when possible) and to behave and return **exactly** the same way as the original classes.
+
 ## Installation
 
 Add this line to your application's Gemfile:
