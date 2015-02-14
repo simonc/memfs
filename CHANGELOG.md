@@ -2,6 +2,8 @@
 
 ## HEAD
 
+## 0.4.3
+
 * ADD: `File::SEPARATOR` and `File::ALT_SEPARATOR`
 * FIX: Support `YAML.load_file` by handling `r:bom|utf-8` open mode
 
