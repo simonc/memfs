@@ -165,8 +165,9 @@ end
 
 ## Known issues
 
-* MemFs doesn't implement IO so FileUtils.copy_stream is still the original one
-* Pipes and Sockets are not handled for now
+* MemFs doesn't implement IO so methods like `FileUtils.copy_stream` and `IO.write` are still the originals.
+* Similarly, MemFs doesn't implement Kernel, so don't use a naked `open()` call. This uses the `Kernel` class via `method_missing`, which MemFs will not intercept.
+* Pipes and Sockets are not handled for now.
 
 ## TODO
 
