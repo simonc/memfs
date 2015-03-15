@@ -6,7 +6,7 @@ module MemFs
       describe '#content' do
         it "returns the target's content" do
           MemFs::File.open('/test-file', 'w') { |f| f.puts 'test' }
-          s = Symlink.new('/test-link', '/test-file')
+          s = described_class.new('/test-link', '/test-file')
           expect(s.content).to be(s.dereferenced.content)
         end
       end
@@ -16,7 +16,7 @@ module MemFs
           _fs.touch '/test-file'
           target = _fs.find!('/test-file')
 
-          s = Symlink.new('/test-link', '/test-file')
+          s = described_class.new('/test-link', '/test-file')
 
           expect(s.dereferenced).to eq(target)
         end
@@ -26,7 +26,7 @@ module MemFs
           target = _fs.find!('/test-file')
 
           _fs.symlink '/test-file', '/test-link'
-          s = Symlink.new('/test-link2', '/test-link')
+          s = described_class.new('/test-link2', '/test-link')
 
           expect(s.dereferenced).to eq(target)
         end
@@ -36,14 +36,14 @@ module MemFs
         context "when the symlink's target exists" do
           it 'returns its target name' do
             _fs.touch('/test-file')
-            symlink = Symlink.new('/test-link', '/test-file')
+            symlink = described_class.new('/test-link', '/test-file')
             expect(symlink.dereferenced_name).to eq('test-file')
           end
         end
 
         context "when the symlink's target does not exist" do
           it 'returns its target name' do
-            symlink = Symlink.new('/test-link', '/no-file')
+            symlink = described_class.new('/test-link', '/no-file')
             expect(symlink.dereferenced_name).to eq('no-file')
           end
         end
@@ -53,14 +53,14 @@ module MemFs
         context "when the symlink's target exists" do
           it 'returns its target path' do
             _fs.touch('/test-file')
-            symlink = Symlink.new('/test-link', '/test-file')
+            symlink = described_class.new('/test-link', '/test-file')
             expect(symlink.dereferenced_path).to eq('/test-file')
           end
         end
 
         context "when the symlink's target does not exist" do
           it 'raises an exception' do
-            symlink = Symlink.new('/test-link', '/no-file')
+            symlink = described_class.new('/test-link', '/no-file')
             expect {
               symlink.dereferenced_path
             }.to raise_exception
@@ -77,7 +77,7 @@ module MemFs
         end
 
         context "when the symlink's target exists" do
-          subject { Symlink.new('/test-dir-link', '/test-dir') }
+          subject { described_class.new('/test-dir-link', '/test-dir') }
 
           it 'forwards the search to it' do
             entry = subject.find('test-file')
@@ -86,7 +86,7 @@ module MemFs
         end
 
         context "when the symlink's target does not exist" do
-          subject { Symlink.new('/test-no-link', '/no-dir') }
+          subject { described_class.new('/test-no-link', '/no-dir') }
 
           it 'returns nil' do
             entry = subject.find('test-file')
@@ -97,14 +97,14 @@ module MemFs
 
       describe '#target' do
         it 'returns the target of the symlink' do
-          s = Symlink.new('/test-link', '/test-file')
+          s = described_class.new('/test-link', '/test-file')
           expect(s.target).to eq('/test-file')
         end
       end
 
       describe '#type' do
         it "returns 'link'" do
-          s = Symlink.new('/test-link', '/test-file')
+          s = described_class.new('/test-link', '/test-file')
           expect(s.type).to eq('link')
         end
       end

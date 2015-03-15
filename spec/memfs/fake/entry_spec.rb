@@ -3,7 +3,7 @@ require 'spec_helper'
 module MemFs
   module Fake
     describe Entry do
-      let(:entry) { Entry.new('test') }
+      let(:entry) { described_class.new('test') }
       let(:parent) { Directory.new('parent') }
       let(:time) { Time.now - 5000 }
 
@@ -76,11 +76,11 @@ module MemFs
         end
 
         it 'sets an empty string as name if none is given' do
-          expect(Entry.new.name).to be_empty
+          expect(described_class.new.name).to be_empty
         end
 
         it 'sets the access time' do
-          expect(Entry.new.atime).to be_a(Time)
+          expect(described_class.new.atime).to be_a(Time)
         end
 
         it 'sets the modification time' do

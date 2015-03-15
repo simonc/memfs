@@ -4,8 +4,6 @@ require 'spec_helper'
 module MemFs
   module Fake
     describe File::Content do
-      subject { File::Content.new }
-
       describe '#<<' do
         it 'writes the given string to the contained string' do
           subject << 'test'
@@ -21,7 +19,7 @@ module MemFs
         end
 
         context 'when an argument is given' do
-          subject { File::Content.new(base_value) }
+          subject { described_class.new(base_value) }
 
           context 'when the argument is a string' do
             let(:base_value) { 'test' }
@@ -80,7 +78,7 @@ module MemFs
       end
 
       describe '#truncate' do
-        subject { File::Content.new('x' * 50) }
+        subject { described_class.new('x' * 50) }
 
         it 'truncates the content to length characters' do
           subject.truncate(5)
@@ -113,7 +111,7 @@ module MemFs
       end
 
       context 'when initialized with a string argument' do
-        subject { File::Content.new('test') }
+        subject { described_class.new('test') }
 
         describe '#read' do
           it 'reads +length+ bytes from the contained string' do

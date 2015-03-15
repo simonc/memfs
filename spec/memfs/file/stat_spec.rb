@@ -2,17 +2,17 @@ require 'spec_helper'
 
 module MemFs
   describe File::Stat do
-    let(:file_stat) { File::Stat.new('/test-file') }
-    let(:dereferenced_file_stat) { File::Stat.new('/test-file', true) }
+    let(:file_stat) { described_class.new('/test-file') }
+    let(:dereferenced_file_stat) { described_class.new('/test-file', true) }
 
-    let(:dir_link_stat) { File::Stat.new('/test-dir-link') }
-    let(:dereferenced_dir_link_stat) { File::Stat.new('/test-dir-link', true) }
+    let(:dir_link_stat) { described_class.new('/test-dir-link') }
+    let(:dereferenced_dir_link_stat) { described_class.new('/test-dir-link', true) }
 
-    let(:link_stat) { File::Stat.new('/test-link') }
-    let(:dereferenced_link_stat) { File::Stat.new('/test-link', true) }
+    let(:link_stat) { described_class.new('/test-link') }
+    let(:dereferenced_link_stat) { described_class.new('/test-link', true) }
 
-    let(:dir_stat) { File::Stat.new('/test-dir') }
-    let(:dereferenced_dir_stat) { File::Stat.new('/test-dir', true) }
+    let(:dir_stat) { described_class.new('/test-dir') }
+    let(:dereferenced_dir_stat) { described_class.new('/test-dir', true) }
 
     let(:entry) { _fs.find!('/test-file') }
 
@@ -29,7 +29,7 @@ module MemFs
         context 'when the last target of the link chain does not exist' do
           it 'raises an exception' do
             expect {
-              File::Stat.new('/test-no-file-link', true)
+              described_class.new('/test-no-file-link', true)
             }.to raise_error(Errno::ENOENT)
           end
         end
@@ -74,7 +74,7 @@ module MemFs
           _fs.touch('/block-file')
           file = _fs.find('/block-file')
           file.block_device = true
-          block_stat = File::Stat.new('/block-file')
+          block_stat = described_class.new('/block-file')
           expect(block_stat.blockdev?).to be true
         end
       end
@@ -92,7 +92,7 @@ module MemFs
           _fs.touch('/character-file')
           file = _fs.find('/character-file')
           file.character_device = true
-          character_stat = File::Stat.new('/character-file')
+          character_stat = described_class.new('/character-file')
           expect(character_stat.chardev?).to be true
         end
       end
@@ -391,7 +391,7 @@ module MemFs
           _fs.touch('/block-file')
           file = _fs.find('/block-file')
           file.block_device = true
-          block_stat = File::Stat.new('/block-file')
+          block_stat = described_class.new('/block-file')
           expect(block_stat.ftype).to eq('blockSpecial')
         end
       end
@@ -401,7 +401,7 @@ module MemFs
           _fs.touch('/character-file')
           file = _fs.find('/character-file')
           file.character_device = true
-          character_stat = File::Stat.new('/character-file')
+          character_stat = described_class.new('/character-file')
           expect(character_stat.ftype).to eq('characterSpecial')
         end
       end
@@ -418,7 +418,7 @@ module MemFs
         it "returns 'unknown'" do
           root = _fs.find('/')
           root.add_entry Fake::Entry.new('test-entry')
-          entry_stat = File::Stat.new('/test-entry')
+          entry_stat = described_class.new('/test-entry')
           expect(entry_stat.ftype).to eq('unknown')
         end
       end

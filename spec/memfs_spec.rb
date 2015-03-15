@@ -1,78 +1,76 @@
 require 'spec_helper'
 
 describe MemFs do
-  subject { MemFs }
-
   describe '.activate' do
     it 'calls the given block with MemFs activated' do
-      subject.activate do
-        expect(::Dir).to be(MemFs::Dir)
+      described_class.activate do
+        expect(::Dir).to be(described_class::Dir)
       end
     end
 
     it 'resets the original classes once finished' do
-      subject.activate {}
-      expect(::Dir).to be(MemFs::OriginalDir)
+      described_class.activate {}
+      expect(::Dir).to be(described_class::OriginalDir)
     end
 
     it 'deactivates MemFs even when an exception occurs' do
       begin
-        subject.activate { fail 'Some error' }
+        described_class.activate { fail 'Some error' }
       rescue
       end
-      expect(::Dir).to be(MemFs::OriginalDir)
+      expect(::Dir).to be(described_class::OriginalDir)
     end
   end
 
   describe '.activate!' do
-    before(:each) { subject.activate! }
-    after(:each)  { subject.deactivate! }
+    before(:each) { described_class.activate! }
+    after(:each)  { described_class.deactivate! }
 
     it 'replaces Ruby Dir class with a fake one' do
-      expect(::Dir).to be(MemFs::Dir)
+      expect(::Dir).to be(described_class::Dir)
     end
 
     it 'replaces Ruby File class with a fake one' do
-      expect(::File).to be(MemFs::File)
+      expect(::File).to be(described_class::File)
     end
   end
 
   describe '.deactivate!' do
     before :each do
-      subject.activate!
-      subject.deactivate!
+      described_class.activate!
+      described_class.deactivate!
     end
 
     it 'sets back the Ruby Dir class to the original one' do
-      expect(::Dir).to be(MemFs::OriginalDir)
+      expect(::Dir).to be(described_class::OriginalDir)
     end
 
     it 'sets back the Ruby File class to the original one' do
-      expect(::File).to be(MemFs::OriginalFile)
+      expect(::File).to be(described_class::OriginalFile)
     end
   end
 
   describe '.touch' do
-    around(:each) { |example| MemFs.activate { example.run } }
+    around(:each) { |example| described_class.activate { example.run } }
 
     it 'creates the specified file' do
       _fs.mkdir('/path')
       _fs.mkdir('/path/to')
       _fs.mkdir('/path/to/some')
-      subject.touch('/path/to/some/file.rb')
+      described_class.touch('/path/to/some/file.rb')
       expect(File.exist?('/path/to/some/file.rb')).to be true
     end
 
     context 'when the parent folder do not exist' do
       it 'creates them all' do
-        subject.touch('/path/to/some/file.rb')
+        described_class.touch('/path/to/some/file.rb')
         expect(File.exist?('/path/to/some/file.rb')).to be true
       end
     end
 
     context 'when several files are specified' do
       it 'creates every file' do
-        subject.touch('/some/path', '/other/path')
+        described_class.touch('/some/path', '/other/path')
         expect(File.exist?('/some/path')).to be true
         expect(File.exist?('/other/path')).to be true
       end

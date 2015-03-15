@@ -3,7 +3,7 @@ require 'spec_helper'
 module MemFs
   module Fake
     describe Directory do
-      let(:directory) { Directory.new('test') }
+      subject(:directory) { described_class.new('test') }
 
       describe '.new' do
         it 'sets . in the entries list' do
@@ -16,7 +16,7 @@ module MemFs
       end
 
       describe '#add_entry' do
-        let(:entry) { Directory.new('new_entry') }
+        let(:entry) { described_class.new('new_entry') }
 
         it 'adds the entry to the entries list' do
           directory.add_entry entry
@@ -35,7 +35,7 @@ module MemFs
         end
 
         it 'returns false if the directory is not empty' do
-          directory.add_entry Directory.new('test')
+          directory.add_entry described_class.new('test')
           expect(directory).not_to be_empty
         end
       end
@@ -43,7 +43,7 @@ module MemFs
       describe '#entry_names' do
         it 'returns the list of the names of the entries in the directory' do
           3.times do |n|
-            directory.add_entry Directory.new("dir#{n}")
+            directory.add_entry described_class.new("dir#{n}")
           end
 
           expect(directory.entry_names).to eq(%w[. .. dir0 dir1 dir2])
@@ -51,7 +51,7 @@ module MemFs
       end
 
       describe '#find' do
-        let(:sub_directory) { Directory.new('sub_dir') }
+        let(:sub_directory) { described_class.new('sub_dir') }
         let(:file) { File.new('file') }
 
         before :each do
@@ -73,7 +73,7 @@ module MemFs
       end
 
       describe '#parent=' do
-        let(:parent) { Directory.new('parent') }
+        let(:parent) { described_class.new('parent') }
 
         it 'sets the .. entry in entries list' do
           directory.parent = parent
@@ -87,7 +87,7 @@ module MemFs
       end
 
       describe '#path' do
-        let(:root) { Directory.new('/') }
+        let(:root) { described_class.new('/') }
 
         it 'returns the directory path' do
           directory.parent = root
@@ -103,7 +103,7 @@ module MemFs
 
       describe '#paths' do
         before do
-          subdir = Directory.new('subdir')
+          subdir = described_class.new('subdir')
           directory.add_entry(subdir)
           subdir.add_entry File.new('file1')
           subdir.add_entry File.new('file2')
