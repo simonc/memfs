@@ -96,9 +96,11 @@ module MemFs
       find_parent!(new_name).add_entry link
     end
 
-    def mkdir(path)
+    def mkdir(path, mode = 0777)
       fail Errno::EEXIST, path if find(path)
-      find_parent!(path).add_entry Fake::Directory.new(path)
+      directory = Fake::Directory.new(path)
+      directory.mode = mode
+      find_parent!(path).add_entry directory
     end
 
     def paths

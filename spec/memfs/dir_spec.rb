@@ -264,6 +264,18 @@ module MemFs
         expect(File.directory?('/new-folder')).to be true
       end
 
+      it 'sets directory permissions to default 0777' do
+        described_class.mkdir '/new-folder'
+        expect(File.stat('/new-folder').mode).to eq(0100777)
+      end
+
+      context 'when permissions are specified' do
+        it 'sets directory permissions to specified value' do
+          described_class.mkdir '/new-folder', 0644
+          expect(File.stat('/new-folder').mode).to eq(0100644)
+        end
+      end
+
       context 'when the directory already exist' do
         it 'raises an exception' do
           expect { described_class.mkdir('/') }.to raise_error(Errno::EEXIST)
