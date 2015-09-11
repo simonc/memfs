@@ -2,6 +2,8 @@
 
 ## HEAD
 
+* ADD: Support for Ruby 2.2 (@raeno)
+
 ## 0.4.3
 
 * ADD: `File::SEPARATOR` and `File::ALT_SEPARATOR`

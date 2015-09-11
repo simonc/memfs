@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'pathname'
 
 module MemFs
   describe File do
