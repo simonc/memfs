@@ -64,8 +64,8 @@ module MemFs
       original_dir_class.home(*args)
     end
 
-    def self.mkdir(path)
-      fs.mkdir path
+    def self.mkdir(path, mode = 0777)
+      fs.mkdir path, mode
     end
 
     def self.open(dirname)

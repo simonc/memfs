@@ -2,6 +2,7 @@
 
 ## HEAD
 
+* ADD: Support for _mode_ to `Dir.mkdir`, `FileUtils.mkdir` and `FileUtils.mkdir_p` (@raeno)
 * ADD: Support for Ruby 2.2 (@raeno)
 
 ## 0.4.3
