@@ -448,7 +448,6 @@ module MemFs
     end
 
     describe '.exist?' do
-
       subject { described_class }
 
       it_behaves_like 'aliased method', :exist?, :exists?
