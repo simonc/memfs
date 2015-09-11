@@ -649,6 +649,26 @@ describe FileUtils do
         expect(File.directory?('/test-dir2')).to be true
       end
     end
+
+    context 'when passing options' do
+      context 'when passing mode parameter' do
+        it 'creates directory with specified permissions' do
+          described_class.mkdir('/test-dir', :mode => 0654)
+          expect(File.exist?('/test-dir')).to be true
+          expect(File.stat('/test-dir').mode).to eq(0100654)
+        end
+      end
+
+      context 'when passing noop parameter' do
+        it 'does not create any directories' do
+          described_class.mkdir(['/test-dir', '/another-dir'], :noop => true)
+          expect(File.directory?('/test-dir')).to be false
+          expect(File.directory?('/another-dir')).to be false
+        end
+      end
+    end
+
+
   end
 
   describe '.mkdir_p' do
@@ -671,6 +691,24 @@ describe FileUtils do
       it "creates each directory's parents" do
         described_class.mkdir_p(['/test-dir', '/path/to/some/test-dir'])
         expect(File.directory?('/path/to/some')).to be true
+      end
+    end
+
+    context 'when passing options' do
+      context 'when passing mode parameter' do
+        it 'creates directory with specified permissions' do
+          described_class.mkdir_p('/test-dir', :mode => 0654)
+          expect(File.exist?('/test-dir')).to be true
+          expect(File.stat('/test-dir').mode).to eq(0100654)
+        end
+      end
+
+      context 'when passing noop parameter' do
+        it 'does not create any directories' do
+          described_class.mkdir_p(['/test-dir', '/another-dir'], :noop => true)
+          expect(File.directory?('/test-dir')).to be false
+          expect(File.directory?('/another-dir')).to be false
+        end
       end
     end
   end

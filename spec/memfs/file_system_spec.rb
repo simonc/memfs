@@ -289,6 +289,18 @@ module MemFs
         expect(subject.find!('/new-dir')).to be_a(Fake::Directory)
       end
 
+      it 'sets directory permissions to default 0777' do
+        subject.mkdir '/new-dir'
+        expect(subject.find!('/new-dir').mode).to eq(0100777)
+      end
+
+      context 'when permissions are specified' do
+        it 'sets directory permission to specified value' do
+          subject.mkdir '/new-dir', 0644
+          expect(subject.find!('/new-dir').mode).to eq(0100644)
+        end
+      end
+
       context 'when a relative path is given' do
         it 'creates a directory in current directory' do
           subject.chdir '/test-dir'
