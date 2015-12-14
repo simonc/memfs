@@ -1,7 +1,11 @@
+AllCops:
+  Exclude:
+  - lib/fileutils.rb
+
 AlignParameters:
   Enabled: false
 
-Blocks:
+BlockDelimiters:
   Enabled: false
 
 ClassLength:
@@ -13,16 +17,28 @@ Documentation:
 DoubleNegation:
   Enabled: false
 
-EmptyLinesAroundBody:
+EmptyLinesAroundClassBody:
+  Exclude:
+  - lib/memfs/fake/file/content.rb
+
+IfUnlessModifier:
   Enabled: false
+
+IndentHash:
+  EnforcedStyle: consistent
 
 LineLength:
   Enabled: false
 
 PercentLiteralDelimiters:
-  Enabled: false
+  PreferredDelimiters:
+    '%i': '[]'
+    '%w': '[]'
 
 SpecialGlobalVars:
+  Enabled: false
+
+RegexpLiteral:
   Enabled: false
 
 TrivialAccessors:
