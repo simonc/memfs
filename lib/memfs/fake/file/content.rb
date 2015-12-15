@@ -3,7 +3,6 @@ require 'delegate'
 module MemFs
   module Fake
     class File < Entry
-
       class Content < SimpleDelegator
         attr_accessor :pos
 
@@ -46,7 +45,6 @@ module MemFs
           text.size
         end
       end
-
     end
   end
 end

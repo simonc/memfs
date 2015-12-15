@@ -58,7 +58,6 @@ module MemFs
       before { allow(Process).to receive_messages(uid: 0) }
 
       it "changes the process's idea of the file system root" do
-
         described_class.mkdir('/test/subdir')
         described_class.chroot('/test')
 

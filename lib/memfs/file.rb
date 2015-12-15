@@ -58,18 +58,24 @@ module MemFs
       :writable_real?,
       :zero?
     ].each do |query_method|
-      define_singleton_method(query_method) do |path|    # def directory?(path)
-        stat_query(path, query_method)                   #   stat_query(path, :directory?)
-      end                                                # end
+      # def directory?(path)
+      #   stat_query(path, :directory?)
+      # end
+      define_singleton_method(query_method) do |path|
+        stat_query(path, query_method)
+      end
     end
 
     [
       :world_readable?,
       :world_writable?
     ].each do |query_method|
-      define_singleton_method(query_method) do |path|    # def directory?(path)
-        stat_query(path, query_method, false)            #   stat_query(path, :directory?, false)
-      end                                                # end
+      # def directory?(path)
+      #   stat_query(path, :directory?, false)
+      # end
+      define_singleton_method(query_method) do |path|
+        stat_query(path, query_method, false)
+      end
     end
 
     def self.absolute_path(path, dir_string = fs.pwd)
@@ -233,13 +239,14 @@ module MemFs
 
     def initialize(filename, mode = File::RDONLY, *perm_and_or_opt)
       opt = perm_and_or_opt.last.is_a?(Hash) ? perm_and_or_opt.pop : {}
-      perm = perm_and_or_opt.shift
+      perm_and_or_opt.shift
       if perm_and_or_opt.size > 0
         fail ArgumentError, 'wrong number of arguments (4 for 1..3)'
       end
 
       @path = filename
-      @external_encoding = opt[:external_encoding] && Encoding.find(opt[:external_encoding])
+      @external_encoding = opt[:external_encoding] &&
+                           Encoding.find(opt[:external_encoding])
 
       self.closed = false
       self.opening_mode = str_to_mode_int(mode)

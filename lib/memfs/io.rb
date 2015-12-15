@@ -30,7 +30,7 @@ module MemFs
         content << object.to_s
       end
 
-      def advise(advice_type, offset = 0, len = 0)
+      def advise(advice_type, _offset = 0, _len = 0)
         advice_types = [
           :dontneed,
           :noreuse,
@@ -177,7 +177,7 @@ module MemFs
 
       def readable?
         (opening_mode & File::RDWR).nonzero? ||
-        (opening_mode | File::RDONLY).zero?
+          (opening_mode | File::RDONLY).zero?
       end
 
       def str_to_mode_int(mode)
@@ -197,7 +197,7 @@ module MemFs
 
       def writable?
         (opening_mode & File::WRONLY).nonzero? ||
-        (opening_mode & File::RDWR).nonzero?
+          (opening_mode & File::RDWR).nonzero?
       end
     end
   end

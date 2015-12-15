@@ -15,7 +15,6 @@ module MemFs
       described_class.symlink '/no-file', '/no-link'
     end
 
-
     it 'implements Enumerable' do
       expect(described_class.ancestors).to include Enumerable
     end
@@ -205,7 +204,7 @@ module MemFs
 
       it 'ignores -1 user id' do
         expect {
-          described_class.chown -1, 42, '/test-file'
+          described_class.chown(-1, 42, '/test-file')
         }.to_not change { described_class.stat('/test-file').uid }
       end
 
@@ -555,21 +554,21 @@ module MemFs
 
     describe '.ftype' do
       context 'when the named entry is a regular file' do
-        it "returns 'file'" do
+        it 'returns "file"' do
           ftype = described_class.ftype('/test-file')
           expect(ftype).to eq 'file'
         end
       end
 
       context 'when the named entry is a directory' do
-        it "returns 'directory'" do
+        it 'returns "directory"' do
           ftype = described_class.ftype('/test-dir')
           expect(ftype).to eq 'directory'
         end
       end
 
       context 'when the named entry is a block device' do
-        it "returns 'blockSpecial'" do
+        it 'returns "blockSpecial"' do
           _fs.touch '/block-file'
           file = _fs.find('/block-file')
           file.block_device = true
@@ -580,7 +579,7 @@ module MemFs
       end
 
       context 'when the named entry is a character device' do
-        it "returns 'characterSpecial'" do
+        it 'returns "characterSpecial"' do
           _fs.touch '/character-file'
           file = _fs.find('/character-file')
           file.character_device = true
@@ -591,7 +590,7 @@ module MemFs
       end
 
       context 'when the named entry is a symlink' do
-        it "returns 'link'" do
+        it 'returns "link"' do
           ftype = described_class.ftype('/test-link')
           expect(ftype).to eq 'link'
         end
@@ -600,7 +599,7 @@ module MemFs
       # fifo and socket not handled for now
 
       context 'when the named entry has no specific type' do
-        it "returns 'unknown'" do
+        it 'returns "unknown"' do
           root = _fs.find '/'
           root.add_entry Fake::Entry.new('test-entry')
 
@@ -727,7 +726,7 @@ module MemFs
           expect(mode).to be 0100777
         end
 
-        it "does not change permission bits on the link's target" do
+        it 'does not change permission bits on the link’s target' do
           old_mode = described_class.stat('/test-file').mode
           described_class.lchmod 0777, '/test-link'
 
@@ -820,7 +819,8 @@ module MemFs
 
           it 'sets the write+create+truncate mode for "w"' do
             subject = described_class.new('/test-file', 'w')
-            expect(subject.send(:opening_mode)).to eq File::CREAT|File::TRUNC|File::WRONLY
+            expect(subject.send(:opening_mode)).to \
+              eq File::CREAT | File::TRUNC | File::WRONLY
           end
 
           it 'sets the read+write mode for "r+"' do
@@ -830,17 +830,20 @@ module MemFs
 
           it 'sets the read+write+create+truncate mode for "w+"' do
             subject = described_class.new('/test-file', 'w+')
-            expect(subject.send(:opening_mode)).to eq File::CREAT|File::TRUNC|File::RDWR
+            expect(subject.send(:opening_mode)).to \
+              eq File::CREAT | File::TRUNC | File::RDWR
           end
 
           it 'sets the write+create+append mode for "a"' do
             subject = described_class.new('/test-file', 'a')
-            expect(subject.send(:opening_mode)).to eq File::CREAT|File::APPEND|File::WRONLY
+            expect(subject.send(:opening_mode)).to \
+              eq File::CREAT | File::APPEND | File::WRONLY
           end
 
           it 'sets the read+write+create+append mode for "a+"' do
             subject = described_class.new('/test-file', 'a+')
-            expect(subject.send(:opening_mode)).to eq File::CREAT|File::APPEND|File::RDWR
+            expect(subject.send(:opening_mode)).to \
+              eq File::CREAT | File::APPEND | File::RDWR
           end
 
           it 'handles the :bom option' do
@@ -889,7 +892,9 @@ module MemFs
 
       context 'when too many arguments are given' do
         it 'raises an exception' do
-          expect { described_class.new(1, 2, 3, 4) }.to raise_error(ArgumentError)
+          expect {
+            described_class.new(1, 2, 3, 4)
+          }.to raise_error(ArgumentError)
         end
       end
     end
@@ -989,18 +994,18 @@ module MemFs
 
       context 'when the last argument is a hash' do
         it 'passes the contained options to +open+' do
-          expect(described_class).to receive(:open)
-              .with('/test-file', File::RDONLY, encoding: 'UTF-8')
-              .and_return(subject)
+          expect(described_class).to \
+            receive(:open)
+            .with('/test-file', File::RDONLY, encoding: 'UTF-8')
+            .and_return(subject)
 
           described_class.read '/test-file', encoding: 'UTF-8'
         end
 
         context 'when it contains the +open_args+ key' do
           it 'takes precedence over the other options' do
-            expect(described_class).to receive(:open)
-                .with('/test-file', 'r')
-                .and_return(subject)
+            expect(described_class).to \
+              receive(:open).with('/test-file', 'r').and_return(subject)
 
             described_class.read '/test-file', mode: 'w', open_args: ['r']
           end
@@ -1458,7 +1463,7 @@ module MemFs
           expect(sticky).to be true
         end
 
-        it "returns false if the named file hasn't' the sticky bit set" do
+        it 'returns false if the named file hasn’t the sticky bit set' do
           _fs.touch '/test-file'
 
           sticky = File.sticky?('/test-file')
@@ -1906,7 +1911,7 @@ module MemFs
     end
 
     describe '#autoclose?' do
-      it "returns true by default" do
+      it 'returns true by default' do
         expect(subject.autoclose?).to be true
       end
 
@@ -1938,7 +1943,7 @@ module MemFs
         expect(subject.binmode?).to be true
       end
 
-      it "sets the file encoding to ASCII-8BIT" do
+      it 'sets the file encoding to ASCII-8BIT' do
         subject.binmode
 
         encoding = subject.external_encoding
@@ -1947,7 +1952,7 @@ module MemFs
     end
 
     describe '#binmode?' do
-      it "returns false by default" do
+      it 'returns false by default' do
         expect(subject.binmode?).to be false
       end
 
@@ -2023,7 +2028,7 @@ module MemFs
 
       it 'ignores -1 user id' do
         expect {
-          subject.chown -1, 42
+          subject.chown(-1, 42)
         }.to_not change { subject.stat.uid }
       end
 
@@ -2097,7 +2102,7 @@ module MemFs
         expect(subject.close_on_exec?).to be true
       end
 
-      context "when the close-on-exec flag is set to false" do
+      context 'when the close-on-exec flag is set to false' do
         before { subject.close_on_exec = false }
 
         it 'returns false' do
@@ -2507,7 +2512,7 @@ module MemFs
         expect(content).to eq "test\n"
       end
 
-      it "does not override the file's content" do
+      it 'does not override the file’s content' do
         write_subject.puts 'test'
         write_subject.puts 'test'
         write_subject.close
@@ -2599,7 +2604,7 @@ module MemFs
 
       context 'when +whence+ is IO::SEEK_END' do
         it 'seeks to +amount+ plus end of stream' do
-          subject.seek -1, ::IO::SEEK_END
+          subject.seek(-1, ::IO::SEEK_END)
 
           expect(subject.pos).to be 4
         end
@@ -2621,7 +2626,7 @@ module MemFs
 
       context 'if the position ends up to be less than zero' do
         it 'raises an exception' do
-          expect { subject.seek -1 }.to raise_error Errno::EINVAL
+          expect { subject.seek(-1) }.to raise_error Errno::EINVAL
         end
       end
     end

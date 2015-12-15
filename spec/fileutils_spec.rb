@@ -667,8 +667,6 @@ describe FileUtils do
         end
       end
     end
-
-
   end
 
   describe '.mkdir_p' do
