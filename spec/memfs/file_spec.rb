@@ -1819,47 +1819,47 @@ module MemFs
 
     describe '.write' do
       it 'writes the string to the given file' do
-        described_class.write('/test-file', "test")
+        described_class.write('/test-file', 'test')
         read_content = described_class.read('/test-file')
-        expect(read_content).to eq "test"
+        expect(read_content).to eq 'test'
       end
 
       context 'when +offset+ is provided' do
         it 'writes the string to the given file when offset is 0' do
-          described_class.write('/test-file', "test", 0)
+          described_class.write('/test-file', 'test', 0)
           read_content = described_class.read('/test-file')
-          expect(read_content).to eq "test"
+          expect(read_content).to eq 'test'
         end
 
         it 'writes the string to the given file when offset is nil' do
-          described_class.write('/test-file', "test", nil)
+          described_class.write('/test-file', 'test', nil)
           read_content = described_class.read('/test-file')
-          expect(read_content).to eq "test"
+          expect(read_content).to eq 'test'
         end
 
         it 'starts writing from the offset' do
-          pending("Offsets not yet implemented, because Content#write always appends.")
-          described_class.write('/test-file', "test")
-          described_class.write('/test-file', "test", 2)
+          pending('Offsets not yet implemented in IO.write')
+          described_class.write('/test-file', 'test')
+          described_class.write('/test-file', 'test', 2)
           read_content = described_class.read('/test-file')
           expect(read_content).to eq 'tetest'
         end
 
         it 'raises an error if offset is negative' do
           expect {
-            described_class.write '/test-file', "foo", -1
+            described_class.write('/test-file', 'foo', -1)
           }.to raise_error Errno::EINVAL
         end
 
         it 'raises an error if offset is a boolean' do
           expect {
-            described_class.write '/test-file', "foo", false
+            described_class.write '/test-file', 'foo', false
           }.to raise_error TypeError
         end
 
         it 'raises an error if offset is a string' do
           expect {
-            described_class.write '/test-file', "foo", "offset"
+            described_class.write '/test-file', 'foo', 'offset'
           }.to raise_error TypeError
         end
       end

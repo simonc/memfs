@@ -606,6 +606,7 @@ module MemFs
 
       context 'when the file does not have the setgid bit set' do
         it 'returns false' do
+          _fs.chmod(0644, '/test-file')
           expect(file_stat.setgid?).to be false
         end
       end
@@ -621,6 +622,7 @@ module MemFs
 
       context 'when the file does not have the setuid bit set' do
         it 'returns false' do
+          _fs.chmod(0644, '/test-file')
           expect(file_stat.setuid?).to be false
         end
       end
@@ -643,6 +645,7 @@ module MemFs
       end
 
       it "returns false if the named file hasn't' the sticky bit set" do
+        _fs.chmod(0666, '/test-file')
         expect(file_stat.sticky?).to be false
       end
     end

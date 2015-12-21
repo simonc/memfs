@@ -6,7 +6,11 @@ module MemFs
     module ClassMethods
       def read(path, *args)
         options = args.last.is_a?(Hash) ? args.pop : {}
-        options = { mode: File::RDONLY, encoding: nil, open_args: nil }.merge(options)
+        options = {
+          mode: File::RDONLY,
+          encoding: nil,
+          open_args: nil
+        }.merge(options)
         open_args = options[:open_args] ||
                     [options[:mode], encoding: options[:encoding]]
 
@@ -23,14 +27,14 @@ module MemFs
         open_args ||= [File::WRONLY, encoding: nil]
 
         offset = 0 if offset.nil?
-        if offset.respond_to?(:to_int)
-          offset = offset.to_int
-        else
-          raise TypeError, "no implicit conversion from #{offset.class}"
+        unless offset.respond_to?(:to_int)
+          fail TypeError, "no implicit conversion from #{offset.class}"
         end
+        offset = offset.to_int
 
         if offset > 0
-          fail NotImplementedError, "MemFs::IO.write with offset not yet supported."
+          fail NotImplementedError,
+               'MemFs::IO.write with offset not yet supported.'
         end
 
         file = open(path, *open_args)
