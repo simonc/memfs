@@ -112,7 +112,6 @@ module MemFs
       end
 
       def print(*objs)
-        $stdout.puts $_.inspect
         objs << $_ if objs.empty?
         self << objs.join($,) << $\.to_s
         nil

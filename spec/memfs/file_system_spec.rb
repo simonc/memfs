@@ -200,7 +200,7 @@ module MemFs
 
       context 'when there is no entry for the given path' do
         it 'raises an exception' do
-          expect { subject.find!('/no-file') }.to raise_exception
+          expect { subject.find!('/no-file') }.to raise_error Errno::ENOENT
         end
       end
 
@@ -221,7 +221,7 @@ module MemFs
           it 'raises an exception' do
             expect {
               subject.find!('/test-no-link/test-file')
-            }.to raise_error
+            }.to raise_error Errno::ENOENT
           end
         end
       end
@@ -433,7 +433,7 @@ module MemFs
 
       context 'when the entry is a directory' do
         it 'raises an exception' do
-          expect { subject.unlink('/test-dir') }.to raise_error
+          expect { subject.unlink('/test-dir') }.to raise_error Errno::EPERM
         end
       end
     end

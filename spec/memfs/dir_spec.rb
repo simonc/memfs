@@ -145,7 +145,9 @@ module MemFs
 
         context "and the directory doesn't exist" do
           it 'raises an exception' do
-            expect { described_class.foreach('/no-dir') {} }.to raise_error
+            expect {
+              described_class.foreach('/no-dir') {}
+            }.to raise_error Errno::ENOENT
           end
         end
 
@@ -153,7 +155,7 @@ module MemFs
           it 'raises an exception' do
             expect {
               described_class.foreach('/test/test-file') {}
-            }.to raise_error
+            }.to raise_error Errno::ENOTDIR
           end
         end
       end
@@ -307,7 +309,9 @@ module MemFs
 
       context "when the given directory doesn't exist" do
         it 'raises an exception' do
-          expect { described_class.open('/no-dir') }.to raise_error
+          expect {
+            described_class.open('/no-dir')
+          }.to raise_error Errno::ENOENT
         end
       end
 
@@ -315,7 +319,9 @@ module MemFs
         before { _fs.touch('/test/test-file') }
 
         it 'raises an exception' do
-          expect { described_class.open('/test/test-file') }.to raise_error
+          expect {
+            described_class.open('/test/test-file')
+          }.to raise_error Errno::ENOTDIR
         end
       end
     end
@@ -323,7 +329,9 @@ module MemFs
     describe '.new' do
       context "when the given directory doesn't exist" do
         it 'raises an exception' do
-          expect { described_class.new('/no-dir') }.to raise_error
+          expect {
+            described_class.new('/no-dir')
+          }.to raise_error Errno::ENOENT
         end
       end
 
@@ -331,7 +339,9 @@ module MemFs
         before { _fs.touch('/test/test-file') }
 
         it 'raises an exception' do
-          expect { described_class.new('/test/test-file') }.to raise_error
+          expect {
+            described_class.new('/test/test-file')
+          }.to raise_error Errno::ENOTDIR
         end
       end
     end

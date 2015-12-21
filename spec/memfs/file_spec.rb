@@ -1225,7 +1225,7 @@ module MemFs
         it 'raises an exception' do
           expect {
             described_class.realdirpath '/no-dir/test-file'
-          }.to raise_error
+          }.to raise_error Errno::ENOENT
         end
       end
     end
@@ -1289,7 +1289,7 @@ module MemFs
         it 'raises an exception' do
           expect {
             described_class.realpath '/no-dir/test-file'
-          }.to raise_error
+          }.to raise_error Errno::ENOENT
         end
       end
     end
@@ -1321,6 +1321,8 @@ module MemFs
 
         context 'and the named file does not have the setgid bit set' do
           it 'returns false' do
+            _fs.chmod 0644, '/test-file'
+
             setgid = File.setgid?('/test-file')
             expect(setgid).not_to be true
           end
@@ -1348,6 +1350,8 @@ module MemFs
 
         context 'and the named file does not have the setuid bit set' do
           it 'returns false' do
+            _fs.chmod 0644, '/test-file'
+
             setuid = File.setuid?('/test-file')
             expect(setuid).not_to be true
           end
@@ -1465,6 +1469,7 @@ module MemFs
 
         it 'returns false if the named file hasn’t the sticky bit set' do
           _fs.touch '/test-file'
+          _fs.chmod 0666, '/test-file'
 
           sticky = File.sticky?('/test-file')
           expect(sticky).to be false
@@ -1545,13 +1550,17 @@ module MemFs
 
       context 'when the named file does not exist' do
         it 'raises an exception' do
-          expect { described_class.truncate '/no-file', 5 }.to raise_error
+          expect {
+            described_class.truncate '/no-file', 5
+          }.to raise_error Errno::ENOENT
         end
       end
 
       context 'when the given size is negative' do
         it 'it raises an exception' do
-          expect { described_class.truncate '/test-file', -1 }.to raise_error
+          expect {
+            described_class.truncate '/test-file', -1
+          }.to raise_error TypeError
         end
       end
     end

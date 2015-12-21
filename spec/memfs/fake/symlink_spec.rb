@@ -63,7 +63,7 @@ module MemFs
             symlink = described_class.new('/test-link', '/no-file')
             expect {
               symlink.dereferenced_path
-            }.to raise_exception
+            }.to raise_error Errno::ENOENT
           end
         end
       end

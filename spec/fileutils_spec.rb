@@ -474,7 +474,7 @@ describe FileUtils do
       it 'raises an exception' do
         expect {
           described_class.install('/test-file', '/test-file')
-        }.to raise_exception(ArgumentError)
+        }.to raise_error ArgumentError
       end
     end
 
