@@ -22,12 +22,19 @@ module MemFs
       def write(path, string, offset = 0, open_args = nil)
         open_args ||= [File::WRONLY, encoding: nil]
 
+        offset = 0 if offset.nil?
+        if offset.respond_to?(:to_int)
+          offset = offset.to_int
+        else
+          raise TypeError, "no implicit conversion from #{offset.class}"
+        end
+
         if offset > 0
           fail NotImplementedError, "MemFs::IO.write with offset not yet supported."
         end
 
         file = open(path, *open_args)
-        file.seek(offset || 0)
+        file.seek(offset)
         file.write(string)
       ensure
         file.close if file
