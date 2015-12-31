@@ -25,12 +25,12 @@ describe FileUtils do
     end
 
     it "raises an error when the given path doesn't exist" do
-      expect { described_class.cd('/nowhere') }.to raise_specific_error(Errno::ENOENT)
+      expect { described_class.cd('/nowhere') }.to raise_error(Errno::ENOENT)
     end
 
     it 'raises an error when the given path is not a directory' do
       described_class.touch('/test-file')
-      expect { described_class.cd('/test-file') }.to raise_specific_error(Errno::ENOTDIR)
+      expect { described_class.cd('/test-file') }.to raise_error(Errno::ENOTDIR)
     end
 
     context 'when called with a block' do
@@ -57,7 +57,7 @@ describe FileUtils do
       end
 
       it "raises an error if the last target of the link chain doesn't exist" do
-        expect { described_class.cd('/nowhere-link') }.to raise_specific_error(Errno::ENOENT)
+        expect { described_class.cd('/nowhere-link') }.to raise_error(Errno::ENOENT)
       end
     end
   end
@@ -82,7 +82,7 @@ describe FileUtils do
     end
 
     it 'raises an error if an entry does not exist' do
-      expect { described_class.chmod(0777, '/test-file') }.to raise_specific_error(Errno::ENOENT)
+      expect { described_class.chmod(0777, '/test-file') }.to raise_error(Errno::ENOENT)
     end
 
     context 'when the named file is a symlink' do
@@ -298,7 +298,7 @@ describe FileUtils do
       it 'raises an exception' do
         expect {
           described_class.copy_entry('/test-file', '/test-copy')
-        }.to raise_specific_error(RuntimeError)
+        }.to raise_error(RuntimeError)
       end
     end
 
@@ -382,7 +382,7 @@ describe FileUtils do
       it 'raises an error' do
         expect {
           described_class.cp('/test-file', '/test-file')
-        }.to raise_specific_error(ArgumentError)
+        }.to raise_error(ArgumentError)
       end
     end
 
@@ -400,7 +400,7 @@ describe FileUtils do
           described_class.touch(['/dest', '/test-file2'])
           expect {
             described_class.cp(['/test-file', '/test-file2'], '/dest')
-          }.to raise_specific_error(Errno::ENOTDIR)
+          }.to raise_error(Errno::ENOTDIR)
         end
       end
     end
@@ -527,7 +527,7 @@ describe FileUtils do
           described_class.touch('/test-file2')
           expect {
             described_class.ln('/test-file', '/test-file2')
-          }.to raise_specific_error(SystemCallError)
+          }.to raise_error(SystemCallError)
         end
 
         context 'and +:force+ is set' do
@@ -552,7 +552,7 @@ describe FileUtils do
           described_class.touch(['/test-file2', '/not-a-dir'])
           expect {
             described_class.ln(['/test-file', '/test-file2'], '/not-a-dir')
-          }.to raise_specific_error(Errno::ENOTDIR)
+          }.to raise_error(Errno::ENOTDIR)
         end
       end
     end
@@ -587,7 +587,7 @@ describe FileUtils do
         it 'raises an exeption' do
           expect {
             described_class.ln_s('/test-file', '/not-a-dir')
-          }.to raise_specific_error(Errno::EEXIST)
+          }.to raise_error(Errno::EEXIST)
         end
 
         context 'and +:force+ is set' do
@@ -618,7 +618,7 @@ describe FileUtils do
         it 'raises an error' do
           expect {
             described_class.ln_s(['/test-file', '/test-file2'], '/not-a-dir')
-          }.to raise_specific_error(Errno::ENOTDIR)
+          }.to raise_error(Errno::ENOTDIR)
         end
       end
     end
@@ -865,7 +865,7 @@ describe FileUtils do
 
     it 'cannot remove a directory' do
       described_class.mkdir('/test-dir')
-      expect { described_class.rm('/test-dir') }.to raise_specific_error(Errno::EPERM)
+      expect { described_class.rm('/test-dir') }.to raise_error(Errno::EPERM)
     end
 
     context 'when +:force+ is set' do

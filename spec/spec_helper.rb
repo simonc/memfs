@@ -15,22 +15,6 @@ RSpec.configure do |config|
   end
 end
 
-RSpec::Matchers.define :raise_specific_error do |expected_exception_class|
-  match do |block|
-    begin
-      block.call
-    rescue expected_exception_class
-      true
-    else
-      false
-    end
-  end
-
-  def supports_block_expectations?
-    true
-  end
-end
-
 def _fs
   MemFs::FileSystem.instance
 end
