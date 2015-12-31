@@ -168,6 +168,7 @@ end
 * MemFs doesn't implement IO so methods like `FileUtils.copy_stream` and `IO.write` are still the originals.
 * Similarly, MemFs doesn't implement Kernel, so don't use a naked `open()` call. This uses the `Kernel` class via `method_missing`, which MemFs will not intercept.
 * Pipes and Sockets are not handled for now.
+* `require "pp"` will raise a _superclass mismatch_ exception since MemFs::File does not inherit from IO. The best thing to do is to require pp _before_ MemFs.
 
 ## TODO
 
