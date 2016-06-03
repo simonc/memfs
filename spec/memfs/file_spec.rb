@@ -2250,7 +2250,7 @@ module MemFs
       context 'when the file is not open for reading' do
         it 'raises an exception' do
           expect {
-            write_subject.each_byte { |b| }
+            write_subject.each_byte { |_b| }
           }.to raise_error IOError
         end
 
@@ -2287,7 +2287,7 @@ module MemFs
       context 'when the file is not open for reading' do
         it 'raises an exception' do
           expect {
-            write_subject.each_char { |b| }
+            write_subject.each_char { |_b| }
           }.to raise_error IOError
         end
 

@@ -33,9 +33,8 @@ module MemFs
       end
 
       def type
-        case
-        when block_device     then 'blockSpecial'
-        when character_device then 'characterSpecial'
+        if block_device then 'blockSpecial'
+        elsif character_device then 'characterSpecial'
         else 'file'
         end
       end
