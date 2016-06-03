@@ -21,7 +21,7 @@ module MemFs
       previous_directory = working_directory
       self.working_directory = destination
 
-      block.call if block
+      yield if block
     ensure
       self.working_directory = previous_directory if block
     end

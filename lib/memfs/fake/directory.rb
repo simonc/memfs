@@ -45,9 +45,9 @@ module MemFs
 
       def paths
         [path] + entries.reject { |p| %w[. ..].include?(p) }
-                        .values
-                        .map(&:paths)
-                        .flatten
+                 .values
+                 .map(&:paths)
+                 .flatten
       end
 
       def remove_entry(entry)

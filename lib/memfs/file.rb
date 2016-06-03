@@ -22,9 +22,9 @@ module MemFs
       'w+' => CREAT | TRUNC | RDWR,
       'a'  => CREAT | APPEND | WRONLY,
       'a+' => CREAT | APPEND | RDWR
-    }
+    }.freeze
 
-    SEPARATOR = '/'
+    SEPARATOR = '/'.freeze
     SUCCESS = 0
 
     @umask = nil
@@ -186,7 +186,7 @@ module MemFs
 
     def self.size?(path)
       file = fs.find(path)
-      if file && file.size > 0
+      if file && file.size > 0 # rubocop:disable Style/ZeroLengthPredicate
         file.size
       else
         false
@@ -240,7 +240,7 @@ module MemFs
     def initialize(filename, mode = File::RDONLY, *perm_and_or_opt)
       opt = perm_and_or_opt.last.is_a?(Hash) ? perm_and_or_opt.pop : {}
       perm_and_or_opt.shift
-      if perm_and_or_opt.size > 0
+      unless perm_and_or_opt.empty?
         fail ArgumentError, 'wrong number of arguments (4 for 1..3)'
       end
 
@@ -296,8 +296,6 @@ module MemFs
       File.truncate(path, integer)
     end
 
-    private
-
     def self.dereference_name(path)
       entry = fs.find(path)
       if entry
@@ -330,13 +328,13 @@ module MemFs
 
     def self.stat_query(path, query, force_boolean = true)
       response = fs.find(path) && stat(path).public_send(query)
-      force_boolean ? !!(response) : response
+      force_boolean ? !!response : response
     end
     private_class_method :stat_query
 
     def self.lstat_query(path, query)
       response = fs.find(path) && lstat(path).public_send(query)
-      !!(response)
+      !!response
     end
     private_class_method :lstat_query
   end

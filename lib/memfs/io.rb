@@ -109,25 +109,25 @@ module MemFs
         end
       end
 
-      def each(sep = $/, &block)
+      def each(sep = $/)
         return to_enum(__callee__) unless block_given?
         fail IOError, 'not opened for reading' unless readable?
-        content.each_line(sep) { |line| block.call(line) }
+        content.each_line(sep) { |line| yield(line) }
         self
       end
 
-      def each_byte(&block)
+      def each_byte
         return to_enum(__callee__) unless block_given?
         fail IOError, 'not opened for reading' unless readable?
-        content.each_byte { |byte| block.call(byte) }
+        content.each_byte { |byte| yield(byte) }
         self
       end
       alias_method :bytes, :each_byte
 
-      def each_char(&block)
+      def each_char
         return to_enum(__callee__) unless block_given?
         fail IOError, 'not opened for reading' unless readable?
-        content.each_char { |char| block.call(char) }
+        content.each_char { |char| yield(char) }
         self
       end
       alias_method :chars, :each_char
