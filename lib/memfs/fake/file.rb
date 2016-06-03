@@ -33,11 +33,10 @@ module MemFs
       end
 
       def type
-        case
-        when block_device     then 'blockSpecial'
-        when character_device then 'characterSpecial'
-        else 'file'
-        end
+        return 'blockSpecial' if block_device
+        return 'characterSpecial' if character_device
+
+        'file'
       end
     end
   end

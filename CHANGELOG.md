@@ -2,6 +2,8 @@
 
 ## HEAD
 
+* ADD: Support for _Pathname_ in `Dir.glob` (@craigw)
+
 ## 0.5.0
 
 * ADD: Support for _mode_ to `Dir.mkdir`, `FileUtils.mkdir` and `FileUtils.mkdir_p` (@raeno)

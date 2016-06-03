@@ -21,7 +21,7 @@ module MemFs
                      :uid
 
       def blockdev?
-        !!(entry.block_device)
+        !!entry.block_device
       end
 
       def chardev?

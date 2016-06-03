@@ -15,15 +15,15 @@ module MemFs
       File.basename(path)
     end
 
-    def chdir(path, &block)
+    def chdir(path)
       destination = find_directory!(path)
 
       previous_directory = working_directory
       self.working_directory = destination
 
-      block.call if block
+      yield if block_given?
     ensure
-      self.working_directory = previous_directory if block
+      self.working_directory = previous_directory if block_given?
     end
 
     def clear!
