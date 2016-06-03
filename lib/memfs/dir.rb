@@ -47,7 +47,7 @@ module MemFs
     class << self; alias_method :pwd, :getwd; end
 
     def self.glob(patterns, flags = 0)
-      patterns = [*patterns]
+      patterns = [*patterns].map(&:to_s)
       list = fs.paths.select do |path|
         patterns.any? do |pattern|
           File.fnmatch?(pattern, path, flags | GLOB_FLAGS)
