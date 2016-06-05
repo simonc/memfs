@@ -28,4 +28,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rb-inotify', '~> 0.8'
   gem.add_development_dependency 'rb-fsevent', '~> 0.9'
   gem.add_development_dependency 'rb-fchange', '~> 0.0'
+
+  listen_version = RUBY_VERSION >= '2.2.3' ? '~> 3.1' : '~> 3.0.7'
+  gem.add_development_dependency 'listen', listen_version
 end
