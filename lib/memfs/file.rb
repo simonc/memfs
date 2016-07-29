@@ -257,6 +257,9 @@ module MemFs
       # FIXME: this is an ugly way to ensure a symlink has a target
       entry.dereferenced
 
+      if entry.respond_to?(:pos=)
+        entry.pos = 0
+      end
       entry.content.clear if truncate_file?
     end
 
