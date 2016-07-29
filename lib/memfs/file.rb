@@ -255,6 +255,7 @@ module MemFs
 
       self.entry = fs.find!(filename)
 
+      entry.pos = 0
       entry.content.clear if truncate_file?
     end
 

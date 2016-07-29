@@ -804,6 +804,16 @@ module MemFs
     end
 
     describe '.new' do
+      it 'resets the file position to the beginning' do
+        described_class.open('/test-file', 'w') { |f| f.write 'hello' }
+
+        contents = described_class.open('/test-file', 'r', &:read)
+        expect(contents).to eq('hello')
+
+        contents = described_class.open('/test-file', 'r', &:read)
+        expect(contents).to eq('hello')
+      end
+
       context 'when only the filename is provided' do
         context 'and the file exists' do
           it 'returns the open file' do
