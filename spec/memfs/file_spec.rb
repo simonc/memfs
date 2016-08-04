@@ -804,6 +804,23 @@ module MemFs
     end
 
     describe '.new' do
+      context 'when only the filename is provided' do
+        context 'and the file exists' do
+          it 'returns the open file' do
+            file = described_class.new('/test-file')
+            expect(file).to be_a(MemFs::File)
+          end
+        end
+
+        context 'and the file does not exist' do
+          it 'raises an exception' do
+            expect {
+              described_class.new('missing-file')
+            }.to raise_error(Errno::ENOENT)
+          end
+        end
+      end
+
       context 'when the mode is provided' do
         context 'and it is an integer' do
           subject { described_class.new('/test-file', File::RDWR) }
