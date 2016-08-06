@@ -792,14 +792,6 @@ module MemFs
           is_symlink = described_class.lstat('/test-link').symlink?
           expect(is_symlink).to be true
         end
-
-        context 'and its target does not exist' do
-          it 'ignores errors' do
-            expect {
-              described_class.lstat('/no-link')
-            }.not_to raise_error
-          end
-        end
       end
     end
 

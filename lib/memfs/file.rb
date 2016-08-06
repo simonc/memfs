@@ -254,6 +254,8 @@ module MemFs
       fs.touch(filename) if create_file?
 
       self.entry = fs.find!(filename)
+      # FIXME: this is an ugly way to ensure a symlink has a target
+      entry.dereferenced
 
       entry.content.clear if truncate_file?
     end

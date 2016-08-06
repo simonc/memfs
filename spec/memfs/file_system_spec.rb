@@ -374,6 +374,7 @@ module MemFs
 
     describe '#symlink' do
       it 'creates a symbolic link' do
+        subject.touch('/some-file')
         subject.symlink('/some-file', '/some-link')
         expect(subject.find!('/some-link')).to be_a(Fake::Symlink)
       end
