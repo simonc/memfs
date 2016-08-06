@@ -819,6 +819,14 @@ module MemFs
             }.to raise_error(Errno::ENOENT)
           end
         end
+
+        context 'when the file is a symlink and its target does not exist' do
+          it 'raises an exception' do
+            expect {
+              described_class.new('/no-link')
+            }.to raise_error(Errno::ENOENT)
+          end
+        end
       end
 
       context 'when the mode is provided' do
@@ -2406,19 +2414,11 @@ module MemFs
         expect(subject.lstat).to be_a File::Stat
       end
 
-      it 'does not follow the last symbolic link' do
-        file = described_class.new('/test-link')
+      context 'when the given file is a symlink' do
+        subject { described_class.new('/test-link') }
 
-        is_symlink = file.lstat.symlink?
-        expect(is_symlink).to be true
-      end
-
-      context 'when the named file is a symlink' do
-        context 'and its target does not exist' do
-          it 'ignores errors' do
-            file = described_class.new('/no-link')
-            expect { file.lstat }.not_to raise_error
-          end
+        it 'does not follow the last symbolic link' do
+          expect(subject.lstat).to be_symlink
         end
       end
     end
