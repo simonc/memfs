@@ -100,6 +100,37 @@ module MemFs
   end
   module_function :deactivate!
 
+  # Switches back to the original file system, calls the given block (if any),
+  # and switches back afterwards.
+  # 
+  # Allows for file & dir operations that need to take place on the real fs.
+  # 
+  # @example
+  #   MemFs.halt do
+  #     puts Dir.getwd
+  #   end
+  #   
+  # @return nothing
+  def halt
+
+    switch_to = -> dir_class, file_class { 
+      
+      Object.class_eval do
+        remove_const :Dir
+        remove_const :File
+
+        const_set :Dir, dir_class
+        const_set :File, file_class
+      end
+    }
+
+    switch_to.call MemFs::OriginalDir, MemFs::OriginalFile
+    yield if block_given?
+  ensure
+    switch_to.call MemFs::Dir, MemFs::File
+  end
+  module_function :halt
+
   # Creates a file and all its parent directories.
   #
   # @param path: The path of the file to create.
