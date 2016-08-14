@@ -103,31 +103,27 @@ module MemFs
   # Switches back to the original file system, calls the given block (if any),
   # and switches back afterwards.
   # 
-  # Allows for file & dir operations that need to take place on the real fs.
+  # If a block is given, all file & dir operations (like reading dir contents or
+  # requiring files) will operate on the original fs. 
   # 
   # @example
   #   MemFs.halt do
   #     puts Dir.getwd
   #   end
-  #   
   # @return nothing
   def halt
+    # Keep fake fs state
+    fs    = MemFs::FileSystem.instance
+    state = Hash[fs.instance_variables.map { |key| [key, fs.instance_variable_get(key)] } ]
 
-    switch_to = -> dir_class, file_class { 
-      
-      Object.class_eval do
-        remove_const :Dir
-        remove_const :File
-
-        const_set :Dir, dir_class
-        const_set :File, file_class
-      end
-    }
-
-    switch_to.call MemFs::OriginalDir, MemFs::OriginalFile
+    deactivate!
+    
     yield if block_given?
   ensure
-    switch_to.call MemFs::Dir, MemFs::File
+    activate!
+
+    # Recover fake fs state
+    state.each { |key, value| fs.instance_variable_set(key, value) }
   end
   module_function :halt
 

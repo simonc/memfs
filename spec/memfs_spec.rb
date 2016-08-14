@@ -50,6 +50,36 @@ describe MemFs do
     end
   end
 
+  describe '.halt' do
+    before :each do
+      described_class.activate!
+      described_class.deactivate!
+    end
+
+    it 'switches back to the original Ruby Dir & File classes' do
+      described_class.halt do
+        expect(::Dir).to be(described_class::OriginalDir)
+        expect(::File).to be(described_class::OriginalFile)
+      end
+    end
+
+    it 'switches back to the faked Dir & File classes' do
+      described_class.halt
+      expect(::Dir).to be(described_class::Dir)
+      expect(::File).to be(described_class::File)
+    end
+
+    it 'maintains the state of the faked fs' do
+      _fs.touch('file.rb')
+
+      described_class.halt do
+        expect(File.exist?('file.rb')).to be false
+      end
+          
+      expect(File.exist?('file.rb')).to be true
+    end
+  end
+
   describe '.touch' do
     around(:each) { |example| described_class.activate { example.run } }
 
