@@ -70,7 +70,7 @@ module MemFs
   #
   # @see #deactivate!
   # @return nothing.
-  def activate!
+  def activate!(clear: true)
     Object.class_eval do
       remove_const :Dir
       remove_const :File
@@ -79,7 +79,7 @@ module MemFs
       const_set :File, MemFs::File
     end
 
-    MemFs::FileSystem.instance.clear!
+    MemFs::FileSystem.instance.clear! if clear
   end
   module_function :activate!
 
@@ -112,18 +112,11 @@ module MemFs
   #   end
   # @return nothing
   def halt
-    # Keep fake fs state
-    fs    = MemFs::FileSystem.instance
-    state = Hash[fs.instance_variables.map { |key| [key, fs.instance_variable_get(key)] } ]
-
     deactivate!
     
     yield if block_given?
   ensure
-    activate!
-
-    # Recover fake fs state
-    state.each { |key, value| fs.instance_variable_set(key, value) }
+    activate!(clear: false) 
   end
   module_function :halt
 
