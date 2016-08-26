@@ -51,10 +51,8 @@ describe MemFs do
   end
 
   describe '.halt' do
-    before :each do
-      described_class.activate!
-      described_class.deactivate!
-    end
+    before(:each) { described_class.activate! }
+    after(:each)  { described_class.deactivate! }
 
     it 'switches back to the original Ruby Dir & File classes' do
       described_class.halt do
@@ -67,6 +65,15 @@ describe MemFs do
       described_class.halt
       expect(::Dir).to be(described_class::Dir)
       expect(::File).to be(described_class::File)
+    end
+
+    it 'switches back to the faked Dir & File classes no matter what' do
+      begin
+        described_class.halt { raise StandardError.new }
+      rescue
+        expect(::Dir).to be(described_class::Dir)
+        expect(::File).to be(described_class::File)
+      end
     end
 
     it 'maintains the state of the faked fs' do
