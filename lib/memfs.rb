@@ -70,7 +70,7 @@ module MemFs
   #
   # @see #deactivate!
   # @return nothing.
-  def activate!
+  def activate!(clear: true)
     Object.class_eval do
       remove_const :Dir
       remove_const :File
@@ -79,7 +79,7 @@ module MemFs
       const_set :File, MemFs::File
     end
 
-    MemFs::FileSystem.instance.clear!
+    MemFs::FileSystem.instance.clear! if clear
   end
   module_function :activate!
 
@@ -99,6 +99,26 @@ module MemFs
     end
   end
   module_function :deactivate!
+
+  # Switches back to the original file system, calls the given block (if any),
+  # and switches back afterwards.
+  # 
+  # If a block is given, all file & dir operations (like reading dir contents or
+  # requiring files) will operate on the original fs. 
+  # 
+  # @example
+  #   MemFs.halt do
+  #     puts Dir.getwd
+  #   end
+  # @return nothing
+  def halt
+    deactivate!
+    
+    yield if block_given?
+  ensure
+    activate!(clear: false) 
+  end
+  module_function :halt
 
   # Creates a file and all its parent directories.
   #
