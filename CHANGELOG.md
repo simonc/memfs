@@ -3,6 +3,8 @@
 ## HEAD
 
 * ADD: Support for _Pathname_ in `Dir.glob` (@craigw)
+* ADD: `MemFs.halt` to switch back to the real file-system (@thsur)
+* FIX: Reset the file position when reopened (@jimpo)
 
 ## 0.5.0
 
