@@ -125,13 +125,13 @@ module MemFs
 
       describe '#dev' do
         it 'returns an integer representing the device on which the entry resides' do
-          expect(entry.dev).to be_a(Fixnum)
+          expect(entry.dev).to be_a(Integer)
         end
       end
 
       describe '#ino' do
         it 'Returns the inode number for the entry' do
-          expect(entry.ino).to be_a(Fixnum)
+          expect(entry.ino).to be_a(Integer)
         end
       end
 

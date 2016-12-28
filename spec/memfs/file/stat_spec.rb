@@ -131,7 +131,7 @@ module MemFs
 
     describe '#dev' do
       it 'returns an integer representing the device on which stat resides' do
-        expect(file_stat.dev).to be_a(Fixnum)
+        expect(file_stat.dev).to be_a(Integer)
       end
     end
 
@@ -449,7 +449,7 @@ module MemFs
 
     describe '#ino' do
       it 'returns the inode number for stat.' do
-        expect(file_stat.ino).to be_a(Fixnum)
+        expect(file_stat.ino).to be_a(Integer)
       end
     end
 

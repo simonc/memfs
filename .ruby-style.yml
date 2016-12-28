@@ -84,6 +84,8 @@ Style/IfUnlessModifier:
 Style/OptionHash:
   Description: Don't use option hashes when you can use keyword arguments.
   Enabled: false
+Style/NumericLiteralPrefix:
+  Enabled: false
 Style/PercentLiteralDelimiters:
   Description: Use `%`-literal delimiters consistently
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#percent-literal-braces

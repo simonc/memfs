@@ -1479,10 +1479,10 @@ module MemFs
       end
 
       it 'always returns a new object' do
-        stat_1 = described_class.stat('/test-file')
-        stat_2 = described_class.stat('/test-file')
+        stat1 = described_class.stat('/test-file')
+        stat2 = described_class.stat('/test-file')
 
-        expect(stat_2).not_to be stat_1
+        expect(stat2).not_to be stat1
       end
     end
 
