@@ -16,3 +16,4 @@ test/tmp
 test/version_tmp
 tmp
 lib/fileutils.rb
+spec/examples.txt
