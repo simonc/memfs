@@ -1,8 +1,7 @@
-require 'spec_helper'
 require 'pathname'
 
 module MemFs
-  describe Dir do
+  ::RSpec.describe Dir do
     subject { described_class.new('/test') }
 
     before { described_class.mkdir '/test' }

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module MemFs
   module Fake
-    describe Entry do
+    ::RSpec.describe Entry do
       let(:entry) { described_class.new('test') }
       let(:parent) { Directory.new('parent') }
       let(:time) { Time.now - 5000 }

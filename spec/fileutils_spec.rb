@@ -2,7 +2,7 @@ require 'date'
 require 'fileutils'
 require 'spec_helper'
 
-describe FileUtils do
+RSpec.describe FileUtils do
   before :each do
     MemFs::File.umask(0020)
     MemFs.activate!

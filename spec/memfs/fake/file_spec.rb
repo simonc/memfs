@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module MemFs
   module Fake
-    describe File do
+    ::RSpec.describe File do
       let(:file) { _fs.find!('/test-file') }
 
       before do

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module MemFs
-  describe File::Stat do
+  ::RSpec.describe File::Stat do
     let(:file_stat) { described_class.new('/test-file') }
     let(:dereferenced_file_stat) { described_class.new('/test-file', true) }
 

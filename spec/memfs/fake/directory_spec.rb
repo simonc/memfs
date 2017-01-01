@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module MemFs
   module Fake
-    describe Directory do
+    ::RSpec.describe Directory do
       subject(:directory) { described_class.new('test') }
 
       describe '.new' do

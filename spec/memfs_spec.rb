@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe MemFs do
+RSpec.describe MemFs do
   describe '.activate' do
     it 'calls the given block with MemFs activated' do
       described_class.activate do

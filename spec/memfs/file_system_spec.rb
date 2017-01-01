@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module MemFs
-  describe FileSystem do
+  ::RSpec.describe FileSystem do
     subject { _fs }
 
     before :each do

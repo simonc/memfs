@@ -4,7 +4,7 @@ require 'spec_helper'
 require 'pathname'
 
 module MemFs
-  describe File do
+  ::RSpec.describe File do
     subject { described_class.new('/test-file') }
     let(:write_subject) { described_class.new('/test-file', 'w') }
 

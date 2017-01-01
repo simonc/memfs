@@ -3,7 +3,7 @@ require 'spec_helper'
 
 module MemFs
   module Fake
-    describe File::Content do
+    ::RSpec.describe File::Content do
       describe '#<<' do
         it 'writes the given string to the contained string' do
           subject << 'test'

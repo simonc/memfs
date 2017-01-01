@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module MemFs
   module Fake
-    describe Symlink do
+    ::RSpec.describe Symlink do
       describe '#content' do
         it "returns the target's content" do
           MemFs::File.open('/test-file', 'w') { |f| f.puts 'test' }
