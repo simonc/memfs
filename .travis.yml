@@ -1,5 +1,5 @@
-before_install:
-  - gem update --system '2.4.5'
+# before_install:
+#   - gem update --system '2.4.5'
 language: ruby
 rvm:
   - 2.0.0
