@@ -11,6 +11,15 @@ Metrics/LineLength:
   Exclude:
   - Rakefile
   - "spec/**/*"
+Style/AlignParameters:
+  Description: Align the parameters of a method call if they span more than one line.
+  StyleGuide: '#no-double-indent'
+  Enabled: true
+  EnforcedStyle: with_fixed_indentation
+  SupportedStyles:
+  - with_first_parameter
+  - with_fixed_indentation
+  IndentationWidth: ~
 Style/BlockDelimiters:
   Description: abc
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#single-line-blocks

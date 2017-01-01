@@ -16,14 +16,14 @@ module MemFs
       SETGID = 02000
 
       attr_accessor :atime,
-                    :block_device,
-                    :character_device,
-                    :ctime,
-                    :gid,
-                    :mtime,
-                    :name,
-                    :parent,
-                    :uid
+        :block_device,
+        :character_device,
+        :ctime,
+        :gid,
+        :mtime,
+        :name,
+        :parent,
+        :uid
       attr_reader :mode
 
       def blksize

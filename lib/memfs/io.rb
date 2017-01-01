@@ -8,7 +8,7 @@ module MemFs
 
     (OriginalIO.constants - OriginalFile::Constants.constants)
       .each do |const_name|
-        self.const_set(const_name, OriginalIO.const_get(const_name))
+        const_set(const_name, OriginalIO.const_get(const_name))
       end
 
     def_delegators :original_io_class,
@@ -44,7 +44,7 @@ module MemFs
 
       if offset > 0
         fail NotImplementedError,
-             'MemFs::IO.write with offset not yet supported.'
+          'MemFs::IO.write with offset not yet supported.'
       end
 
       file = open(path, *open_args)
@@ -60,7 +60,7 @@ module MemFs
     private_class_method :original_io_class
 
     attr_writer :autoclose,
-                :close_on_exec
+      :close_on_exec
 
     def <<(object)
       fail IOError, 'not opened for writing' unless writable?
@@ -199,8 +199,8 @@ module MemFs
     private
 
     attr_accessor :closed,
-                  :entry,
-                  :opening_mode
+      :entry,
+      :opening_mode
 
     attr_reader :path
 

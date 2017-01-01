@@ -27,13 +27,13 @@ module MemFs
     @umask = nil
 
     def_delegators :original_file_class,
-                   :basename,
-                   :dirname,
-                   :extname,
-                   :fnmatch,
-                   :join,
-                   :path,
-                   :split
+      :basename,
+      :dirname,
+      :extname,
+      :fnmatch,
+      :join,
+      :path,
+      :split
 
     [
       :blockdev?,

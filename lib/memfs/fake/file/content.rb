@@ -6,8 +6,7 @@ module MemFs
       class Content < SimpleDelegator
         attr_accessor :pos
 
-        def close
-        end
+        def close; end
 
         def initialize(obj = '')
           @string = obj.to_s.dup

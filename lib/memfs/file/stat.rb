@@ -10,15 +10,15 @@ module MemFs
       attr_reader :entry
 
       def_delegators :entry,
-                     :atime,
-                     :blksize,
-                     :ctime,
-                     :dev,
-                     :gid,
-                     :ino,
-                     :mode,
-                     :mtime,
-                     :uid
+        :atime,
+        :blksize,
+        :ctime,
+        :dev,
+        :gid,
+        :ino,
+        :mode,
+        :mtime,
+        :uid
 
       def blockdev?
         !!entry.block_device
