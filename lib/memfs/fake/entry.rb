@@ -16,6 +16,7 @@ module MemFs
       SETGID = 02000
 
       attr_accessor :atime,
+        :birthtime,
         :block_device,
         :character_device,
         :ctime,
@@ -60,11 +61,11 @@ module MemFs
 
       def initialize(path = nil)
         time = Time.now
-        self.atime = time
-        self.ctime = time
+        %i[atime birthtime ctime mtime].each do |time_attr|
+          self.send("#{time_attr}=", time)
+        end
         self.gid = Process.egid
         self.mode = 0666 - MemFs::File.umask
-        self.mtime = time
         self.name = MemFs::File.basename(path || '')
         self.uid = Process.euid
       end

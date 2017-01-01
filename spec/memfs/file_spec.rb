@@ -75,6 +75,27 @@ module MemFs
       end
     end
 
+    describe '.birthtime' do
+      it 'returns creation time for the named file as a Time object' do
+        expect(described_class.birthtime('/test-file')).to be_a Time
+      end
+
+      it 'raises an error if the entry does not exist' do
+        expect { described_class.birthtime('/no-file') }.to raise_error Errno::ENOENT
+      end
+
+      context 'when the entry is a symlink' do
+        let(:time) { Time.now - 500_000 }
+
+        it 'returns the creation time of the last target of the link chain' do
+          _fs.find!('/test-file').birthtime = time
+          described_class.symlink '/test-link', '/test-link2'
+
+          expect(described_class.birthtime('/test-link2')).to eq time
+        end
+      end
+    end
+
     describe '.blockdev?' do
       context 'when the name file exists' do
         context 'and it is a block device' do
@@ -2048,6 +2069,12 @@ module MemFs
         it 'returns true' do
           expect(subject.binmode?).to be true
         end
+      end
+    end
+
+    describe '#birthtime' do
+      it 'returns a Time object' do
+        expect(subject.birthtime).to be_a Time
       end
     end
 

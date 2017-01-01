@@ -83,6 +83,10 @@ module MemFs
       stat(path).atime
     end
 
+    def self.birthtime(path)
+      stat(path).birthtime
+    end
+
     def self.chmod(mode_int, *paths)
       paths.each do |path|
         fs.chmod mode_int, path
@@ -262,6 +266,10 @@ module MemFs
 
     def atime
       File.atime(path)
+    end
+
+    def birthtime
+      File.birthtime(path)
     end
 
     def chmod(mode_int)

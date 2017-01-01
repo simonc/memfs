@@ -11,6 +11,7 @@ module MemFs
 
       def_delegators :entry,
         :atime,
+        :birthtime,
         :blksize,
         :ctime,
         :dev,

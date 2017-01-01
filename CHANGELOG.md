@@ -3,7 +3,8 @@
 ## HEAD
 
 * ADD: `Dir.empty?` from Ruby 2.4
-* ADD: `File#fileno` and `Dir#fileno` raise `NotImplementedError`
+* ADD: `IO#fileno` and `Dir#fileno` raise `NotImplementedError`
+* ADD: `File.birthtime` and `File#birthtime`
 
 ## 1.0.0
 
