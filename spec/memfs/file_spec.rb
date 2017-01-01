@@ -2404,6 +2404,12 @@ module MemFs
       end
     end
 
+    describe '#fileno' do
+      it 'raises an exception' do
+        expect { subject.fileno }.to raise_exception(NotImplementedError)
+      end
+    end
+
     describe '#flock' do
       it 'returns zero' do
         returned_value = subject.flock(File::LOCK_EX)

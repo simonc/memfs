@@ -115,6 +115,10 @@ module MemFs
       entry.entry_names.each(&block)
     end
 
+    def fileno
+      entry.fileno
+    end
+
     def path
       entry.path
     end

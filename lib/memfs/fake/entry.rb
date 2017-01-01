@@ -50,6 +50,10 @@ module MemFs
         @dev ||= rand(1000)
       end
 
+      def fileno
+        fail NotImplementedError
+      end
+
       def find(_path)
         fail Errno::ENOTDIR, path
       end

@@ -117,6 +117,12 @@ module MemFs
         end
       end
 
+      describe '#fileno' do
+        it 'raises an exception' do
+          expect { subject.fileno }.to raise_exception(NotImplementedError)
+        end
+      end
+
       describe '#find' do
         it 'raises an error' do
           expect { entry.find('test') }.to raise_error(Errno::ENOTDIR)

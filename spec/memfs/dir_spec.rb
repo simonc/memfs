@@ -440,6 +440,12 @@ module MemFs
       end
     end
 
+    describe '#fileno' do
+      it 'raises an exception' do
+        expect { subject.fileno }.to raise_exception(NotImplementedError)
+      end
+    end
+
     describe '#path' do
       it "returns the path parameter passed to dir's constructor" do
         expect(subject.path).to eq '/test'
