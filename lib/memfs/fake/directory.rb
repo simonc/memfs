@@ -19,7 +19,7 @@ module MemFs
       end
 
       def find(path)
-        path = path.sub(%r{\A/+}, '')
+        path = path.sub(%r{\A/+}, '').sub(%r{/+\z}, '')
         parts = path.split('/', 2)
 
         if entry_names.include?(path)

@@ -70,6 +70,10 @@ module MemFs
         it 'should remove any leading / in the path' do
           expect(directory.find('/sub_dir/file')).to be(file)
         end
+
+        it 'should remove any trailing / in the path' do
+          expect(directory.find('sub_dir/file/')).to be(file)
+        end
       end
 
       describe '#parent=' do
