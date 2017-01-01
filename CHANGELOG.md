@@ -2,9 +2,16 @@
 
 ## HEAD
 
-* ADD: Support for _Pathname_ in `Dir.glob` (@craigw)
-* ADD: `MemFs.halt` to switch back to the real file-system (@thsur)
-* FIX: Reset the file position when reopened (@jimpo)
+:warning: This version drops support for Ruby 1.9.
+
+* ADD: Support for Ruby 2.4.0
+* ADD: Support for _Pathname_ in `Dir.glob` (PR #21 by @craigw)
+* ADD: `MemFs.halt` to switch back to the real file-system (PR #24 by @thsur)
+* ADD: Basic support for `IO.write` (PR #20 by @rmm5t)
+* FIX: Reset the file position when reopened (PR #23 by @jimpo)
+* FIX: Ignore trailing slashes when searching an entry (issue #26)
+* FIX: Making `File` inherit from `IO` to fix 3rd-party related issues
+* FIX: Ensure `File.new` on a symlink raises if target is absent
 
 ## 0.5.0
 
