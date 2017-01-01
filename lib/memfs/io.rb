@@ -145,6 +145,10 @@ module MemFs
     end
     alias_method :chars, :each_char
 
+    def fileno
+      entry.fileno
+    end
+
     def pos
       entry.pos
     end

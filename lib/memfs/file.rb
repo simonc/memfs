@@ -278,10 +278,6 @@ module MemFs
       File.ctime(path)
     end
 
-    def fileno
-      entry.fileno
-    end
-
     def flock(*)
       SUCCESS
     end
