@@ -325,6 +325,12 @@ module MemFs
       end
     end
 
+    describe '.empty?' do
+      subject { described_class }
+
+      it_behaves_like 'aliased method', :empty?, :zero?
+    end
+
     describe '.executable?' do
       let(:access) { 0 }
       let(:gid) { 0 }

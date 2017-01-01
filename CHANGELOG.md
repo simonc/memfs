@@ -5,6 +5,7 @@
 * ADD: `Dir.empty?` from Ruby 2.4
 * ADD: `IO#fileno` and `Dir#fileno` raise `NotImplementedError`
 * ADD: `File.birthtime` and `File#birthtime`
+* ADD: `File.empty?`
 
 ## 1.0.0
 

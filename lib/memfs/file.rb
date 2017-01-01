@@ -63,6 +63,8 @@ module MemFs
       end
     end
 
+    class << self; alias_method :empty?, :zero?; end
+
     [
       :world_readable?,
       :world_writable?
