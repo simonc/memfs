@@ -1,6 +1,6 @@
 # Changelog
 
-## HEAD
+## 1.0.0
 
 :warning: This version drops support for Ruby 1.9.
 
