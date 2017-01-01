@@ -1,5 +1,9 @@
 # Changelog
 
+## HEAD
+
+* ADD: `Dir.empty?` from Ruby 2.4
+
 ## 1.0.0
 
 :warning: This version drops support for Ruby 1.9.

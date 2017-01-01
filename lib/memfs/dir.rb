@@ -26,6 +26,11 @@ module MemFs
       0
     end
 
+    def self.empty?(path)
+      entry = fs.find!(path)
+      File.directory?(path) && entry.empty?
+    end
+
     def self.entries(dirname, _opts = {})
       fs.entries(dirname)
     end

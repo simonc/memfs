@@ -96,6 +96,38 @@ module MemFs
       it_behaves_like 'aliased method', :delete, :rmdir
     end
 
+    describe '.empty?' do
+      context 'when the given directory is empty' do
+        it 'returns true' do
+          expect(described_class.empty?('/test')).to be true
+        end
+      end
+
+      context 'when the given directory is non-empty' do
+        before { Dir.mkdir('/test/sub-dir') }
+
+        it 'returns false' do
+          expect(described_class.empty?('/test')).to be false
+        end
+      end
+
+      context 'when the given directory does not exist' do
+        it 'raises an exception' do
+          expect {
+            described_class.empty?('/nothing')
+          }.to raise_exception(Errno::ENOENT)
+        end
+      end
+
+      context 'when the given entry is not a directory' do
+        before { _fs.touch '/test/file1' }
+
+        it 'returns false' do
+          expect(described_class.empty?('/test/file1')).to be false
+        end
+      end
+    end
+
     describe '.entries' do
       it 'returns an array containing all of the filenames in the given directory' do
         %w[/test/dir1 /test/dir2].each { |dir| described_class.mkdir dir }
