@@ -3,15 +3,12 @@ require 'memfs/filesystem_access'
 require 'memfs/io'
 
 module MemFs
-  class File
+  class File < IO
     extend FilesystemAccess
     extend SingleForwardable
-    extend IO::ClassMethods
 
     include Enumerable
     include FilesystemAccess
-    include OriginalFile::Constants
-    include IO::InstanceMethods
 
     ALT_SEPARATOR = nil
 

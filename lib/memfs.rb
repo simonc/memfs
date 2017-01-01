@@ -22,6 +22,9 @@ module MemFs
   # Keeps track of the original Ruby File class.
   OriginalFile = ::File
 
+  # Keeps track of the original Ruby IO class.
+  OriginalIO = ::IO
+
   require 'memfs/file_system'
   require 'memfs/dir'
   require 'memfs/file'
@@ -74,8 +77,10 @@ module MemFs
     Object.class_eval do
       remove_const :Dir
       remove_const :File
+      remove_const :IO
 
       const_set :Dir, MemFs::Dir
+      const_set :IO, MemFs::IO
       const_set :File, MemFs::File
     end
 
@@ -93,8 +98,10 @@ module MemFs
     Object.class_eval do
       remove_const :Dir
       remove_const :File
+      remove_const :IO
 
       const_set :Dir, MemFs::OriginalDir
+      const_set :IO, MemFs::OriginalIO
       const_set :File, MemFs::OriginalFile
     end
   end
