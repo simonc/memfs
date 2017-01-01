@@ -1867,7 +1867,7 @@ module MemFs
         end
 
         it 'starts writing from the offset' do
-          pending('Offsets not yet implemented in IO.write')
+          skip('Offsets not yet implemented in IO.write')
           described_class.write('/test-file', 'test')
           described_class.write('/test-file', 'test', 2)
           read_content = described_class.read('/test-file')

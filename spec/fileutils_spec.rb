@@ -296,9 +296,12 @@ RSpec.describe FileUtils do
 
     context 'when +src+ does not exist' do
       it 'raises an exception' do
+        expected_exception =
+          RUBY_VERSION >= '2.4.0' ? Errno::ENOENT : RuntimeError
+
         expect {
           described_class.copy_entry('/test-file', '/test-copy')
-        }.to raise_error(RuntimeError)
+        }.to raise_error(expected_exception)
       end
     end
 
@@ -880,7 +883,9 @@ RSpec.describe FileUtils do
 
   describe '.rm_f' do
     it 'calls rm with +:force+ set to true' do
-      expect(described_class).to receive(:rm).with('test', force: true)
+      expect(described_class)
+        .to receive(:rm).with('test', a_hash_including(force: true))
+
       described_class.rm_f('test')
     end
   end
@@ -915,7 +920,9 @@ RSpec.describe FileUtils do
 
   describe '.rm_rf' do
     it 'calls rm with +:force+ set to true' do
-      expect(described_class).to receive(:rm_r).with('test', force: true)
+      expect(described_class)
+        .to receive(:rm_r).with('test', a_hash_including(force: true))
+
       described_class.rm_rf('test')
     end
   end

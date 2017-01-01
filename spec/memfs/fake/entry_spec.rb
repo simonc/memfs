@@ -13,11 +13,11 @@ module MemFs
       end
 
       shared_examples 'it has accessors for' do |attribute|
-        let(:expected) { value }
+        let(:expected_value) { defined?(expected) ? expected : value }
 
         it attribute do
           entry.send(:"#{attribute}=", value)
-          expect(entry.public_send(attribute)).to eq(expected)
+          expect(entry.public_send(attribute)).to eq(expected_value)
         end
       end
 

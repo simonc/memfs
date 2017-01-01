@@ -84,7 +84,7 @@ module MemFs
     end
 
     def autoclose?
-      @autoclose.nil? ? true : !!@autoclose
+      defined?(@autoclose) ? !!@autoclose : true
     end
 
     def binmode
@@ -94,7 +94,7 @@ module MemFs
     end
 
     def binmode?
-      @binmode.nil? ? false : @binmode
+      defined?(@binmode) ? @binmode : false
     end
 
     def close
@@ -106,7 +106,7 @@ module MemFs
     end
 
     def close_on_exec?
-      @close_on_exec.nil? ? true : !!@close_on_exec
+      defined?(@close_on_exec) ? !!@close_on_exec : true
     end
 
     def eof?
