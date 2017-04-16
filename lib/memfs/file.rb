@@ -23,6 +23,8 @@ module MemFs
 
     SEPARATOR = '/'.freeze
     SUCCESS = 0
+    
+    @umask = nil
 
     @umask = nil
 
