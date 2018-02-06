@@ -947,13 +947,30 @@ RSpec.describe FileUtils do
         described_class.touch('/test-dir/test-file')
       end
 
-      it 'ignores errors' do
-        expect { described_class.rmdir('/test-dir') }.not_to raise_error
-      end
+      if RUBY_VERSION >= '2.5.0'
+        it 'raises an error' do
+          expect { described_class.rmdir('/test-dir') }
+            .to raise_error(Errno::ENOTEMPTY)
+        end
 
-      it "doesn't remove the directory" do
-        described_class.rmdir('/test-dir')
-        expect(Dir.exist?('/test-dir')).to be true
+        it 'doesn’t remove the directory' do
+          begin
+            described_class.rmdir('/test-dir')
+          rescue Errno::ENOTEMPTY
+            # noop
+          end
+
+          expect(Dir.exist?('/test-dir')).to be true
+        end
+      else
+        it 'ignores errors' do
+          expect { described_class.rmdir('/test-dir') }.not_to raise_error
+        end
+
+        it 'doesn’t remove the directory' do
+          described_class.rmdir('/test-dir')
+          expect(Dir.exist?('/test-dir')).to be true
+        end
       end
     end
   end
