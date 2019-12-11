@@ -17,6 +17,12 @@ module MemFs
       0
     end
 
+    if Gem::Requirement.new('>= 2.6').satisfied_by?(Gem::Version.new(RUBY_VERSION))
+      def self.children(dirname, _opts = {})
+        entries(dirname, _opts) - %w[. ..]
+      end
+    end
+
     def self.chroot(path)
       fail Errno::EPERM, path unless Process.uid.zero?
 

@@ -54,6 +54,23 @@ module MemFs
       end
     end
 
+    if Gem::Requirement.new('>= 2.6').satisfied_by?(Gem::Version.new(RUBY_VERSION))
+      describe '.children' do
+        it 'returns an array containing all of the filenames except for "." and ".."'\
+            'in this directory.' do
+          %w[/test/dir1 /test/dir2].each { |dir| described_class.mkdir dir }
+          _fs.touch '/test/file1', '/test/file2'
+          expect(described_class.children('/test')).to eq(%w[dir1 dir2 file1 file2])
+        end
+      end
+    else
+      describe '.children' do
+        it 'raises and error' do
+          expect { described_class.children('/test') }.to raise_error(NoMethodError)
+        end
+      end
+    end
+
     describe '.chroot' do
       before { allow(Process).to receive_messages(uid: 0) }
 
