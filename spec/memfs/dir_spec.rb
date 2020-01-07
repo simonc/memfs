@@ -54,7 +54,7 @@ module MemFs
       end
     end
 
-    if Gem::Requirement.new('>= 2.6').satisfied_by?(Gem::Version.new(RUBY_VERSION))
+    if MemFs.ruby_version_gte?('2.6')
       describe '.children' do
         it 'returns an array containing all of the filenames except for "." and ".." in this directory.' do
           %w[/test/dir1 /test/dir2].each { |dir| described_class.mkdir dir }

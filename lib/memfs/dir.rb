@@ -17,7 +17,7 @@ module MemFs
       0
     end
 
-    if Gem::Requirement.new('>= 2.6').satisfied_by?(Gem::Version.new(RUBY_VERSION))
+    if MemFs.ruby_version_gte?('2.6')
       def self.children(dirname, _opts = {})
         entries(dirname, _opts) - %w[. ..]
       end

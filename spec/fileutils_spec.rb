@@ -20,7 +20,7 @@ RSpec.describe FileUtils do
       expect(described_class.pwd).to eq('/test')
     end
 
-    if Gem::Requirement.new('>= 2.6').satisfied_by?(Gem::Version.new(RUBY_VERSION))
+    if MemFs.ruby_version_gte?('2.6')
       it 'returns 0' do
         expect(described_class.cd('/test')).to eq 0
       end
