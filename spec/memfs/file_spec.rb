@@ -527,9 +527,16 @@ module MemFs
       end
 
       context 'when the period is the last character in path' do
-        it 'returns an empty string' do
-          extname = described_class.extname('test-subject.')
-          expect(extname).to eq ''
+        if MemFs.ruby_version_gte?('2.7') && !MemFs.windows?
+          it 'returns a period' do
+            extname = described_class.extname('test-subject.')
+            expect(extname).to eq '.'
+          end
+        else
+          it 'returns an empty string' do
+            extname = described_class.extname('test-subject.')
+            expect(extname).to eq ''
+          end
         end
       end
     end

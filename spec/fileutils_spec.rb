@@ -20,8 +20,14 @@ RSpec.describe FileUtils do
       expect(described_class.pwd).to eq('/test')
     end
 
-    it 'returns nil' do
-      expect(described_class.cd('/test')).to be_nil
+    if MemFs.ruby_version_gte?('2.6')
+      it 'returns 0' do
+        expect(described_class.cd('/test')).to eq 0
+      end
+    else
+      it 'returns nil' do
+        expect(described_class.cd('/test')).to be_nil
+      end
     end
 
     it "raises an error when the given path doesn't exist" do

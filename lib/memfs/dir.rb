@@ -17,6 +17,12 @@ module MemFs
       0
     end
 
+    if MemFs.ruby_version_gte?('2.6')
+      def self.children(dirname, _opts = {})
+        entries(dirname, _opts) - %w[. ..]
+      end
+    end
+
     def self.chroot(path)
       fail Errno::EPERM, path unless Process.uid.zero?
 

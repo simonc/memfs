@@ -25,6 +25,14 @@ module MemFs
   # Keeps track of the original Ruby IO class.
   OriginalIO = ::IO
 
+  def self.ruby_version_gte?(version) # :nodoc:
+    Gem::Version.new(RUBY_VERSION) >= Gem::Version.new(version)
+  end
+
+  def self.windows?
+    /mswin|bccwin|mingw/ =~ RUBY_PLATFORM
+  end
+
   require 'memfs/file_system'
   require 'memfs/dir'
   require 'memfs/file'
