@@ -1,19 +1,21 @@
+# frozen_string_literal: true
+
 module MemFs
   module Fake
     class Entry
-      UREAD  = 00100
-      UWRITE = 00200
-      UEXEC  = 00400
-      GREAD  = 00010
-      GWRITE = 00020
-      GEXEC  = 00040
-      OREAD  = 00001
-      OWRITE = 00002
-      OEXEC  = 00004
-      RSTICK = 01000
-      USTICK = 05000
-      SETUID = 04000
-      SETGID = 02000
+      UREAD  = 0o0100
+      UWRITE = 0o0200
+      UEXEC  = 0o0400
+      GREAD  = 0o0010
+      GWRITE = 0o0020
+      GEXEC  = 0o0040
+      OREAD  = 0o0001
+      OWRITE = 0o0002
+      OEXEC  = 0o0004
+      RSTICK = 0o1000
+      USTICK = 0o5000
+      SETUID = 0o4000
+      SETGID = 0o2000
 
       attr_accessor :atime,
         :birthtime,
@@ -61,11 +63,13 @@ module MemFs
 
       def initialize(path = nil)
         time = Time.now
-        %i[atime birthtime ctime mtime].each do |time_attr|
-          self.send("#{time_attr}=", time)
-        end
+
+        self.atime = time
+        self.birthtime = time
+        self.ctime = time
         self.gid = Process.egid
-        self.mode = 0666 - MemFs::File.umask
+        self.mode = 0o666 - MemFs::File.umask
+        self.mtime = time
         self.name = MemFs::File.basename(path || '')
         self.uid = Process.euid
       end
@@ -75,11 +79,11 @@ module MemFs
       end
 
       def mode=(mode_int)
-        @mode = 0100000 | mode_int
+        @mode = 0o100000 | mode_int
       end
 
       def path
-        parts = [parent && parent.path, name].compact
+        parts = [parent&.path, name].compact
         MemFs::File.join(parts)
       end
 

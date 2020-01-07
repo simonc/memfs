@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'forwardable'
 require 'memfs/filesystem_access'
 
@@ -95,11 +97,11 @@ module MemFs
       end
 
       def world_readable?
-        entry.mode - 0100000 if (entry.mode & Fake::Entry::OREAD).nonzero?
+        entry.mode - 0o100000 if (entry.mode & Fake::Entry::OREAD).nonzero?
       end
 
       def world_writable?
-        entry.mode - 0100000 if (entry.mode & Fake::Entry::OWRITE).nonzero?
+        entry.mode - 0o100000 if (entry.mode & Fake::Entry::OWRITE).nonzero?
       end
 
       def writable?
@@ -165,7 +167,7 @@ module MemFs
       end
 
       def world_executable?
-        entry.mode - 0100000 if (entry.mode & Fake::Entry::OEXEC).nonzero?
+        entry.mode - 0o100000 if (entry.mode & Fake::Entry::OEXEC).nonzero?
       end
     end
   end

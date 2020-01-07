@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'memfs/filesystem_access'
 
 module MemFs
@@ -18,8 +20,8 @@ module MemFs
     end
 
     if MemFs.ruby_version_gte?('2.6')
-      def self.children(dirname, _opts = {})
-        entries(dirname, _opts) - %w[. ..]
+      def self.children(dirname, opts = {})
+        entries(dirname, opts) - %w[. ..]
       end
     end
 
@@ -44,7 +46,7 @@ module MemFs
     def self.exists?(path)
       File.directory?(path)
     end
-    class << self; alias_method :exist?, :exists?; end
+    class << self; alias exist? exists?; end
 
     def self.foreach(dirname, &block)
       return to_enum(__callee__, dirname) unless block
@@ -55,7 +57,7 @@ module MemFs
     def self.getwd
       fs.getwd
     end
-    class << self; alias_method :pwd, :getwd; end
+    class << self; alias pwd getwd; end
 
     def self.glob(patterns, flags = 0)
       patterns = [*patterns].map(&:to_s)
@@ -75,7 +77,7 @@ module MemFs
       original_dir_class.home(*args)
     end
 
-    def self.mkdir(path, mode = 0777)
+    def self.mkdir(path, mode = 0o777)
       fs.mkdir path, mode
     end
 
@@ -88,7 +90,7 @@ module MemFs
         dir
       end
     ensure
-      dir && dir.close if block_given?
+      dir&.close if block_given?
     end
 
     def self.rmdir(path)
@@ -100,8 +102,8 @@ module MemFs
     end
 
     class << self
-      alias_method :delete, :rmdir
-      alias_method :unlink, :rmdir
+      alias delete rmdir
+      alias unlink rmdir
     end
 
     def initialize(path)
@@ -128,12 +130,14 @@ module MemFs
     def path
       entry.path
     end
-    alias_method :to_path, :path
+    alias to_path path
 
+    # rubocop:disable Lint/Void
     def pos=(position)
       seek(position)
       position
     end
+    # rubocop:enable Lint/Void
 
     def read
       name = entries[pos]

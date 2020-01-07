@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'memfs/fake/entry'
 require 'memfs/fake/file/content'
 

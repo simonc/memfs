@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'singleton'
 require 'memfs/fake/directory'
 require 'memfs/fake/file'
@@ -80,7 +82,7 @@ module MemFs
     def getwd
       working_directory.path
     end
-    alias_method :pwd, :getwd
+    alias pwd getwd
 
     def initialize
       clear!
@@ -96,7 +98,7 @@ module MemFs
       find_parent!(new_name).add_entry link
     end
 
-    def mkdir(path, mode = 0777)
+    def mkdir(path, mode = 0o777)
       fail Errno::EEXIST, path if find(path)
       directory = Fake::Directory.new(path)
       directory.mode = mode

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'memfs/version'
 require 'fileutils'
 
@@ -141,9 +143,7 @@ module MemFs
   #
   # @return nothing.
   def touch(*paths)
-    if ::File != MemFs::File
-      fail 'Always call MemFs.touch inside a MemFs active context.'
-    end
+    fail 'Always call MemFs.touch inside a MemFs active context.' if ::File != MemFs::File
 
     paths.each do |path|
       FileUtils.mkdir_p File.dirname(path)

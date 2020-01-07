@@ -455,8 +455,8 @@ module MemFs
 
     describe '#mode' do
       it 'returns an integer representing the permission bits of stat' do
-        _fs.chmod(0777, '/test-file')
-        expect(file_stat.mode).to be(0100777)
+        _fs.chmod(0o777, '/test-file')
+        expect(file_stat.mode).to be(0o100777)
       end
     end
 
@@ -599,14 +599,14 @@ module MemFs
     describe '#setgid?' do
       context 'when the file has the setgid bit set' do
         it 'returns true' do
-          _fs.chmod(02000, '/test-file')
+          _fs.chmod(0o2000, '/test-file')
           expect(file_stat.setgid?).to be true
         end
       end
 
       context 'when the file does not have the setgid bit set' do
         it 'returns false' do
-          _fs.chmod(0644, '/test-file')
+          _fs.chmod(0o644, '/test-file')
           expect(file_stat.setgid?).to be false
         end
       end
@@ -615,14 +615,14 @@ module MemFs
     describe '#setuid?' do
       context 'when the file has the setuid bit set' do
         it 'returns true' do
-          _fs.chmod(04000, '/test-file')
+          _fs.chmod(0o4000, '/test-file')
           expect(file_stat.setuid?).to be true
         end
       end
 
       context 'when the file does not have the setuid bit set' do
         it 'returns false' do
-          _fs.chmod(0644, '/test-file')
+          _fs.chmod(0o644, '/test-file')
           expect(file_stat.setuid?).to be false
         end
       end
@@ -640,12 +640,12 @@ module MemFs
 
     describe '#sticky?' do
       it 'returns true if the named file has the sticky bit set' do
-        _fs.chmod(01777, '/test-file')
+        _fs.chmod(0o1777, '/test-file')
         expect(file_stat.sticky?).to be true
       end
 
       it "returns false if the named file hasn't' the sticky bit set" do
-        _fs.chmod(0666, '/test-file')
+        _fs.chmod(0o666, '/test-file')
         expect(file_stat.sticky?).to be false
       end
     end

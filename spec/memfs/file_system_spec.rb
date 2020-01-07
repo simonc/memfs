@@ -52,16 +52,16 @@ module MemFs
     describe '#chmod' do
       it 'changes permission bits on the named file' do
         subject.touch('/some-file')
-        subject.chmod(0777, '/some-file')
-        expect(subject.find!('/some-file').mode).to be(0100777)
+        subject.chmod(0o777, '/some-file')
+        expect(subject.find!('/some-file').mode).to be(0o100777)
       end
 
       context 'when the named file is a symlink' do
         it 'changes the permission bits on the symlink itself' do
           subject.touch('/some-file')
           subject.symlink('/some-file', '/some-link')
-          subject.chmod(0777, '/some-link')
-          expect(subject.find!('/some-link').mode).to be(0100777)
+          subject.chmod(0o777, '/some-link')
+          expect(subject.find!('/some-link').mode).to be(0o100777)
         end
       end
     end
@@ -289,15 +289,15 @@ module MemFs
         expect(subject.find!('/new-dir')).to be_a(Fake::Directory)
       end
 
-      it 'sets directory permissions to default 0777' do
+      it 'sets directory permissions to default 0o777' do
         subject.mkdir '/new-dir'
-        expect(subject.find!('/new-dir').mode).to eq(0100777)
+        expect(subject.find!('/new-dir').mode).to eq(0o100777)
       end
 
       context 'when permissions are specified' do
         it 'sets directory permission to specified value' do
-          subject.mkdir '/new-dir', 0644
-          expect(subject.find!('/new-dir').mode).to eq(0100644)
+          subject.mkdir '/new-dir', 0o644
+          expect(subject.find!('/new-dir').mode).to eq(0o100644)
         end
       end
 

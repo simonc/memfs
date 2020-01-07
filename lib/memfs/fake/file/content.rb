@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'delegate'
 
 module MemFs
@@ -23,7 +25,7 @@ module MemFs
           end
         end
 
-        def read(length = nil, buffer = '')
+        def read(length = nil, buffer = +'')
           length ||= @string.length - @pos
           buffer.replace @string[@pos, length]
           @pos += buffer.bytesize

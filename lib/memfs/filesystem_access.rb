@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MemFs
   module FilesystemAccess
     private

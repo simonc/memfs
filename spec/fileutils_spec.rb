@@ -4,7 +4,7 @@ require 'spec_helper'
 
 RSpec.describe FileUtils do
   before :each do
-    MemFs::File.umask(0020)
+    MemFs::File.umask(0o020)
     MemFs.activate!
 
     described_class.mkdir '/test'
@@ -71,24 +71,24 @@ RSpec.describe FileUtils do
   describe '.chmod' do
     it 'changes permission bits on the named file to the bit pattern represented by mode' do
       described_class.touch '/test-file'
-      described_class.chmod 0777, '/test-file'
-      expect(File.stat('/test-file').mode).to eq(0100777)
+      described_class.chmod 0o777, '/test-file'
+      expect(File.stat('/test-file').mode).to eq(0o100777)
     end
 
     it 'changes permission bits on the named files (in list) to the bit pattern represented by mode' do
       described_class.touch ['/test-file', '/test-file2']
-      described_class.chmod 0777, ['/test-file', '/test-file2']
-      expect(File.stat('/test-file2').mode).to eq(0100777)
+      described_class.chmod 0o777, ['/test-file', '/test-file2']
+      expect(File.stat('/test-file2').mode).to eq(0o100777)
     end
 
     it 'returns an array containing the file names' do
       file_names = %w[/test-file /test-file2]
       described_class.touch file_names
-      expect(described_class.chmod(0777, file_names)).to eq(file_names)
+      expect(described_class.chmod(0o777, file_names)).to eq(file_names)
     end
 
     it 'raises an error if an entry does not exist' do
-      expect { described_class.chmod(0777, '/test-file') }.to raise_error(Errno::ENOENT)
+      expect { described_class.chmod(0o777, '/test-file') }.to raise_error(Errno::ENOENT)
     end
 
     context 'when the named file is a symlink' do
@@ -99,13 +99,13 @@ RSpec.describe FileUtils do
 
       context 'when File responds to lchmod' do
         it 'changes the mode on the link' do
-          described_class.chmod(0777, '/test-link')
-          expect(File.lstat('/test-link').mode).to eq(0100777)
+          described_class.chmod(0o777, '/test-link')
+          expect(File.lstat('/test-link').mode).to eq(0o100777)
         end
 
         it "doesn't change the mode of the link's target" do
           mode = File.lstat('/test-file').mode
-          described_class.chmod(0777, '/test-link')
+          described_class.chmod(0o777, '/test-link')
           expect(File.lstat('/test-file').mode).to eq(mode)
         end
       end
@@ -115,7 +115,7 @@ RSpec.describe FileUtils do
           allow_any_instance_of(described_class::Entry_).to \
             receive_messages(have_lchmod?: false)
           mode = File.lstat('/test-link').mode
-          described_class.chmod(0777, '/test-link')
+          described_class.chmod(0o777, '/test-link')
           expect(File.lstat('/test-link').mode).to eq(mode)
         end
       end
@@ -128,18 +128,18 @@ RSpec.describe FileUtils do
     end
 
     it 'changes the permission bits on the named entry' do
-      described_class.chmod_R(0777, '/test')
-      expect(File.stat('/test').mode).to eq(0100777)
+      described_class.chmod_R(0o777, '/test')
+      expect(File.stat('/test').mode).to eq(0o100777)
     end
 
     it 'changes the permission bits on any sub-directory of the named entry' do
-      described_class.chmod_R(0777, '/')
-      expect(File.stat('/test').mode).to eq(0100777)
+      described_class.chmod_R(0o777, '/')
+      expect(File.stat('/test').mode).to eq(0o100777)
     end
 
     it 'changes the permission bits on any descendant file of the named entry' do
-      described_class.chmod_R(0777, '/')
-      expect(File.stat('/test/test-file').mode).to eq(0100777)
+      described_class.chmod_R(0o777, '/')
+      expect(File.stat('/test/test-file').mode).to eq(0o100777)
     end
   end
 
@@ -317,7 +317,7 @@ RSpec.describe FileUtils do
       before :each do
         described_class.touch('/test-file')
         described_class.chown(1042, 1042, '/test-file')
-        described_class.chmod(0777, '/test-file')
+        described_class.chmod(0o777, '/test-file')
         _fs.find('/test-file').mtime = time
         described_class.copy_entry('/test-file', '/test-copy', true)
       end
@@ -331,7 +331,7 @@ RSpec.describe FileUtils do
       end
 
       it 'preserves permissions' do
-        expect(File.stat('/test-copy').mode).to eq(0100777)
+        expect(File.stat('/test-copy').mode).to eq(0o100777)
       end
 
       it 'preserves modified time' do
@@ -474,8 +474,8 @@ RSpec.describe FileUtils do
 
     context 'when +:mode+ is set' do
       it 'changes the permission mode to +mode+' do
-        expect(File).to receive(:chmod).with(0777, '/test-file2')
-        described_class.install('/test-file', '/test-file2', mode: 0777)
+        expect(File).to receive(:chmod).with(0o777, '/test-file2')
+        described_class.install('/test-file', '/test-file2', mode: 0o777)
       end
     end
 
@@ -662,9 +662,9 @@ RSpec.describe FileUtils do
     context 'when passing options' do
       context 'when passing mode parameter' do
         it 'creates directory with specified permissions' do
-          described_class.mkdir('/test-dir', mode: 0654)
+          described_class.mkdir('/test-dir', mode: 0o654)
           expect(File.exist?('/test-dir')).to be true
-          expect(File.stat('/test-dir').mode).to eq(0100654)
+          expect(File.stat('/test-dir').mode).to eq(0o100654)
         end
       end
 
@@ -704,9 +704,9 @@ RSpec.describe FileUtils do
     context 'when passing options' do
       context 'when passing mode parameter' do
         it 'creates directory with specified permissions' do
-          described_class.mkdir_p('/test-dir', mode: 0654)
+          described_class.mkdir_p('/test-dir', mode: 0o654)
           expect(File.exist?('/test-dir')).to be true
-          expect(File.stat('/test-dir').mode).to eq(0100654)
+          expect(File.stat('/test-dir').mode).to eq(0o100654)
         end
       end
 
@@ -815,28 +815,28 @@ RSpec.describe FileUtils do
     end
 
     it 'removes a file system entry +path+' do
-      described_class.chmod(0755, '/')
+      described_class.chmod(0o755, '/')
       described_class.remove_entry_secure('/test-dir')
       expect(Dir.exist?('/test-dir')).to be false
     end
 
     context 'when +path+ is a directory' do
       it 'removes it recursively' do
-        described_class.chmod(0755, '/')
+        described_class.chmod(0o755, '/')
         described_class.remove_entry_secure('/test-dir')
         expect(Dir.exist?('/test-dir/test-sub-dir')).to be false
       end
 
       context 'and is word writable' do
         it 'calls chown(2) on it' do
-          described_class.chmod(01777, '/')
+          described_class.chmod(0o1777, '/')
           directory = _fs.find('/test-dir')
           expect(directory).to receive(:uid=).at_least(:once)
           described_class.remove_entry_secure('/test-dir')
         end
 
         it 'calls chmod(2) on all sub directories' do
-          described_class.chmod(01777, '/')
+          described_class.chmod(0o1777, '/')
           directory = _fs.find('/test-dir')
           expect(directory).to receive(:mode=).at_least(:once)
           described_class.remove_entry_secure('/test-dir')

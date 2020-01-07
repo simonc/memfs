@@ -172,17 +172,17 @@ module MemFs
 
     describe '.chmod' do
       it 'changes permission bits on the named file' do
-        described_class.chmod 0777, '/test-file'
+        described_class.chmod 0o777, '/test-file'
 
         mode = described_class.stat('/test-file').mode
-        expect(mode).to be 0100777
+        expect(mode).to be 0o100777
       end
 
       it 'changes permission bits on the named files (in list)' do
-        described_class.chmod 0777, '/test-file', '/test-file2'
+        described_class.chmod 0o777, '/test-file', '/test-file2'
 
         mode = described_class.stat('/test-file2').mode
-        expect(mode).to be 0100777
+        expect(mode).to be 0o100777
       end
     end
 
@@ -747,24 +747,24 @@ module MemFs
     describe '.lchmod' do
       context 'when the named file is a regular file' do
         it 'acts like chmod' do
-          described_class.lchmod 0777, '/test-file'
+          described_class.lchmod 0o777, '/test-file'
 
           mode = described_class.stat('/test-file').mode
-          expect(mode).to be 0100777
+          expect(mode).to be 0o100777
         end
       end
 
       context 'when the named file is a symlink' do
         it 'changes permission bits on the symlink' do
-          described_class.lchmod 0777, '/test-link'
+          described_class.lchmod 0o777, '/test-link'
 
           mode = described_class.lstat('/test-link').mode
-          expect(mode).to be 0100777
+          expect(mode).to be 0o100777
         end
 
         it 'does not change permission bits on the link’s target' do
           old_mode = described_class.stat('/test-file').mode
-          described_class.lchmod 0777, '/test-link'
+          described_class.lchmod 0o777, '/test-link'
 
           mode = described_class.stat('/test-file').mode
           expect(mode).to eq old_mode
@@ -1375,7 +1375,7 @@ module MemFs
       context 'when the named file exists' do
         context 'and the named file has the setgid bit set' do
           it 'returns true' do
-            _fs.chmod 02000, '/test-file'
+            _fs.chmod 0o2000, '/test-file'
 
             setgid = File.setgid?('/test-file')
             expect(setgid).to be true
@@ -1384,7 +1384,7 @@ module MemFs
 
         context 'and the named file does not have the setgid bit set' do
           it 'returns false' do
-            _fs.chmod 0644, '/test-file'
+            _fs.chmod 0o644, '/test-file'
 
             setgid = File.setgid?('/test-file')
             expect(setgid).not_to be true
@@ -1404,7 +1404,7 @@ module MemFs
       context 'when the named file exists' do
         context 'and the named file has the setuid bit set' do
           it 'returns true' do
-            _fs.chmod 04000, '/test-file'
+            _fs.chmod 0o4000, '/test-file'
 
             setuid = File.setuid?('/test-file')
             expect(setuid).to be true
@@ -1413,7 +1413,7 @@ module MemFs
 
         context 'and the named file does not have the setuid bit set' do
           it 'returns false' do
-            _fs.chmod 0644, '/test-file'
+            _fs.chmod 0o644, '/test-file'
 
             setuid = File.setuid?('/test-file')
             expect(setuid).not_to be true
@@ -1524,7 +1524,7 @@ module MemFs
       context 'when the named file exists' do
         it 'returns true if the named file has the sticky bit set' do
           _fs.touch '/test-file'
-          _fs.chmod 01777, '/test-file'
+          _fs.chmod 0o1777, '/test-file'
 
           sticky = File.sticky?('/test-file')
           expect(sticky).to be true
@@ -1532,7 +1532,7 @@ module MemFs
 
         it 'returns false if the named file hasn’t the sticky bit set' do
           _fs.touch '/test-file'
-          _fs.chmod 0666, '/test-file'
+          _fs.chmod 0o666, '/test-file'
 
           sticky = File.sticky?('/test-file')
           expect(sticky).to be false
@@ -1629,21 +1629,21 @@ module MemFs
     end
 
     describe '.umask' do
-      before { described_class.umask 0022 }
+      before { described_class.umask 0o022 }
 
       it 'returns the current umask value for this process' do
-        expect(described_class.umask).to be 0022
+        expect(described_class.umask).to be 0o022
       end
 
       context 'when the optional argument is given' do
         it 'sets the umask to that value' do
-          described_class.umask 0777
-          expect(described_class.umask).to be 0777
+          described_class.umask 0o777
+          expect(described_class.umask).to be 0o777
         end
 
         it 'return the previous value' do
-          previous_umask = described_class.umask(0777)
-          expect(previous_umask).to be 0022
+          previous_umask = described_class.umask(0o777)
+          expect(previous_umask).to be 0o022
         end
       end
     end
@@ -2101,14 +2101,14 @@ module MemFs
 
     describe '#chmod' do
       it 'changes permission bits on the file' do
-        subject.chmod 0777
+        subject.chmod 0o777
 
         mode = subject.stat.mode
-        expect(mode).to be 0100777
+        expect(mode).to be 0o100777
       end
 
       it 'returns zero' do
-        returned_value = subject.chmod(0777)
+        returned_value = subject.chmod(0o777)
         expect(returned_value).to be_zero
       end
     end
@@ -2691,7 +2691,7 @@ module MemFs
 
       context 'when a buffer is given' do
         it 'fills the buffer with the read content' do
-          buffer = String.new
+          buffer = +''
           subject.read 2, buffer
 
           expect(buffer).to eq random_string[0, 2]

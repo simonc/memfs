@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'memfs/fake/entry'
 
 module MemFs
@@ -19,7 +21,7 @@ module MemFs
       end
 
       def find(path)
-        path = path.sub(%r{\A/+}, '').sub(%r{/+\z}, '')
+        path = path.gsub(%r{(\A/+|/+\z)}, '')
         parts = path.split('/', 2)
 
         if entry_names.include?(path)
@@ -44,10 +46,12 @@ module MemFs
       end
 
       def paths
-        [path] + entries.reject { |p| %w[. ..].include?(p) }
-                 .values
-                 .map(&:paths)
-                 .flatten
+        [path] +
+          entries
+          .reject { |p| %w[. ..].include?(p) }
+          .values
+          .map(&:paths)
+          .flatten
       end
 
       def remove_entry(entry)

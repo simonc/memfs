@@ -69,7 +69,7 @@ RSpec.describe MemFs do
 
     it 'switches back to the faked Dir & File classes no matter what' do
       begin
-        described_class.halt { raise StandardError.new }
+        described_class.halt { fail 'Fatal Error' }
       rescue
         expect(::Dir).to be(described_class::Dir)
         expect(::File).to be(described_class::File)

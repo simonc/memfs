@@ -54,8 +54,8 @@ module MemFs
       end
 
       it_behaves_like 'it has accessors for', :mode do
-        let(:value) { 0777 }
-        let(:expected) { 0100777 }
+        let(:value) { 0o777 }
+        let(:expected) { 0o100777 }
       end
 
       it_behaves_like 'it has accessors for', :parent do

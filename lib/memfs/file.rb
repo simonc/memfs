@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'forwardable'
 require 'memfs/filesystem_access'
 require 'memfs/io'
@@ -13,15 +15,15 @@ module MemFs
     ALT_SEPARATOR = nil
 
     MODE_MAP = {
-      'r'  => RDONLY,
+      'r' => RDONLY,
       'r+' => RDWR,
-      'w'  => CREAT | TRUNC | WRONLY,
+      'w' => CREAT | TRUNC | WRONLY,
       'w+' => CREAT | TRUNC | RDWR,
-      'a'  => CREAT | APPEND | WRONLY,
+      'a' => CREAT | APPEND | WRONLY,
       'a+' => CREAT | APPEND | RDWR
     }.freeze
 
-    SEPARATOR = '/'.freeze
+    SEPARATOR = '/'
     SUCCESS = 0
 
     @umask = nil
@@ -35,25 +37,25 @@ module MemFs
       :path,
       :split
 
-    [
-      :blockdev?,
-      :chardev?,
-      :directory?,
-      :executable?,
-      :executable_real?,
-      :file?,
-      :grpowned?,
-      :owned?,
-      :pipe?,
-      :readable?,
-      :readable_real?,
-      :setgid?,
-      :setuid?,
-      :socket?,
-      :sticky?,
-      :writable?,
-      :writable_real?,
-      :zero?
+    %i[
+      blockdev?
+      chardev?
+      directory?
+      executable?
+      executable_real?
+      file?
+      grpowned?
+      owned?
+      pipe?
+      readable?
+      readable_real?
+      setgid?
+      setuid?
+      socket?
+      sticky?
+      writable?
+      writable_real?
+      zero?
     ].each do |query_method|
       # def directory?(path)
       #   stat_query(path, :directory?)
@@ -63,11 +65,11 @@ module MemFs
       end
     end
 
-    class << self; alias_method :empty?, :zero?; end
+    class << self; alias empty? zero?; end
 
-    [
-      :world_readable?,
-      :world_writable?
+    %i[
+      world_readable?
+      world_writable?
     ].each do |query_method|
       # def directory?(path)
       #   stat_query(path, :directory?, false)
@@ -109,7 +111,7 @@ module MemFs
     def self.exists?(path)
       !!fs.find(path)
     end
-    class << self; alias_method :exist?, :exists?; end
+    class << self; alias exist? exists?; end
 
     def self.expand_path(file_name, dir_string = fs.pwd)
       original_file_class.expand_path(file_name, dir_string)
@@ -119,10 +121,10 @@ module MemFs
       fs.find!(path) && lstat(path).ftype
     end
 
-    class << self; alias_method :fnmatch?, :fnmatch; end
+    class << self; alias fnmatch? fnmatch; end
 
     def self.identical?(path1, path2)
-      fs.find!(path1).dereferenced === fs.find!(path2).dereferenced
+      fs.find!(path1).dereferenced.equal? fs.find!(path2).dereferenced
     rescue Errno::ENOENT
       false
     end
@@ -189,11 +191,9 @@ module MemFs
 
     def self.size?(path)
       file = fs.find(path)
-      if file && file.size > 0
-        file.size
-      else
-        false
-      end
+      size = file&.size.to_i
+
+      size.positive? ? size : false
     end
 
     def self.stat(path)
@@ -223,12 +223,10 @@ module MemFs
     end
 
     def self.unlink(*paths)
-      paths.each do |path|
-        fs.unlink(path)
-      end
+      paths.each { |path| fs.unlink(path) }
       paths.size
     end
-    class << self; alias_method :delete, :unlink; end
+    class << self; alias delete unlink; end
 
     def self.utime(atime, mtime, *file_names)
       file_names.each do |file_name|
@@ -240,16 +238,16 @@ module MemFs
 
     attr_reader :path
 
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
     def initialize(filename, mode = File::RDONLY, *perm_and_or_opt)
       opt = perm_and_or_opt.last.is_a?(Hash) ? perm_and_or_opt.pop : {}
       perm_and_or_opt.shift
-      if perm_and_or_opt.any?
-        fail ArgumentError, 'wrong number of arguments (4 for 1..3)'
-      end
+
+      fail ArgumentError, 'wrong number of arguments (4 for 1..3)' if perm_and_or_opt.any?
 
       @path = filename
-      @external_encoding = opt[:external_encoding] &&
-                           Encoding.find(opt[:external_encoding])
+      @external_encoding =
+        opt[:external_encoding] && Encoding.find(opt[:external_encoding])
 
       self.closed = false
       self.opening_mode = str_to_mode_int(mode)
@@ -260,11 +258,10 @@ module MemFs
       # FIXME: this is an ugly way to ensure a symlink has a target
       entry.dereferenced
 
-      if entry.respond_to?(:pos=)
-        entry.pos = 0
-      end
+      entry.pos = 0 if entry.respond_to?(:pos=)
       entry.content.clear if truncate_file?
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
     def atime
       File.atime(path)
@@ -310,11 +307,7 @@ module MemFs
 
     def self.dereference_name(path)
       entry = fs.find(path)
-      if entry
-        entry.dereferenced_name
-      else
-        basename(path)
-      end
+      entry ? entry.dereferenced_name : basename(path)
     end
     private_class_method :dereference_name
 
