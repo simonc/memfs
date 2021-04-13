@@ -12,6 +12,7 @@ module MemFs
     include Enumerable
     include FilesystemAccess
 
+    PATH_SEPARATOR = '/'
     ALT_SEPARATOR = nil
 
     MODE_MAP = {
