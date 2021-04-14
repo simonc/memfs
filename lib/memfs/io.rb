@@ -214,7 +214,7 @@ module MemFs
     def str_to_mode_int(mode)
       return mode unless mode.is_a?(String)
 
-      unless mode =~ /\A([rwa]\+?)([bt])?(:bom)?(\|.+)?\z/
+      unless mode =~ /\A([rwa]\+?)([bt])?(:(bom|UTF-8|utf-8))?(\|.+)?\z/
         fail ArgumentError, "invalid access mode #{mode}"
       end
 

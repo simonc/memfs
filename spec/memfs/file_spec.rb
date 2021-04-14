@@ -914,6 +914,16 @@ module MemFs
             expect(subject.send(:opening_mode)).to eq File::RDONLY
           end
 
+          it 'handles the :utf-8 option' do
+            subject = described_class.new('/test-file', 'r:utf-8')
+            expect(subject.send(:opening_mode)).to eq File::RDONLY
+          end
+
+          it 'handles the :UTF-8 option' do
+            subject = described_class.new('/test-file', 'r:UTF-8')
+            expect(subject.send(:opening_mode)).to eq File::RDONLY
+          end
+
           it 'handles the |utf-8 option' do
             subject = described_class.new('/test-file', 'r|utf-8')
             expect(subject.send(:opening_mode)).to eq File::RDONLY
