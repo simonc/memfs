@@ -26,6 +26,10 @@ module MemFs
         expect(MemFs::File::SEPARATOR).to eq '/'
       end
 
+      it 'exposes PATH_SEPARATOR' do
+        expect(MemFs::File::PATH_SEPARATOR).to eq '/'
+      end
+
       it 'expose ALT_SEPARATOR' do
         expect(MemFs::File::ALT_SEPARATOR).to be_nil
       end
