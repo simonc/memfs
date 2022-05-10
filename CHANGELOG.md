@@ -6,6 +6,7 @@
 * ADD: `IO#fileno` and `Dir#fileno` raise `NotImplementedError`
 * ADD: `File.birthtime` and `File#birthtime`
 * ADD: `File.empty?`
+* ADD: `File::Stat#nlink` (#39 by @djberg96)
 
 ## 1.0.0
 
