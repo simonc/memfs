@@ -2,6 +2,7 @@ AllCops:
   Exclude:
     - memfs.gemspec
     - 'spec/**/*'
+  NewCops: enable
   TargetRubyVersion: 2.7
 
 Layout/ArgumentAlignment:
@@ -22,7 +23,7 @@ Layout/FirstHashElementIndentation:
 Layout/LineLength:
   Exclude:
     - Rakefile
-  Max: 90
+  Max: 100
 
 Layout/MultilineMethodCallBraceLayout:
   EnforcedStyle: same_line
@@ -33,14 +34,8 @@ Layout/MultilineMethodDefinitionBraceLayout:
 Layout/MultilineOperationIndentation:
   EnforcedStyle: indented
 
-# Lint/AmbiguousRegexpLiteral:
-#   Enabled: false
-
-# Lint/RescueException:
-#   Enabled: false
-
 Metrics/AbcSize:
-  Max: 15
+  Max: 18
 
 Metrics/ClassLength:
   Enabled: false
@@ -66,12 +61,6 @@ Style/DoubleNegation:
 
 Style/Documentation:
   Enabled: false
-
-# Style/FrozenStringLiteralComment:
-#   Enabled: false
-
-# Style/MultilineBlockChain:
-#   Enabled: false
 
 Style/PercentLiteralDelimiters:
   PreferredDelimiters:

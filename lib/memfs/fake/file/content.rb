@@ -11,6 +11,8 @@ module MemFs
         def close; end
 
         def initialize(obj = '')
+          super
+
           @string = obj.to_s.dup
           @pos = 0
 

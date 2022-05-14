@@ -18,7 +18,7 @@ module MemFs
     def self.read(path, *args)
       options = args.last.is_a?(Hash) ? args.pop : {}
       options = { encoding: nil, mode: File::RDONLY, open_args: nil }.merge(options)
-      open_args = options[:open_args] || [options[:mode], encoding: options[:encoding]]
+      open_args = options[:open_args] || [options[:mode], { encoding: options[:encoding] }]
 
       length, offset = args
 
@@ -31,7 +31,7 @@ module MemFs
 
     # rubocop:disable Metrics/MethodLength
     def self.write(path, string, offset = 0, open_args = nil)
-      open_args ||= [File::WRONLY, encoding: nil]
+      open_args ||= [File::WRONLY, { encoding: nil }]
 
       offset = 0 if offset.nil?
       unless offset.respond_to?(:to_int)
@@ -40,7 +40,7 @@ module MemFs
       offset = offset.to_int
 
       if offset.positive?
-        fail NotImplementedError, 'MemFs::IO.write with offset not yet supported.'
+        fail(NotImplementedError, 'MemFs::IO.write with offset not yet supported.')
       end
 
       file = open(path, *open_args)
@@ -112,25 +112,25 @@ module MemFs
       end
     end
 
-    def each(sep = $/)
+    def each(sep = $/, &block)
       return to_enum(__callee__) unless block_given?
       fail IOError, 'not opened for reading' unless readable?
-      content.each_line(sep) { |line| yield(line) }
+      content.each_line(sep) { |line| block.call(line) }
       self
     end
 
-    def each_byte
+    def each_byte(&block)
       return to_enum(__callee__) unless block_given?
       fail IOError, 'not opened for reading' unless readable?
-      content.each_byte { |byte| yield(byte) }
+      content.each_byte { |byte| block.call(byte) }
       self
     end
     alias bytes each_byte
 
-    def each_char
+    def each_char(&block)
       return to_enum(__callee__) unless block_given?
       fail IOError, 'not opened for reading' unless readable?
-      content.each_char { |char| yield(char) }
+      content.each_char { |char| block.call(char) }
       self
     end
     alias chars each_char

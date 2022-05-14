@@ -55,7 +55,7 @@ module MemFs
         gid == Process.egid
       end
 
-      def initialize(path, dereference = false)
+      def initialize(path, dereference: false)
         entry = fs.find!(path)
         @entry = dereference ? entry.dereferenced : entry
       end

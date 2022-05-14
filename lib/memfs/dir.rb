@@ -59,7 +59,7 @@ module MemFs
     end
     class << self; alias pwd getwd; end
 
-    def self.glob(patterns, flags = 0)
+    def self.glob(patterns, flags = 0, &block)
       patterns = [*patterns].map(&:to_s)
       list = fs.paths.select do |path|
         patterns.any? do |pattern|
@@ -69,7 +69,7 @@ module MemFs
       # FIXME: ugly special case for /* and /
       list.delete('/') if patterns.first == '/*'
       return list unless block_given?
-      list.each { |path| yield path }
+      list.each { |path| block.call(path) }
       nil
     end
 

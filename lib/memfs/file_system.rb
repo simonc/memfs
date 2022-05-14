@@ -9,9 +9,9 @@ module MemFs
   class FileSystem
     include Singleton
 
-    attr_accessor :working_directory
-    attr_accessor :registred_entries
-    attr_accessor :root
+    attr_accessor :registred_entries,
+      :root,
+      :working_directory
 
     def basename(path)
       File.basename(path)

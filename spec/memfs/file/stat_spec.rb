@@ -3,16 +3,16 @@ require 'spec_helper'
 module MemFs
   ::RSpec.describe File::Stat do
     let(:file_stat) { described_class.new('/test-file') }
-    let(:dereferenced_file_stat) { described_class.new('/test-file', true) }
+    let(:dereferenced_file_stat) { described_class.new('/test-file', dereference: true) }
 
     let(:dir_link_stat) { described_class.new('/test-dir-link') }
-    let(:dereferenced_dir_link_stat) { described_class.new('/test-dir-link', true) }
+    let(:dereferenced_dir_link_stat) { described_class.new('/test-dir-link', dereference: true) }
 
     let(:link_stat) { described_class.new('/test-link') }
-    let(:dereferenced_link_stat) { described_class.new('/test-link', true) }
+    let(:dereferenced_link_stat) { described_class.new('/test-link', dereference: true) }
 
     let(:dir_stat) { described_class.new('/test-dir') }
-    let(:dereferenced_dir_stat) { described_class.new('/test-dir', true) }
+    let(:dereferenced_dir_stat) { described_class.new('/test-dir', dereference: true) }
 
     let(:entry) { _fs.find!('/test-file') }
 
@@ -29,7 +29,7 @@ module MemFs
         context 'when the last target of the link chain does not exist' do
           it 'raises an exception' do
             expect {
-              described_class.new('/test-no-file-link', true)
+              described_class.new('/test-no-file-link', dereference: true)
             }.to raise_error(Errno::ENOENT)
           end
         end

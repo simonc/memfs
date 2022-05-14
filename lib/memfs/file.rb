@@ -76,7 +76,7 @@ module MemFs
       #   stat_query(path, :directory?, false)
       # end
       define_singleton_method(query_method) do |path|
-        stat_query(path, query_method, false)
+        stat_query(path, query_method, force_boolean: false)
       end
     end
 
@@ -198,7 +198,7 @@ module MemFs
     end
 
     def self.stat(path)
-      Stat.new(path, true)
+      Stat.new(path, dereference: true)
     end
 
     def self.symlink(old_name, new_name)
@@ -239,8 +239,10 @@ module MemFs
 
     attr_reader :path
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def initialize(filename, mode = File::RDONLY, *perm_and_or_opt)
+      super()
+
       opt = perm_and_or_opt.last.is_a?(Hash) ? perm_and_or_opt.pop : {}
       perm_and_or_opt.shift
 
@@ -262,7 +264,7 @@ module MemFs
       entry.pos = 0 if entry.respond_to?(:pos=)
       entry.content.clear if truncate_file?
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def atime
       File.atime(path)
@@ -332,7 +334,7 @@ module MemFs
     end
     private_class_method :original_file_class
 
-    def self.stat_query(path, query, force_boolean = true)
+    def self.stat_query(path, query, force_boolean: true)
       response = fs.find(path) && stat(path).public_send(query)
       force_boolean ? !!response : response
     end
