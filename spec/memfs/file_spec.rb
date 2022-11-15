@@ -1073,7 +1073,7 @@ module MemFs
         it 'passes the contained options to +open+' do
           expect(described_class).to \
             receive(:open)
-            .with('/test-file', File::RDONLY, encoding: 'UTF-8')
+            .with('/test-file', File::RDONLY, { encoding: 'UTF-8' })
             .and_return(subject)
 
           described_class.read '/test-file', encoding: 'UTF-8'
