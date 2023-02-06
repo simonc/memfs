@@ -7,6 +7,7 @@
 * ADD: `File.birthtime` and `File#birthtime`
 * ADD: `File.empty?`
 * ADD: `File::Stat#nlink` (#39 by @djberg96)
+* FIX: Fixing the inverted _read_ and _execute_ bitmasks (#41 by @micahlee)
 
 ## 1.0.0
 
