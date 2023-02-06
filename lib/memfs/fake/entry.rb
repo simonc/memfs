@@ -3,15 +3,15 @@
 module MemFs
   module Fake
     class Entry
-      UREAD  = 0o0100
+      UREAD  = 0o0400
       UWRITE = 0o0200
-      UEXEC  = 0o0400
-      GREAD  = 0o0010
+      UEXEC  = 0o0100
+      GREAD  = 0o0040
       GWRITE = 0o0020
-      GEXEC  = 0o0040
-      OREAD  = 0o0001
+      GEXEC  = 0o0010
+      OREAD  = 0o0004
       OWRITE = 0o0002
-      OEXEC  = 0o0004
+      OEXEC  = 0o0001
       RSTICK = 0o1000
       USTICK = 0o5000
       SETUID = 0o4000
