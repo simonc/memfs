@@ -113,7 +113,7 @@ module MemFs
     end
 
     def each(sep = $/, &block)
-      return to_enum(__callee__) unless block_given?
+      return to_enum(__callee__, sep) unless block_given?
       fail IOError, 'not opened for reading' unless readable?
       content.each_line(sep) { |line| block.call(line) }
       self

@@ -1,9 +1,9 @@
-![MemFs Logo](https://raw.github.com/simonc/memfs/master/memfs.png)
+![MemFs Logo](https://raw.github.com/simonc/memfs/main/memfs.png)
 
 [![Gem Version](https://badge.fury.io/rb/memfs.svg)](https://badge.fury.io/rb/memfs)
-[![Build Status](https://api.travis-ci.org/simonc/memfs.svg?branch=master)](http://travis-ci.org/simonc/memfs)
+[![Build Status](https://github.com/simonc/memfs/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/simonc/memfs/actions/workflows/ci.yml)
 [![Code Climate](https://codeclimate.com/github/simonc/memfs/badges/gpa.svg)](https://codeclimate.com/github/simonc/memfs)
-[![Coverage Status](https://coveralls.io/repos/github/simonc/memfs/badge.svg?branch=master)](https://coveralls.io/github/simonc/memfs?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/simonc/memfs/badge.svg?branch=main)](https://coveralls.io/github/simonc/memfs?branch=main)
 
 MemFs is an in-memory filesystem that can be used for your tests.
 

@@ -2,12 +2,20 @@
 
 ## HEAD
 
-* ADD: `Dir.empty?` from Ruby 2.4
+* ADD: Support for Ruby 3.x
+* ADD: `Dir.empty?`
 * ADD: `IO#fileno` and `Dir#fileno` raise `NotImplementedError`
 * ADD: `File.birthtime` and `File#birthtime`
 * ADD: `File.empty?`
 * ADD: `File::Stat#nlink` (#39 by @djberg96)
 * FIX: Fixing the inverted _read_ and _execute_ bitmasks (#41 by @micahlee)
+* ADD: Dependabot configuration
+* CHG: Replacing Travis CI with GitHub Actions
+
+### Breaking
+
+* DEL: Removing support for Ruby 2.4 and 2.5
+* CHG: Renaming the `master` branch to `main`
 
 ## 1.0.0
 
