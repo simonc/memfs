@@ -21,7 +21,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
 
   gem.add_development_dependency 'coveralls', '~> 0.6'
-  gem.add_development_dependency 'rake', '~> 12.0'
+  gem.add_development_dependency 'rake', '~> 13.0'
   gem.add_development_dependency 'rspec', '~> 3.0'
   gem.add_development_dependency 'guard', '~> 2.6'
   gem.add_development_dependency 'guard-rspec', '~> 4.3'
