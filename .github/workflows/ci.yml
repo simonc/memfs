@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version: ['3.2', '3.1', '3.0', '2.7', '2.6']
+        ruby-version: ['3.4', '3.3', '3.2', '3.1', '3.0', '2.7']
 
     steps:
     - uses: actions/checkout@v3
@@ -25,10 +25,8 @@ jobs:
       with:
         ruby-version: ${{matrix.ruby-version}}
         bundler-cache: true
-    - name: Updating RubyGems
-      run: gem update --system
     - name: Install dependencies
-      run: bundle install
+      run: bundle install --quiet
     - name: Rubocop
       run: bundle exec rubocop -D
     - name: Rspec
