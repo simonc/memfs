@@ -101,6 +101,58 @@ module MemFs
       '/tmp'
     end
 
+    def self.mktmpdir(prefix_suffix = nil, tmpdir = nil, **options)
+      tmpdir ||= self.tmpdir
+
+      case prefix_suffix
+      when nil
+        prefix = 'd'
+        suffix = ''
+      when String
+        prefix = prefix_suffix
+        suffix = ''
+      when Array
+        prefix = prefix_suffix[0] || 'd'
+        suffix = prefix_suffix[1] || ''
+      else
+        raise ArgumentError, "unexpected prefix_suffix: #{prefix_suffix.inspect}"
+      end
+
+      max_try = options.fetch(:max_try, 10000)
+      path = nil
+
+      max_try.times do
+        timestamp = Time.now.strftime('%Y%m%d')
+        random = sprintf('%d-%d', $$, rand(0x100000000))
+        path = File.join(tmpdir, "#{prefix}#{timestamp}-#{random}-0#{suffix}")
+
+        begin
+          mkdir(path, 0o700)
+          break
+        rescue Errno::EEXIST
+          path = nil
+          next
+        end
+      end
+
+      raise "cannot generate temporary directory name" if path.nil?
+
+      if block_given?
+        begin
+          result = yield path
+        ensure
+          begin
+            rmdir(path) if exists?(path)
+          rescue
+            # Ignore cleanup errors
+          end
+        end
+        result
+      else
+        path
+      end
+    end
+
     class << self
       alias delete rmdir
       alias unlink rmdir
