@@ -46,9 +46,11 @@ module MemFs
       end
 
       def paths
+        current_or_parent_dirs = %w[. ..]
+
         [path] +
           entries
-          .reject { |p| %w[. ..].include?(p) }
+          .reject { current_or_parent_dirs.include?(_1) }
           .values
           .map(&:paths)
           .flatten

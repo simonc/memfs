@@ -2,7 +2,7 @@
 
 ## HEAD
 
-* ADD: Support for Ruby 3.x
+* ADD: Support for Ruby 3.x and 4.x
 * ADD: `Dir.empty?`
 * ADD: `IO#fileno` and `Dir#fileno` raise `NotImplementedError`
 * ADD: `File.birthtime` and `File#birthtime`

@@ -237,7 +237,7 @@ module MemFs
       file_names.size
     end
 
-    attr_reader :path
+    attr_reader :path # rubocop:disable Lint/DuplicateMethods
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def initialize(filename, mode = File::RDONLY, *perm_and_or_opt)

@@ -115,14 +115,14 @@ module MemFs
     def each(sep = $/, &block)
       return to_enum(__callee__, sep) unless block_given?
       fail IOError, 'not opened for reading' unless readable?
-      content.each_line(sep) { |line| block.call(line) }
+      content.each_line(sep, &block)
       self
     end
 
     def each_byte(&block)
       return to_enum(__callee__) unless block_given?
       fail IOError, 'not opened for reading' unless readable?
-      content.each_byte { |byte| block.call(byte) }
+      content.each_byte(&block)
       self
     end
     alias bytes each_byte
@@ -130,7 +130,7 @@ module MemFs
     def each_char(&block)
       return to_enum(__callee__) unless block_given?
       fail IOError, 'not opened for reading' unless readable?
-      content.each_char { |char| block.call(char) }
+      content.each_char(&block)
       self
     end
     alias chars each_char

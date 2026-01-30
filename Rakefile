@@ -8,8 +8,7 @@ RSpec::Core::RakeTask.new(:spec)
 
 task default: :spec
 
-desc 'Compares a MemFs class to the original Ruby one ' \
-     '(set CLASS to the compared class)'
+desc 'Compares a MemFs class to the original Ruby one (set CLASS to the compared class)'
 task :compare do
   class_name = ENV['CLASS'] || 'File'
   klass = Object.const_get(class_name)
@@ -39,6 +38,7 @@ task :compare do
   puts implemented_i_methods - original_i_methods
 end
 
+desc 'Starts a console session with the gem context loaded'
 task :console do
   require 'irb'
   require 'irb/completion'
