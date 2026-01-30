@@ -1,5 +1,12 @@
+---
+plugins:
+  - rubocop-performance
+  - rubocop-rake
+  - rubocop-rspec
+
 AllCops:
   Exclude:
+    - bin/*
     - memfs.gemspec
     - spec/**/*
     - vendor/bundle/**/*
@@ -44,7 +51,7 @@ Metrics/ClassLength:
 Metrics/MethodLength:
   Max: 10
 
-Naming/PredicateName:
+Naming/PredicatePrefix:
   ForbiddenPrefixes:
     - is_
 

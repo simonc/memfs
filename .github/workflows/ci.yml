@@ -7,27 +7,56 @@ on:
   pull_request:
     branches:
       - main
+  # Run workflow manually
+  workflow_dispatch:
 
 jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "4.0"
+
+      - name: Bundler
+        run: bundle install
+
+      - name: Rubocop
+        run: bin/rubocop
+
   specs:
-    name: Rubocop & Rspec
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        ruby-version: ['3.4', '3.3', '3.2', '3.1', '3.0', '2.7']
+        ruby:
+          - "4.0"
+          - "3.4"
+          - "3.3"
+          - "3.2"
+          - "3.1"
+          - "3.0"
+          - "2.7"
+
+    env:
+      # Check for frozen strings
+      RUBYOPT: "--enable=frozen-string-literal --debug=frozen-string-literal"
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Ruby ${{matrix.ruby-version}}
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{matrix.ruby-version}}
-        bundler-cache: true
-    - name: Install dependencies
-      run: bundle install --quiet
-    - name: Rubocop
-      run: bundle exec rubocop -D
-    - name: Rspec
-      run: bundle exec rspec
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: RSpec
+        run: bin/rspec
