@@ -12,11 +12,6 @@ Gem::Specification.new do |gem|
                       'for tests. Strongly inspired by FakeFS.'
   gem.summary       = "memfs-#{MemFs::VERSION}"
   gem.homepage      = 'http://github.com/simonc/memfs'
-
   gem.license       = 'MIT'
-
   gem.files         = `git ls-files`.split($/)
-  gem.executables   = gem.files.grep(/^bin\//).map { |f| File.basename(f) }
-  gem.test_files    = gem.files.grep(/^(test|spec|features)\//)
-  gem.require_paths = ['lib']
 end

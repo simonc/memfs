@@ -1,5 +1,12 @@
+---
+plugins:
+  - rubocop-performance
+  - rubocop-rake
+  - rubocop-rspec
+
 AllCops:
   Exclude:
+    - bin/*
     - memfs.gemspec
     - spec/**/*
     - vendor/bundle/**/*
