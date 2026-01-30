@@ -69,7 +69,7 @@ module MemFs
       # FIXME: ugly special case for /* and /
       list.delete('/') if patterns.first == '/*'
       return list unless block_given?
-      list.each { |path| block.call(path) }
+      list.each(&block)
       nil
     end
 

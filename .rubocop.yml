@@ -51,7 +51,7 @@ Metrics/ClassLength:
 Metrics/MethodLength:
   Max: 10
 
-Naming/PredicateName:
+Naming/PredicatePrefix:
   ForbiddenPrefixes:
     - is_
 

@@ -7,12 +7,12 @@ gemspec
 
 # Dev libs
 gem 'coveralls', '~> 0.6'
-gem 'rake', '~> 12.0'
-gem 'rspec', '~> 3.0'
-gem 'rb-inotify', '~> 0.8'
-gem 'rb-fsevent', '~> 0.9'
-gem 'rb-fchange', '~> 0.0'
 gem 'listen', '~> 3.1'
+gem 'rake', '~> 12.0'
+gem 'rb-fchange', '~> 0.0'
+gem 'rb-fsevent', '~> 0.9'
+gem 'rb-inotify', '~> 0.8'
+gem 'rspec', '~> 3.0'
 
 # Dev tools / linter
 gem 'guard-rspec',         require: false
