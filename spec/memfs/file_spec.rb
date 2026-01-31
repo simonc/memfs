@@ -739,6 +739,30 @@ module MemFs
           end
         end
       end
+
+      context 'when given a File object instead of a path' do
+        it 'returns true when the File object refers to the same file' do
+          file = described_class.new('/test-file', 'r')
+          expect(described_class.identical?(file, '/test-file')).to be true
+          file.close
+        end
+
+        it 'returns true when both arguments are File objects for the same file' do
+          file1 = described_class.new('/test-file', 'r')
+          file2 = described_class.new('/test-file', 'r')
+          expect(described_class.identical?(file1, file2)).to be true
+          file1.close
+          file2.close
+        end
+
+        it 'returns false when both File objects refer to different files' do
+          file1 = described_class.new('/test-file', 'r')
+          file2 = described_class.new('/test-file2', 'r')
+          expect(described_class.identical?(file1, file2)).to be false
+          file1.close
+          file2.close
+        end
+      end
     end
 
     describe '.join' do

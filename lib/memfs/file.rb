@@ -125,6 +125,8 @@ module MemFs
     class << self; alias fnmatch? fnmatch; end
 
     def self.identical?(path1, path2)
+      path1 = path1.path if path1.respond_to?(:path)
+      path2 = path2.path if path2.respond_to?(:path)
       fs.find!(path1).dereferenced.equal? fs.find!(path2).dereferenced
     rescue Errno::ENOENT
       false
