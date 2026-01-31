@@ -125,7 +125,7 @@ module MemFs
       # in-memory filesystem: convert backslashes to forward slashes and
       # strip an optional drive letter (e.g. C:)
       path = path.tr('\\', '/')
-      path.sub(%r{\A[A-Za-z]:}, '')
+      path.sub(/\A[A-Za-z]:/, '')
     end
 
     def self.ftype(path)
