@@ -13,6 +13,7 @@
 * FIX: Fixing the inverted _read_ and _execute_ bitmasks (#41 by @micahlee)
 * ADD: Dependabot configuration
 * CHG: Replacing Travis CI with GitHub Actions
+* ADD: Running specs against Windows
 
 ### Breaking
 
