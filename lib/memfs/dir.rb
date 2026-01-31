@@ -160,13 +160,14 @@ module MemFs
       @pos
     end
 
-    private
-
     GLOB_FLAGS = if defined?(File::FNM_EXTGLOB)
                    File::FNM_EXTGLOB | File::FNM_PATHNAME
                  else
                    File::FNM_PATHNAME
                  end
+    private_constant :GLOB_FLAGS
+
+    private
 
     attr_accessor :entry, :max_seek, :state
 
