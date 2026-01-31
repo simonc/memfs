@@ -423,6 +423,76 @@ module MemFs
       end
     end
 
+    describe '.mktmpdir' do
+      context 'when no block is given' do
+        it 'creates a temporary directory and returns its path' do
+          path = described_class.mktmpdir
+          expect(path).to start_with('/tmp/d')
+          expect(described_class.exist?(path)).to be true
+        end
+
+        it 'accepts a prefix' do
+          path = described_class.mktmpdir('myprefix')
+          expect(path).to start_with('/tmp/myprefix')
+          expect(described_class.exist?(path)).to be true
+        end
+
+        it 'accepts a prefix and suffix as an array' do
+          path = described_class.mktmpdir(['prefix_', '_suffix'])
+          expect(path).to start_with('/tmp/prefix_')
+          expect(path).to end_with('_suffix')
+          expect(described_class.exist?(path)).to be true
+        end
+
+        it 'accepts a custom tmpdir' do
+          described_class.mkdir('/custom_tmp')
+          path = described_class.mktmpdir(nil, '/custom_tmp')
+          expect(path).to start_with('/custom_tmp/d')
+          expect(described_class.exist?(path)).to be true
+        end
+      end
+
+      context 'when a block is given' do
+        it 'creates a temporary directory, yields it, and removes it' do
+          yielded_path = nil
+          described_class.mktmpdir do |path|
+            yielded_path = path
+            expect(path).to start_with('/tmp/d')
+            expect(described_class.exist?(path)).to be true
+          end
+          expect(described_class.exist?(yielded_path)).to be false
+        end
+
+        it 'removes the directory even if an exception occurs' do
+          yielded_path = nil
+          expect do
+            described_class.mktmpdir do |path|
+              yielded_path = path
+              expect(described_class.exist?(path)).to be true
+              raise 'test exception'
+            end
+          end.to raise_error('test exception')
+          expect(described_class.exist?(yielded_path)).to be false
+        end
+
+        it 'works with a prefix and block' do
+          yielded_path = nil
+          described_class.mktmpdir('test_') do |path|
+            yielded_path = path
+            expect(path).to start_with('/tmp/test_')
+            expect(described_class.exist?(path)).to be true
+          end
+          expect(described_class.exist?(yielded_path)).to be false
+        end
+      end
+
+      it 'creates unique directory names' do
+        path1 = described_class.mktmpdir
+        path2 = described_class.mktmpdir
+        expect(path1).not_to eq(path2)
+      end
+    end
+
     describe '.unlink' do
       subject { described_class }
       it_behaves_like 'aliased method', :unlink, :rmdir

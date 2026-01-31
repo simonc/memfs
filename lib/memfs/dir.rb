@@ -59,7 +59,10 @@ module MemFs
     end
     class << self; alias pwd getwd; end
 
-    def self.glob(patterns, flags = 0, &block)
+    def self.glob(patterns, flags = 0, base: nil, sort: true, **opts, &block)
+      # Handle keyword argument for flags
+      flags = opts[:flags] if opts.key?(:flags)
+
       patterns = [*patterns].map(&:to_s)
       list = fs.paths.select do |path|
         patterns.any? do |pattern|
@@ -68,6 +71,7 @@ module MemFs
       end
       # FIXME: ugly special case for /* and /
       list.delete('/') if patterns.first == '/*'
+
       return list unless block_given?
       list.each(&block)
       nil
@@ -99,6 +103,58 @@ module MemFs
 
     def self.tmpdir
       '/tmp'
+    end
+
+    def self.mktmpdir(prefix_suffix = nil, tmpdir = nil, **options)
+      tmpdir ||= self.tmpdir
+
+      case prefix_suffix
+      when nil
+        prefix = 'd'
+        suffix = ''
+      when String
+        prefix = prefix_suffix
+        suffix = ''
+      when Array
+        prefix = prefix_suffix[0] || 'd'
+        suffix = prefix_suffix[1] || ''
+      else
+        raise ArgumentError, "unexpected prefix_suffix: #{prefix_suffix.inspect}"
+      end
+
+      max_try = options.fetch(:max_try, 10000)
+      path = nil
+
+      max_try.times do
+        timestamp = Time.now.strftime('%Y%m%d')
+        random = sprintf('%d-%d', $$, rand(0x100000000))
+        path = File.join(tmpdir, "#{prefix}#{timestamp}-#{random}-0#{suffix}")
+
+        begin
+          mkdir(path, 0o700)
+          break
+        rescue Errno::EEXIST
+          path = nil
+          next
+        end
+      end
+
+      raise "cannot generate temporary directory name" if path.nil?
+
+      if block_given?
+        begin
+          result = yield path
+        ensure
+          begin
+            rmdir(path) if exists?(path)
+          rescue
+            # Ignore cleanup errors
+          end
+        end
+        result
+      else
+        path
+      end
     end
 
     class << self
