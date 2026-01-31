@@ -81,7 +81,7 @@ module MemFs
     end
 
     def self.absolute_path(path, dir_string = fs.pwd)
-      original_file_class.absolute_path(path, dir_string)
+      normalize_path(original_file_class.absolute_path(path, dir_string))
     end
 
     def self.atime(path)
@@ -115,7 +115,17 @@ module MemFs
     class << self; alias exist? exists?; end
 
     def self.expand_path(file_name, dir_string = fs.pwd)
-      original_file_class.expand_path(file_name, dir_string)
+      normalize_path(original_file_class.expand_path(file_name, dir_string))
+    end
+
+    private_class_method def self.normalize_path(path)
+      return path unless MemFs.windows?
+
+      # Normalize Windows-style paths to a posix-like path used by the
+      # in-memory filesystem: convert backslashes to forward slashes and
+      # strip an optional drive letter (e.g. C:)
+      path = path.tr('\\', '/')
+      path.sub(%r{\A[A-Za-z]:}, '')
     end
 
     def self.ftype(path)

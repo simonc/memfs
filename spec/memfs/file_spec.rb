@@ -662,8 +662,8 @@ module MemFs
 
         context 'and the effective user group does not own of the file' do
           it 'returns false' do
-            described_class.chown 0, 0, '/test-file'
-
+            other_gid = Process.egid == 0 ? 1 : 0
+            described_class.chown 0, other_gid, '/test-file'
             grpowned = File.grpowned?('/test-file')
             expect(grpowned).to be false
           end
@@ -1013,8 +1013,8 @@ module MemFs
 
         context 'and the effective user does not own of the file' do
           it 'returns false' do
-            described_class.chown 0, 0, '/test-file'
-
+            other_uid = Process.euid == 0 ? 1 : 0
+            described_class.chown other_uid, 0, '/test-file'
             owned = File.owned?('/test-file')
             expect(owned).to be false
           end

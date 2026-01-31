@@ -453,7 +453,8 @@ module MemFs
 
       context 'when the effective user group does not own of the file' do
         it 'returns false' do
-          _fs.chown(0, 0, '/test-file')
+          other_gid = Process.egid == 0 ? 1 : 0
+          _fs.chown(0, other_gid, '/test-file')
           expect(file_stat.grpowned?).to be false
         end
       end
@@ -482,7 +483,8 @@ module MemFs
 
       context 'when the effective user does not own of the file' do
         it 'returns false' do
-          _fs.chown(0, 0, '/test-file')
+          other_uid = Process.euid == 0 ? 1 : 0
+          _fs.chown(other_uid, 0, '/test-file')
           expect(file_stat.owned?).to be false
         end
       end
