@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'tempfile'
 
 RSpec.describe MemFs do
   describe '.activate' do
@@ -84,6 +85,33 @@ RSpec.describe MemFs do
       end
 
       expect(File.exist?('file.rb')).to be true
+    end
+  end
+
+  describe 'Tempfile.create' do
+    around(:each) { |example| described_class.activate { example.run } }
+
+    context 'without a block' do
+      it 'creates the file in the in-memory filesystem' do
+        file = Tempfile.create('memfs')
+        expect(file).to be_a(File)
+        expect(file.path).to start_with('/tmp/memfs')
+        expect(_fs.find(file.path)).not_to be_nil
+        file.close
+      end
+    end
+
+    context 'with a block' do
+      it 'yields a writable file whose content is stored in the in-memory filesystem' do
+        path = nil
+        Tempfile.create('memfs') do |f|
+          path = f.path
+          f.write('hello')
+          expect(File.read(path)).to eq('hello')
+          expect(_fs.find(path)).not_to be_nil
+        end
+        expect(_fs.find(path)).to be_nil
+      end
     end
   end
 

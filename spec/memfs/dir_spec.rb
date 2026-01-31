@@ -423,6 +423,16 @@ module MemFs
       end
     end
 
+    describe '::Tmpname' do
+      it 'is defined' do
+        expect(described_class.const_defined?(:Tmpname)).to be true
+      end
+
+      it 'responds to .create' do
+        expect(described_class::Tmpname).to respond_to(:create)
+      end
+    end
+
     describe '.mktmpdir' do
       context 'when no block is given' do
         it 'creates a temporary directory and returns its path' do

@@ -9,6 +9,8 @@ module MemFs
     include Enumerable
     include FilesystemAccess
 
+    Tmpname = MemFs::OriginalDir::Tmpname
+
     attr_reader :pos
 
     def self.[](*patterns)
