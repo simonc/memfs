@@ -207,7 +207,7 @@ module MemFs
     end
 
     def self.symlink?(path)
-      lstat_query(path, :symlink?)
+      lstat_query?(path, :symlink?)
     end
 
     def self.truncate(path, length)
@@ -340,10 +340,10 @@ module MemFs
     end
     private_class_method :stat_query
 
-    def self.lstat_query(path, query)
+    def self.lstat_query?(path, query)
       response = fs.find(path) && lstat(path).public_send(query)
       !!response
     end
-    private_class_method :lstat_query
+    private_class_method :lstat_query?
   end
 end
