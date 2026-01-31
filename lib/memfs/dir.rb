@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'tmpdir'
 require 'memfs/filesystem_access'
 
 module MemFs
@@ -59,16 +60,23 @@ module MemFs
     end
     class << self; alias pwd getwd; end
 
-    def self.glob(patterns, flags = 0, &block)
+    # rubocop:disable Lint/UnderscorePrefixedVariableName, Lint/UnusedMethodArgument
+    def self.glob(patterns, _flags = 0, flags: _flags, base: nil, sort: true, &block)
+      # rubocop:enable Lint/UnderscorePrefixedVariableName, Lint/UnusedMethodArgument
       patterns = [*patterns].map(&:to_s)
       list = fs.paths.select do |path|
         patterns.any? do |pattern|
           File.fnmatch?(pattern, path, flags | GLOB_FLAGS)
         end
       end
-      # FIXME: ugly special case for /* and /
+
+      # Special case for /* and /
+      # A scenario where /* is not the only pattern and / should be returned is
+      # considered an edge-case.
       list.delete('/') if patterns.first == '/*'
+
       return list unless block_given?
+
       list.each(&block)
       nil
     end
@@ -100,6 +108,28 @@ module MemFs
     def self.tmpdir
       '/tmp'
     end
+
+    # rubocop:disable Metrics/MethodLength
+    def self.mktmpdir(prefix_suffix = nil, tmpdir = nil, **options)
+      tmpdir ||= self.tmpdir
+      path = MemFs::OriginalDir::Tmpname.create(
+        prefix_suffix || 'd',
+        tmpdir,
+        **options) { |p, _, _, _d| mkdir(p, 0o700) }
+
+      return path unless block_given?
+
+      begin
+        yield path.dup
+      ensure
+        begin
+          rmdir(path) if exists?(path)
+        rescue StandardError
+          # Ignore cleanup errors
+        end
+      end
+    end
+    # rubocop:enable Metrics/MethodLength
 
     class << self
       alias delete rmdir
