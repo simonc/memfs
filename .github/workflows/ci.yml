@@ -58,3 +58,7 @@ jobs:
 
       - name: RSpec
         run: bin/rspec
+
+      - name: Coverage Summary
+        if: success() || failure()
+        run: bin/coverage_summary

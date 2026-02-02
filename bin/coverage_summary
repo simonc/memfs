@@ -1,0 +1,51 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "json"
+
+FileCoverage = Data.define(:path, :total, :covered, :missed) do
+  def percent = total.positive? ? (covered.to_f / total * 100).round(2) : 100.0
+end
+
+file = "coverage/.resultset.json"
+unless File.exist?(file)
+  warn "No coverage data found at #{file}"
+  exit
+end
+
+data = JSON.parse(File.read(file))
+coverage_data = data.values.first&.dig("coverage") || {}
+
+project_root = "#{Dir.pwd}/"
+
+files = coverage_data.map do |filepath, line_data|
+  lines = line_data.is_a?(Hash) ? line_data["lines"] : line_data
+  relevant = lines.compact.select { _1.is_a?(Integer) }
+
+  FileCoverage.new(
+    path: filepath.delete_prefix(project_root),
+    total: relevant.size,
+    covered: relevant.count(&:positive?),
+    missed: relevant.count(&:zero?)
+  )
+end
+
+files.sort_by!(&:percent)
+
+total_lines = files.sum(&:total)
+total_covered = files.sum(&:covered)
+total_missed = files.sum(&:missed)
+overall = total_lines.positive? ? (total_covered.to_f / total_lines * 100).round(2) : 100.0
+
+puts "Coverage: #{overall}% (#{total_covered}/#{total_lines} lines, #{total_missed} missed)"
+
+summary_path = ENV["GITHUB_STEP_SUMMARY"] or exit
+
+File.open(summary_path, "a") do |f|
+  f.puts "### Code Coverage: #{overall}%"
+  f.puts ""
+  f.puts "| File | Lines | Missed | Coverage |"
+  f.puts "|------|------:|-------:|---------:|"
+  files.each { f.puts "| #{_1.path} | #{_1.total} | #{_1.missed} | #{_1.percent}% |" }
+  f.puts "| **Total** | **#{total_lines}** | **#{total_missed}** | **#{overall}%** |"
+end

@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-require 'coveralls'
-require 'memfs'
+require 'simplecov'
 
-Coveralls.wear!
+SimpleCov.start
+
+require 'memfs'
 
 def _fs
   MemFs::FileSystem.instance

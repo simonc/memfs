@@ -3,7 +3,7 @@
 [![Gem Version](https://badge.fury.io/rb/memfs.svg)](https://badge.fury.io/rb/memfs)
 [![Build Status](https://github.com/simonc/memfs/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/simonc/memfs/actions/workflows/ci.yml)
 [![Code Climate](https://codeclimate.com/github/simonc/memfs/badges/gpa.svg)](https://codeclimate.com/github/simonc/memfs)
-[![Coverage Status](https://coveralls.io/repos/github/simonc/memfs/badge.svg?branch=main)](https://coveralls.io/github/simonc/memfs?branch=main)
+
 
 MemFs is an in-memory filesystem that can be used for your tests.
 
