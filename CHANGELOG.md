@@ -1,6 +1,6 @@
 # Changelog
 
-## HEAD
+## 2.0.0 (2026-02-03)
 
 * ADD: Support for Ruby 3.x and 4.x
 * ADD: `Dir.empty?`
@@ -17,10 +17,10 @@
 
 ### Breaking
 
-* DEL: Dropping support for Ruby < 3.2
+* **DEL: Dropping support for Ruby < 3.2**
 * CHG: Renaming the `master` branch to `main`
 
-## 1.0.0
+## 1.0.0 (2017-01-01)
 
 :warning: This version drops support for Ruby 1.9.
 
@@ -33,26 +33,26 @@
 * FIX: Making `File` inherit from `IO` to fix 3rd-party related issues
 * FIX: Ensure `File.new` on a symlink raises if target is absent
 
-## 0.5.0
+## 0.5.0 (2015-09-13)
 
 * ADD: Support for _mode_ to `Dir.mkdir`, `FileUtils.mkdir` and `FileUtils.mkdir_p` (@raeno)
 * ADD: Support for Ruby 2.2 (@raeno)
 
-## 0.4.3
+## 0.4.3 (2015-02-14)
 
 * ADD: `File::SEPARATOR` and `File::ALT_SEPARATOR`
 * FIX: Support `YAML.load_file` by handling `r:bom|utf-8` open mode
 
-## 0.4.2
+## 0.4.2 (2015-02-14)
 
 * ADD: `File#external_encoding`
 * FIX: Undefined local variable or method `fs' for MemFs::File
 
-## 0.4.1
+## 0.4.1 (2014-07-24)
 
 * FIX: Support for 1.9.3 broken by File::FNM_EXTGLOB
 
-## 0.4.0
+## 0.4.0 (2014-07-18)
 
 * ADD: `Dir.chroot`
 * ADD: `Dir.glob` and `Dir[]`
@@ -69,11 +69,11 @@
 * ADD: `Dir#to_path`
 * FIX: Internal implementation methods are now private
 
-## 0.3.0
+## 0.3.0 (2014-03-08)
 
 * FIX: The gem is now Ruby 1.9 compatible
 
-## 0.2.0
+## 0.2.0 (2014-03-07)
 
 * ADD: Allowing magic creation of files with `MemFs.touch`
 * ADD: `Dir#each`
@@ -85,10 +85,10 @@
 * ADD: `Dir.unlink`
 * FIX: File.new now truncates a file when opening mode says so
 
-## 0.1.0
+## 0.1.0 (2013-08-25)
 
 * ADD: Adding `File` missing methods - #3
 
-## 0.0.2
+## 0.0.2 (2013-07-12)
 
 * ADD: Adding the MIT license to the gemspec file - #2
