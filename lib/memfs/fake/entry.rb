@@ -70,7 +70,13 @@ module MemFs
         self.gid = Process.egid
         self.mode = 0o666 - MemFs::File.umask
         self.mtime = time
-        self.name = MemFs::File.basename(path || '')
+        # Preserve full path for root directories (e.g., 'D:/' on Windows)
+        # since File.basename('D:/') returns '/' which breaks path matching
+        self.name = if path && MemFs.root_path?(path)
+                      MemFs.normalize_path(path)
+                    else
+                      MemFs::File.basename(path || '')
+                    end
         self.uid = Process.euid
       end
 
