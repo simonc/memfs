@@ -121,11 +121,14 @@ module MemFs
 
     # rubocop:disable Metrics/MethodLength
     def self.mktmpdir(prefix_suffix = nil, tmpdir = nil, **options)
-      tmpdir ||= self.tmpdir
+      tmpdir = MemFs.normalize_path(tmpdir || self.tmpdir)
       path = MemFs::OriginalDir::Tmpname.create(
         prefix_suffix || 'd',
         tmpdir,
         **options) { |p, _, _, _d| mkdir(p, 0o700) }
+
+      # Normalize the returned path for consistent handling across platforms
+      path = MemFs.normalize_path(path)
 
       return path unless block_given?
 
