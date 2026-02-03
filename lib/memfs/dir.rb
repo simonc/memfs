@@ -32,7 +32,7 @@ module MemFs
       fail Errno::EPERM, path unless Process.uid.zero?
 
       dir = fs.find_directory!(path)
-      dir.name = '/'
+      dir.name = MemFs.platform_root
       fs.root = dir
       0
     end
@@ -66,9 +66,11 @@ module MemFs
     # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
     def self.glob(patterns, _flags = 0, flags: _flags, base: nil, sort: true, &block)
       # rubocop:enable Lint/UnderscorePrefixedVariableName, Lint/UnusedMethodArgument
-      patterns = [*patterns].map(&:to_s)
+      original_patterns = [*patterns].map(&:to_s)
+      # Normalize patterns for platform (e.g., '/test' -> 'D:/test' on Windows)
+      normalized_patterns = original_patterns.map { |p| MemFs.normalize_path(p) }
       list = fs.paths.select do |path|
-        patterns.any? do |pattern|
+        normalized_patterns.any? do |pattern|
           File.fnmatch?(pattern, path, flags | GLOB_FLAGS)
         end
       end
@@ -77,7 +79,7 @@ module MemFs
       # A scenario where /* is not the only pattern and / should be returned is
       # considered an edge-case (platform-aware root handling).
       root_pattern = MemFs.windows? ? "#{MemFs.platform_root}*" : '/*'
-      if ['/*', root_pattern].include?(patterns.first)
+      if ['/*', root_pattern].include?(original_patterns.first)
         list.delete(MemFs.platform_root)
         list.delete('/') # Also handle Unix-style if passed
       end

@@ -13,13 +13,13 @@ module MemFs
     describe '[]' do
       context 'when a string is given' do
         it 'acts like calling glob' do
-          expect(described_class['/*']).to eq %w[/tmp /test]
+          expect(described_class['/*']).to eq [expected_path('/tmp'), expected_path('/test')]
         end
       end
 
       context 'when a list of strings is given' do
         it 'acts like calling glob' do
-          expect(described_class['/tm*', '/te*']).to eq %w[/tmp /test]
+          expect(described_class['/tm*', '/te*']).to eq [expected_path('/tmp'), expected_path('/test')]
         end
       end
     end
@@ -27,7 +27,7 @@ module MemFs
     describe '.chdir' do
       it 'changes the current working directory' do
         described_class.chdir '/test'
-        expect(described_class.getwd).to eq('/test')
+        expect(described_class.getwd).to eq(expected_path('/test'))
       end
 
       it 'returns zero' do
@@ -41,7 +41,7 @@ module MemFs
       context 'when a block is given' do
         it 'changes current working directory for the block' do
           described_class.chdir '/test' do
-            expect(described_class.pwd).to eq('/test')
+            expect(described_class.pwd).to eq(expected_path('/test'))
           end
         end
 
@@ -250,7 +250,8 @@ module MemFs
 
       shared_examples 'returning matching filenames' do |pattern, filenames|
         it "with #{pattern}" do
-          expect(described_class.glob(pattern)).to eq filenames
+          expected = filenames.map { |f| expected_path(f) }
+          expect(described_class.glob(pattern)).to eq expected
         end
       end
 
@@ -274,14 +275,14 @@ module MemFs
       context 'when a flag is given' do
         it 'uses it to compare filenames' do
           expect(described_class.glob('/TEST*', File::FNM_CASEFOLD)).to eq \
-            %w[/test0 /test1 /test2]
+            [expected_path('/test0'), expected_path('/test1'), expected_path('/test2')]
         end
       end
 
       context 'when a block is given' do
         it 'calls the block with every matching filenames' do
           expect { |blk| described_class.glob('/test*', &blk) }.to \
-            yield_successive_args('/test0', '/test1', '/test2')
+            yield_successive_args(expected_path('/test0'), expected_path('/test1'), expected_path('/test2'))
         end
 
         it 'returns nil' do
@@ -291,7 +292,7 @@ module MemFs
 
       context 'when pattern is an array of patterns' do
         it 'returns the list of files matching any pattern' do
-          expect(described_class.glob(['/*0', '/*1'])).to eq %w[/test0 /test1]
+          expect(described_class.glob(['/*0', '/*1'])).to eq [expected_path('/test0'), expected_path('/test1')]
         end
       end
     end
@@ -421,7 +422,7 @@ module MemFs
 
     describe '.tmpdir' do
       it 'returns /tmp' do
-        expect(described_class.tmpdir).to eq '/tmp'
+        expect(described_class.tmpdir).to eq expected_path('/tmp')
       end
     end
 
@@ -439,19 +440,19 @@ module MemFs
       context 'when no block is given' do
         it 'creates a temporary directory and returns its path' do
           path = described_class.mktmpdir
-          expect(path).to start_with('/tmp/d')
+          expect(path).to start_with(expected_path('/tmp/d'))
           expect(described_class.exist?(path)).to be true
         end
 
         it 'accepts a prefix' do
           path = described_class.mktmpdir('myprefix')
-          expect(path).to start_with('/tmp/myprefix')
+          expect(path).to start_with(expected_path('/tmp/myprefix'))
           expect(described_class.exist?(path)).to be true
         end
 
         it 'accepts a prefix and suffix as an array' do
           path = described_class.mktmpdir(['prefix_', '_suffix'])
-          expect(path).to start_with('/tmp/prefix_')
+          expect(path).to start_with(expected_path('/tmp/prefix_'))
           expect(path).to end_with('_suffix')
           expect(described_class.exist?(path)).to be true
         end
@@ -459,7 +460,7 @@ module MemFs
         it 'accepts a custom tmpdir' do
           described_class.mkdir('/custom_tmp')
           path = described_class.mktmpdir(nil, '/custom_tmp')
-          expect(path).to start_with('/custom_tmp/d')
+          expect(path).to start_with(expected_path('/custom_tmp/d'))
           expect(described_class.exist?(path)).to be true
         end
       end
@@ -469,7 +470,7 @@ module MemFs
           yielded_path = nil
           described_class.mktmpdir do |path|
             yielded_path = path
-            expect(path).to start_with('/tmp/d')
+            expect(path).to start_with(expected_path('/tmp/d'))
             expect(described_class.exist?(path)).to be true
           end
           expect(described_class.exist?(yielded_path)).to be false
@@ -491,7 +492,7 @@ module MemFs
           yielded_path = nil
           described_class.mktmpdir('test_') do |path|
             yielded_path = path
-            expect(path).to start_with('/tmp/test_')
+            expect(path).to start_with(expected_path('/tmp/test_'))
             expect(described_class.exist?(path)).to be true
           end
           expect(described_class.exist?(yielded_path)).to be false
@@ -546,7 +547,7 @@ module MemFs
 
     describe '#path' do
       it "returns the path parameter passed to dir's constructor" do
-        expect(subject.path).to eq '/test'
+        expect(subject.path).to eq expected_path('/test')
       end
     end
 
@@ -657,7 +658,7 @@ module MemFs
 
     describe '#to_path' do
       it "returns the path parameter passed to dir's constructor" do
-        expect(subject.to_path).to eq '/test'
+        expect(subject.to_path).to eq expected_path('/test')
       end
     end
   end

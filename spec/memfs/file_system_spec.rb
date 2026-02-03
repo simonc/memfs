@@ -11,7 +11,7 @@ module MemFs
     describe '#chdir' do
       it 'changes the current working directory' do
         subject.chdir '/test-dir'
-        expect(subject.getwd).to eq('/test-dir')
+        expect(subject.getwd).to eq(expected_path('/test-dir'))
       end
 
       it 'raises an error if directory does not exist' do
@@ -29,7 +29,7 @@ module MemFs
           subject.chdir '/test-dir' do
             location = subject.getwd
           end
-          expect(location).to eq('/test-dir')
+          expect(location).to eq(expected_path('/test-dir'))
         end
 
         it 'gets back to previous directory once the block is finished' do
@@ -44,7 +44,7 @@ module MemFs
         it 'sets current directory as the last link chain target' do
           subject.symlink('/test-dir', '/test-link')
           subject.chdir('/test-link')
-          expect(subject.getwd).to eq('/test-dir')
+          expect(subject.getwd).to eq(expected_path('/test-dir'))
         end
       end
     end
@@ -140,7 +140,7 @@ module MemFs
 
       it 'sets the current directory to /' do
         subject.clear!
-        expect(subject.getwd).to eq('/')
+        expect(subject.getwd).to eq(root_path)
       end
     end
 
@@ -256,7 +256,7 @@ module MemFs
     describe '#getwd' do
       it 'returns the current working directory' do
         subject.chdir '/test-dir'
-        expect(subject.getwd).to eq('/test-dir')
+        expect(subject.getwd).to eq(expected_path('/test-dir'))
       end
     end
 
@@ -329,8 +329,8 @@ module MemFs
       end
 
       it 'returns the list of all the existing paths' do
-        expect(subject.paths).to eq \
-          %w[/ /tmp /test-dir /test-dir/subdir /test-dir/subdir/file1 /test-dir/subdir/file2]
+        expected = %w[/ /tmp /test-dir /test-dir/subdir /test-dir/subdir/file1 /test-dir/subdir/file2]
+        expect(subject.paths).to eq(expected.map { |p| expected_path(p) })
       end
     end
 

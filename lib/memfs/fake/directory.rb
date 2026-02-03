@@ -24,8 +24,12 @@ module MemFs
       def find(path)
         path = MemFs.normalize_path(path)
 
-        # Strip root prefix if present
-        path = path[name.length..] if root_directory? && path.start_with?(name)
+        # Strip root prefix if present (for root directory, use its name; for others, use platform_root)
+        if root_directory? && path.start_with?(name)
+          path = path[name.length..]
+        elsif !root_directory? && path.start_with?(MemFs.platform_root)
+          path = path[MemFs.platform_root.length..]
+        end
 
         path = path.gsub(%r{(\A/+|/+\z)}, '')
         return self if path.empty?

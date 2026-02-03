@@ -113,7 +113,7 @@ module MemFs
 
       describe '#dereferenced_path' do
         it 'returns the entry path' do
-          expect(entry.dereferenced_path).to eq('/parent/test')
+          expect(entry.dereferenced_path).to eq(expected_path('/parent/test'))
         end
       end
 
@@ -143,13 +143,13 @@ module MemFs
 
       describe '#path' do
         it 'returns the complete path of the entry' do
-          expect(entry.path).to eq('/parent/test')
+          expect(entry.path).to eq(expected_path('/parent/test'))
         end
       end
 
       describe 'paths' do
         it 'returns an array containing the entry path' do
-          expect(entry.paths).to eq ['/parent/test']
+          expect(entry.paths).to eq [expected_path('/parent/test')]
         end
       end
 
