@@ -17,7 +17,7 @@
 
 ### Breaking
 
-* DEL: Dropping support for Ruby < 2.7
+* DEL: Dropping support for Ruby < 3.2
 * CHG: Renaming the `master` branch to `main`
 
 ## 1.0.0
