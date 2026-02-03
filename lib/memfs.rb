@@ -35,6 +35,67 @@ module MemFs
     /mswin|bccwin|mingw/ =~ RUBY_PLATFORM
   end
 
+  # Returns the platform-specific root path (e.g., '/' on Unix, 'D:/' on Windows)
+  def self.platform_root
+    @platform_root || default_platform_root
+  end
+
+  # Allows setting a custom platform root (mainly for testing)
+  def self.platform_root=(value)
+    @platform_root = value
+  end
+
+  # Resets platform_root to the default value
+  def self.reset_platform_root!
+    @platform_root = nil
+  end
+
+  # Returns the default platform root based on the current OS
+  def self.default_platform_root
+    if windows?
+      # Normalize drive letter to uppercase
+      OriginalFile.expand_path('/').sub(/\A([a-z]):/) { "#{::Regexp.last_match(1).upcase}:" }
+    else
+      '/'
+    end
+  end
+
+  # Check if a path is the root path (handles both '/' and 'D:/')
+  def self.root_path?(path)
+    return false if path.nil?
+
+    normalized = normalize_path(path)
+    normalized == platform_root || normalized == '/'
+  end
+
+  # Normalize path for consistent handling
+  # rubocop:disable Metrics/MethodLength
+  def self.normalize_path(path)
+    return path unless path.is_a?(String)
+
+    # Reject UNC paths
+    fail ArgumentError, "UNC paths are not supported: #{path}" if path.start_with?('\\\\', '//')
+
+    # Convert backslashes to forward slashes
+    path = path.tr('\\', '/')
+
+    return path unless windows?
+
+    # Normalize drive letter to uppercase
+    path = path.sub(/\A([a-z]):/) { "#{::Regexp.last_match(1).upcase}:" }
+
+    # Convert bare '/' to platform root on Windows
+    if path == '/'
+      platform_root
+    elsif path.start_with?('/') && !path.match?(%r{\A[A-Z]:/})
+      # Convert '/foo' to 'D:/foo' on Windows
+      "#{platform_root}#{path[1..]}"
+    else
+      path
+    end
+  end
+  # rubocop:enable Metrics/MethodLength
+
   require 'memfs/file_system'
   require 'memfs/dir'
   require 'memfs/file'

@@ -20,8 +20,16 @@ module MemFs
         entries.keys
       end
 
+      # rubocop:disable Metrics/AbcSize
       def find(path)
+        path = MemFs.normalize_path(path)
+
+        # Strip root prefix if present
+        path = path[name.length..] if root_directory? && path.start_with?(name)
+
         path = path.gsub(%r{(\A/+|/+\z)}, '')
+        return self if path.empty?
+
         parts = path.split('/', 2)
 
         if entry_names.include?(path)
@@ -30,6 +38,7 @@ module MemFs
           entries[parts.first].find(parts.last)
         end
       end
+      # rubocop:enable Metrics/AbcSize
 
       def initialize(*args)
         super
@@ -42,7 +51,7 @@ module MemFs
       end
 
       def path
-        name == '/' ? '/' : super
+        root_directory? ? name : super
       end
 
       def paths
@@ -62,6 +71,12 @@ module MemFs
 
       def type
         'directory'
+      end
+
+      private
+
+      def root_directory?
+        parent.nil? || MemFs.root_path?(name)
       end
     end
   end

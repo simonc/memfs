@@ -10,6 +10,17 @@ def _fs
   MemFs::FileSystem.instance
 end
 
+# Returns the platform-appropriate root path
+def root_path
+  MemFs.platform_root
+end
+
+# Converts Unix-style path to platform path for expectations
+# expected_path('/test-file') => '/test-file' on Unix, 'D:/test-file' on Windows
+def expected_path(unix_path)
+  MemFs.normalize_path(unix_path)
+end
+
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true

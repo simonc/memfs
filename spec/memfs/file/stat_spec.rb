@@ -453,7 +453,7 @@ module MemFs
 
       context 'when the effective user group does not own of the file' do
         it 'returns false' do
-          _fs.chown(0, 0, '/test-file')
+          _fs.chown(9999, 9999, '/test-file')
           expect(file_stat.grpowned?).to be false
         end
       end
@@ -482,7 +482,7 @@ module MemFs
 
       context 'when the effective user does not own of the file' do
         it 'returns false' do
-          _fs.chown(0, 0, '/test-file')
+          _fs.chown(9999, 9999, '/test-file')
           expect(file_stat.owned?).to be false
         end
       end

@@ -298,13 +298,15 @@ module MemFs
 
     describe '.home' do
       it 'returns the home directory of the current user' do
-        expect(described_class.home).to eq ENV['HOME']
+        # Dir.home uses forward slashes; ENV['HOME'] may have backslashes on Windows
+        expect(described_class.home).to eq ENV['HOME'].tr('\\', '/')
       end
 
       context 'when a username is given' do
         it 'returns the home directory of the given user' do
-          home_dir = described_class.home(ENV['USER'])
-          expect(home_dir).to eq ENV['HOME']
+          username = ENV['USER'] || ENV['USERNAME']
+          home_dir = described_class.home(username)
+          expect(home_dir).to eq ENV['HOME'].tr('\\', '/')
         end
       end
     end
