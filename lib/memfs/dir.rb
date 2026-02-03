@@ -64,6 +64,7 @@ module MemFs
 
     # rubocop:disable Lint/UnderscorePrefixedVariableName, Lint/UnusedMethodArgument
     # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:disable Metrics/PerceivedComplexity
     def self.glob(patterns, _flags = 0, flags: _flags, base: nil, sort: true, &block)
       # rubocop:enable Lint/UnderscorePrefixedVariableName, Lint/UnusedMethodArgument
       original_patterns = [*patterns].map(&:to_s)
@@ -90,6 +91,7 @@ module MemFs
       nil
     end
     # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
 
     def self.home(*args)
       original_dir_class.home(*args)

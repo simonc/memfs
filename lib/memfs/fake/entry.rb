@@ -61,9 +61,9 @@ module MemFs
         fail Errno::ENOTDIR, path
       end
 
+      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       def initialize(path = nil)
         time = Time.now
-
         self.atime = time
         self.birthtime = time
         self.ctime = time
@@ -79,6 +79,7 @@ module MemFs
                     end
         self.uid = Process.euid
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
       def ino
         @ino ||= rand(1000)

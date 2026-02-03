@@ -20,11 +20,11 @@ module MemFs
         entries.keys
       end
 
-      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       def find(path)
         path = MemFs.normalize_path(path)
 
-        # Strip root prefix if present - check platform_root first, then directory name for root dirs
+        # Strip root prefix if present (platform_root first, then directory name for root dirs)
         if path.start_with?(MemFs.platform_root)
           path = path[MemFs.platform_root.length..]
         elsif root_directory? && path.start_with?(name)
@@ -42,7 +42,7 @@ module MemFs
           entries[parts.first].find(parts.last)
         end
       end
-      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
 
       def initialize(*args)
         super

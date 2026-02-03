@@ -69,7 +69,8 @@ module MemFs
   end
 
   # Normalize path for consistent handling
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+  # rubocop:disable Metrics/PerceivedComplexity
   def self.normalize_path(path)
     return path unless path.is_a?(String)
 
@@ -89,7 +90,7 @@ module MemFs
     # Convert to absolute paths since our fake fs doesn't support per-drive working directories
     if path.match?(/\A[A-Z]:\z/) # Bare drive like 'D:'
       path = "#{path}/"
-    elsif path.match?(/\A[A-Z]:[^\/]/) # Drive-relative like 'D:foo' or 'D:.'
+    elsif path.match?(%r{\A[A-Z]:[^/]}) # Drive-relative like 'D:foo' or 'D:.'
       path = path.sub(/\A([A-Z]):/, '\1:/')
     end
 
@@ -103,7 +104,8 @@ module MemFs
       path
     end
   end
-  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+  # rubocop:enable Metrics/PerceivedComplexity
 
   require 'memfs/file_system'
   require 'memfs/dir'
