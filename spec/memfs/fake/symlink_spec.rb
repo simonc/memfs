@@ -54,7 +54,7 @@ module MemFs
           it 'returns its target path' do
             _fs.touch('/test-file')
             symlink = described_class.new('/test-link', '/test-file')
-            expect(symlink.dereferenced_path).to eq('/test-file')
+            expect(symlink.dereferenced_path).to eq(expected_path('/test-file'))
           end
         end
 

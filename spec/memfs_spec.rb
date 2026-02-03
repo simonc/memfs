@@ -95,7 +95,7 @@ RSpec.describe MemFs do
       it 'creates the file in the in-memory filesystem' do
         file = Tempfile.create('memfs')
         expect(file).to be_a(File)
-        expect(file.path).to start_with('/tmp/memfs')
+        expect(file.path).to start_with(expected_path('/tmp/memfs'))
         expect(_fs.find(file.path)).not_to be_nil
         file.close
       end

@@ -17,7 +17,7 @@ RSpec.describe FileUtils do
   describe '.cd' do
     it 'changes the current working directory' do
       described_class.cd '/test'
-      expect(described_class.pwd).to eq('/test')
+      expect(described_class.pwd).to eq(expected_path('/test'))
     end
 
     if MemFs.ruby_version_gte?('2.6')
@@ -42,7 +42,7 @@ RSpec.describe FileUtils do
     context 'when called with a block' do
       it 'changes current working directory for the block execution' do
         described_class.cd '/test' do
-          expect(described_class.pwd).to eq('/test')
+          expect(described_class.pwd).to eq(expected_path('/test'))
         end
       end
 
@@ -59,7 +59,7 @@ RSpec.describe FileUtils do
 
       it 'changes directory to the last target of the link chain' do
         described_class.cd('/test-link')
-        expect(described_class.pwd).to eq('/test')
+        expect(described_class.pwd).to eq(expected_path('/test'))
       end
 
       it "raises an error if the last target of the link chain doesn't exist" do
@@ -765,7 +765,7 @@ RSpec.describe FileUtils do
   describe '.pwd' do
     it 'returns the name of the current directory' do
       described_class.cd '/test'
-      expect(described_class.pwd).to eq('/test')
+      expect(described_class.pwd).to eq(expected_path('/test'))
     end
   end
 

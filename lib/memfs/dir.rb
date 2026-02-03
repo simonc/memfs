@@ -32,7 +32,7 @@ module MemFs
       fail Errno::EPERM, path unless Process.uid.zero?
 
       dir = fs.find_directory!(path)
-      dir.name = '/'
+      dir.name = MemFs.platform_root
       fs.root = dir
       0
     end
@@ -63,25 +63,35 @@ module MemFs
     class << self; alias pwd getwd; end
 
     # rubocop:disable Lint/UnderscorePrefixedVariableName, Lint/UnusedMethodArgument
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:disable Metrics/PerceivedComplexity
     def self.glob(patterns, _flags = 0, flags: _flags, base: nil, sort: true, &block)
       # rubocop:enable Lint/UnderscorePrefixedVariableName, Lint/UnusedMethodArgument
-      patterns = [*patterns].map(&:to_s)
+      original_patterns = [*patterns].map(&:to_s)
+      # Normalize patterns for platform (e.g., '/test' -> 'D:/test' on Windows)
+      normalized_patterns = original_patterns.map { |p| MemFs.normalize_path(p) }
       list = fs.paths.select do |path|
-        patterns.any? do |pattern|
+        normalized_patterns.any? do |pattern|
           File.fnmatch?(pattern, path, flags | GLOB_FLAGS)
         end
       end
 
       # Special case for /* and /
       # A scenario where /* is not the only pattern and / should be returned is
-      # considered an edge-case.
-      list.delete('/') if patterns.first == '/*'
+      # considered an edge-case (platform-aware root handling).
+      root_pattern = MemFs.windows? ? "#{MemFs.platform_root}*" : '/*'
+      if ['/*', root_pattern].include?(original_patterns.first)
+        list.delete(MemFs.platform_root)
+        list.delete('/') # Also handle Unix-style if passed
+      end
 
       return list unless block_given?
 
       list.each(&block)
       nil
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
 
     def self.home(*args)
       original_dir_class.home(*args)
@@ -108,16 +118,19 @@ module MemFs
     end
 
     def self.tmpdir
-      '/tmp'
+      File.join(MemFs.platform_root, 'tmp')
     end
 
     # rubocop:disable Metrics/MethodLength
     def self.mktmpdir(prefix_suffix = nil, tmpdir = nil, **options)
-      tmpdir ||= self.tmpdir
+      tmpdir = MemFs.normalize_path(tmpdir || self.tmpdir)
       path = MemFs::OriginalDir::Tmpname.create(
         prefix_suffix || 'd',
         tmpdir,
         **options) { |p, _, _, _d| mkdir(p, 0o700) }
+
+      # Normalize the returned path for consistent handling across platforms
+      path = MemFs.normalize_path(path)
 
       return path unless block_given?
 

@@ -91,16 +91,16 @@ module MemFs
       end
 
       describe '#path' do
-        let(:root) { described_class.new('/') }
+        let(:root) { described_class.new(root_path) }
 
         it 'returns the directory path' do
           directory.parent = root
-          expect(directory.path).to eq('/test')
+          expect(directory.path).to eq(expected_path('/test'))
         end
 
         context 'when the directory is /' do
           it 'returns /' do
-            expect(root.path).to eq('/')
+            expect(root.path).to eq(root_path)
           end
         end
       end

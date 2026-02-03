@@ -40,20 +40,20 @@ module MemFs
 
       it 'converts a pathname to an absolute pathname' do
         path = described_class.absolute_path('./test-file')
-        expect(path).to eq '/test-dir/test-file'
+        expect(path).to eq expected_path('/test-dir/test-file')
       end
 
       context 'when +dir_string+ is given' do
         it 'uses it as the starting point' do
           path = described_class.absolute_path('./test-file', '/no-dir')
-          expect(path).to eq '/no-dir/test-file'
+          expect(path).to eq expected_path('/no-dir/test-file')
         end
       end
 
       context "when the given pathname starts with a '~'" do
         it 'does not expanded' do
           path = described_class.absolute_path('~/test-file')
-          expect(path).to eq '/test-dir/~/test-file'
+          expect(path).to eq expected_path('/test-dir/~/test-file')
         end
       end
     end
@@ -490,20 +490,20 @@ module MemFs
         _fs.chdir '/'
 
         expanded_path = described_class.expand_path('test-file')
-        expect(expanded_path).to eq '/test-file'
+        expect(expanded_path).to eq expected_path('/test-file')
       end
 
       it 'references path from the current working directory' do
         _fs.chdir '/test-dir'
 
         expanded_path = described_class.expand_path('test-file')
-        expect(expanded_path).to eq '/test-dir/test-file'
+        expect(expanded_path).to eq expected_path('/test-dir/test-file')
       end
 
       context 'when +dir_string+ is provided' do
         it 'uses +dir_string+ as the stating point' do
           expanded_path = described_class.expand_path('test-file', '/test')
-          expect(expanded_path).to eq '/test/test-file'
+          expect(expanded_path).to eq expected_path('/test/test-file')
         end
       end
     end
@@ -662,7 +662,7 @@ module MemFs
 
         context 'and the effective user group does not own of the file' do
           it 'returns false' do
-            described_class.chown 0, 0, '/test-file'
+            described_class.chown 9999, 9999, '/test-file'
 
             grpowned = File.grpowned?('/test-file')
             expect(grpowned).to be false
@@ -1013,7 +1013,7 @@ module MemFs
 
         context 'and the effective user does not own of the file' do
           it 'returns false' do
-            described_class.chown 0, 0, '/test-file'
+            described_class.chown 9999, 9999, '/test-file'
 
             owned = File.owned?('/test-file')
             expect(owned).to be false
@@ -1258,7 +1258,7 @@ module MemFs
       context 'when the path does not contain any symlink or useless dots' do
         it 'returns the path itself' do
           path = described_class.realdirpath('/test-file')
-          expect(path).to eq '/test-file'
+          expect(path).to eq expected_path('/test-file')
         end
       end
 
@@ -1266,14 +1266,14 @@ module MemFs
         context 'and the symlink is a middle part' do
           it 'returns the path with the symlink dereferrenced' do
             path = described_class.realdirpath('/test-dir/sub-dir-link/test-file')
-            expect(path).to eq '/test-dir/sub-dir/test-file'
+            expect(path).to eq expected_path('/test-dir/sub-dir/test-file')
           end
         end
 
         context 'and the symlink is the last part' do
           it 'returns the path with the symlink dereferrenced' do
             path = described_class.realdirpath('/test-dir/sub-dir-link')
-            expect(path).to eq '/test-dir/sub-dir'
+            expect(path).to eq expected_path('/test-dir/sub-dir')
           end
         end
       end
@@ -1281,7 +1281,7 @@ module MemFs
       context 'when the path contains useless dots' do
         it 'returns the path with the useless dots interpolated' do
           path = described_class.realdirpath('/test-dir/../test-dir/./sub-dir/test-file')
-          expect(path).to eq '/test-dir/sub-dir/test-file'
+          expect(path).to eq expected_path('/test-dir/sub-dir/test-file')
         end
       end
 
@@ -1290,14 +1290,14 @@ module MemFs
           it 'uses the current working directory has base directory' do
             _fs.chdir '/test-dir'
             path = described_class.realdirpath('../test-dir/./sub-dir/test-file')
-            expect(path).to eq '/test-dir/sub-dir/test-file'
+            expect(path).to eq expected_path('/test-dir/sub-dir/test-file')
           end
         end
 
         context 'and +dir_string+ is provided' do
           it 'uses the given directory has base directory' do
             path = described_class.realdirpath('../test-dir/./sub-dir/test-file', '/test-dir')
-            expect(path).to eq '/test-dir/sub-dir/test-file'
+            expect(path).to eq expected_path('/test-dir/sub-dir/test-file')
           end
         end
       end
@@ -1310,7 +1310,7 @@ module MemFs
 
           it 'uses the name of the target in the resulting path' do
             path = described_class.realdirpath('/test-dir/sub-dir/test-link')
-            expect(path).to eq '/test-dir/sub-dir/test'
+            expect(path).to eq expected_path('/test-dir/sub-dir/test')
           end
         end
       end
@@ -1318,7 +1318,7 @@ module MemFs
       context 'when the last part of the given path does not exist' do
         it 'uses its name in the resulting path' do
           path = described_class.realdirpath('/test-dir/sub-dir/test')
-          expect(path).to eq '/test-dir/sub-dir/test'
+          expect(path).to eq expected_path('/test-dir/sub-dir/test')
         end
       end
 
@@ -1341,7 +1341,7 @@ module MemFs
       context 'when the path does not contain any symlink or useless dots' do
         it 'returns the path itself' do
           path = described_class.realpath('/test-file')
-          expect(path).to eq '/test-file'
+          expect(path).to eq expected_path('/test-file')
         end
       end
 
@@ -1349,14 +1349,14 @@ module MemFs
         context 'and the symlink is a middle part' do
           it 'returns the path with the symlink dereferrenced' do
             path = described_class.realpath('/test-dir/sub-dir-link/test-file')
-            expect(path).to eq '/test-dir/sub-dir/test-file'
+            expect(path).to eq expected_path('/test-dir/sub-dir/test-file')
           end
         end
 
         context 'and the symlink is the last part' do
           it 'returns the path with the symlink dereferrenced' do
             path = described_class.realpath('/test-dir/sub-dir-link')
-            expect(path).to eq '/test-dir/sub-dir'
+            expect(path).to eq expected_path('/test-dir/sub-dir')
           end
         end
       end
@@ -1364,7 +1364,7 @@ module MemFs
       context 'when the path contains useless dots' do
         it 'returns the path with the useless dots interpolated' do
           path = described_class.realpath('/test-dir/../test-dir/./sub-dir/test-file')
-          expect(path).to eq '/test-dir/sub-dir/test-file'
+          expect(path).to eq expected_path('/test-dir/sub-dir/test-file')
         end
       end
 
@@ -1374,14 +1374,14 @@ module MemFs
             _fs.chdir '/test-dir'
 
             path = described_class.realpath('../test-dir/./sub-dir/test-file')
-            expect(path).to eq '/test-dir/sub-dir/test-file'
+            expect(path).to eq expected_path('/test-dir/sub-dir/test-file')
           end
         end
 
         context 'and +dir_string+ is provided' do
           it 'uses the given directory has base directory' do
             path = described_class.realpath('../test-dir/./sub-dir/test-file', '/test-dir')
-            expect(path).to eq '/test-dir/sub-dir/test-file'
+            expect(path).to eq expected_path('/test-dir/sub-dir/test-file')
           end
         end
       end

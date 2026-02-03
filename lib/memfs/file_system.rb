@@ -29,9 +29,10 @@ module MemFs
     end
 
     def clear!
-      self.root = Fake::Directory.new('/')
-      mkdir '/tmp'
-      chdir '/'
+      MemFs.reset_platform_root!
+      self.root = Fake::Directory.new(MemFs.platform_root)
+      mkdir File.join(MemFs.platform_root, 'tmp')
+      chdir MemFs.platform_root
     end
 
     def chmod(mode_int, file_name)
@@ -53,7 +54,9 @@ module MemFs
     end
 
     def find(path)
-      if path == '/'
+      path = MemFs.normalize_path(path)
+
+      if MemFs.root_path?(path)
         root
       elsif dirname(path) == '.'
         working_directory.find(path)
