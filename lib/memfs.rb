@@ -84,6 +84,15 @@ module MemFs
     # Normalize drive letter to uppercase
     path = path.sub(/\A([a-z]):/) { "#{::Regexp.last_match(1).upcase}:" }
 
+    # Handle drive-relative paths like 'D:foo' or 'D:.' (no slash after colon)
+    # and bare drive letters like 'D:' (current directory on drive D)
+    # Convert to absolute paths since our fake fs doesn't support per-drive working directories
+    if path.match?(/\A[A-Z]:\z/) # Bare drive like 'D:'
+      path = "#{path}/"
+    elsif path.match?(/\A[A-Z]:[^\/]/) # Drive-relative like 'D:foo' or 'D:.'
+      path = path.sub(/\A([A-Z]):/, '\1:/')
+    end
+
     # Convert bare '/' to platform root on Windows
     if path == '/'
       platform_root
